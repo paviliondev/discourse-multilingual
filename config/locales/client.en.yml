@@ -1,0 +1,8 @@
+en:
+  js:
+    user:
+      content_languages:
+        title: "Content Languages"
+        placeholder: "Select a languages"
+        instructions: "User content languages."
+        set: "Set Languages"

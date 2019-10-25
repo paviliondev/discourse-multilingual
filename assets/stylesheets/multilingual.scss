@@ -1,0 +1,18 @@
+.content-languages-dropdown.select-kit {
+  .select-kit-header.has-languages {
+    background-color: $tertiary;
+    
+    .d-icon {
+      color: $secondary;
+    }
+  }
+  
+  li.select-kit-row {
+    width: 100%;
+    cursor: initial;
+  }
+  
+  li.set-content-language {
+    cursor: pointer;
+  }
+}
