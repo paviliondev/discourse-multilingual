@@ -3,6 +3,10 @@ en:
     user:
       content_languages:
         title: "Content Languages"
-        placeholder: "Select a languages"
+        placeholder: "Select content languages"
         instructions: "User content languages."
         set: "Set Languages"
+    
+    topic:
+      content_languages:
+        placeholder: "select language"

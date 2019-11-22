@@ -6,10 +6,9 @@
 
 register_asset 'stylesheets/multilingual.scss'
 
-gem 'active_hash', '3.0.0'
-
 if respond_to?(:register_svg_icon)
   register_svg_icon "language"
+  register_svg_icon "translate"
 end
 
 after_initialize do
@@ -21,53 +20,22 @@ after_initialize do
       "fixtures"
     ).to_s
   )
-  
-  module ::Multilingual
-    class Engine < ::Rails::Engine
-      engine_name "multilingual"
-      isolate_namespace Multilingual
-    end
+    
+  [
+    '../jobs/update_language_data.rb',
+    '../lib/multilingual/engine.rb',
+    '../lib/multilingual/languages.rb'
+  ].each do |path|
+    load File.expand_path(path, __FILE__)
   end
   
-  class ::Multilingual::Languages < ActiveHash::Base
-    include ActiveModel::Serialization
+  if defined? register_editable_user_custom_field
+    register_editable_user_custom_field :content_languages 
+    register_editable_user_custom_field content_languages: []
   end
   
-  languages = YAML.safe_load(File.read(File.join(
-    Rails.root,
-    'plugins',
-    'discourse-multilingual',
-    'config',
-    'languages.yml'
-  )))
-  
-  id = 0
-  
-  Multilingual::Languages.data = languages["languages"].map do |k, v|
-    id = id + 1
-    {
-      id: id,
-      code: k,
-      name: v.last
-    }
-  end
-  
-  register_editable_user_custom_field :content_languages if defined? register_editable_user_custom_field
-  register_editable_user_custom_field content_languages: [] if defined? register_editable_user_custom_field
-  whitelist_public_user_custom_field :content_languages if defined? whitelist_public_user_custom_field
-
-  class Multilingual::LanguageSerializer < ::ApplicationSerializer
-    attributes :code, :name
-  end
-  
-  class Multilingual::ContentController < ::ApplicationController
-    def languages
-      render_serialized(Multilingual::Languages.all.to_a, Multilingual::LanguageSerializer)
-    end
-  end
-  
-  Multilingual::Engine.routes.draw do
-    get 'languages' => 'content#languages'
+  if defined? whitelist_public_user_custom_field
+    whitelist_public_user_custom_field :content_languages
   end
 
   Discourse::Application.routes.append do
@@ -82,25 +50,47 @@ after_initialize do
     end
   end
   
-  class ::User
-    def content_languages
-      if content_languages = self.custom_fields['content_languages']
-        [*content_languages]
-      else
-        []
-      end
+  add_to_class(:user, :content_languages) do
+    if content_languages = self.custom_fields['content_languages']
+      [*content_languages]
+    else
+      []
     end
+  end
+  
+  add_to_class(:site, :content_languages) do
+    Multilingual::Languages.all
+  end
+  
+  class Multilingual::LanguageSerializer < ::ApplicationSerializer
+    attributes :code, :name
+  end
+  
+  add_to_serializer(:site, :content_languages) do
+    ActiveModel::ArraySerializer.new(
+      object.content_languages,
+      each_serializer: Multilingual::LanguageSerializer,
+      root: false
+    ).as_json
   end
   
   add_to_serializer(:current_user, :content_languages) do
     if user_content_languages = object.content_languages
       user_content_languages.map do |code|
         Multilingual::LanguageSerializer.new(
-          Multilingual::Languages.find_by(code: code),
+          Multilingual::Languages.get(code).first,
           root: false
         )
       end
     end
+  end
+  
+  add_to_serializer(:topic_view, :language_tags) do
+    Multilingual::Languages.language_tags(topic)
+  end
+  
+  add_to_serializer(:topic_list_item, :language_tags) do
+    Multilingual::Languages.language_tags(topic)
   end
   
   DiscourseEvent.on(:user_updated) do |user|
@@ -108,5 +98,31 @@ after_initialize do
       user.custom_fields['content_languages'] = []
       user.save_custom_fields(true)
     end
+  end
+  
+  ### Note ###
+  # The featured topic list in CategoryList is used in the /categories route:
+  #   * when desktop_category_page_style includes 'featured'; and / or
+  #   * on mobile
+  # It does not use TopicQuery and does not have access to the current_user.
+  # The approach below ensures non-content-language topics do not appear, but
+  # as it is filtering a limited list of 100 featured topics, may be empty when
+  # relevant topics in the user's content-language remain in the category.
+  ###
+  
+  module Multilingual::CategoryListExtension
+    def trim_results
+      @categories.each do |c|
+        next if c.displayable_topics.blank?
+        c.displayable_topics = c.displayable_topics.select do |topic|
+          Multilingual::Languages.language_tags(topic).any?
+        end
+      end
+      super
+    end
+  end
+  
+  class ::CategoryList
+    prepend Multilingual::CategoryListExtension
   end
 end

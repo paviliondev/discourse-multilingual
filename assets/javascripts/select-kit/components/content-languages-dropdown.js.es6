@@ -1,7 +1,7 @@
 import DropdownSelectBox from "select-kit/components/dropdown-select-box";
 
 export default DropdownSelectBox.extend({
-  headerIcon: "language",
+  headerIcon: "translate",
   classNames: "content-languages-dropdown",
   rowComponent: "content-languages-row",
   headerComponent: "content-languages-header",

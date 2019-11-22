@@ -1,7 +1,7 @@
 export default {
   setupComponent(attrs, component) {
     let languages = component.get('currentUser.content_languages');
-    let hasSet = languages.find(l => l.code === 'set_content_language');
+    let hasSet = languages.find(l => l && (l.code === 'set_content_language'));
     if (!hasSet) {
       languages = [...languages, {
         code: 'set_content_language',
