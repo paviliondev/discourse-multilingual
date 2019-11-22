@@ -74,7 +74,7 @@ export default {
       
       api.addTagsHtmlCallback(function(topic, params) {
         const languageTags = topic.language_tags;
-        if (!languageTags) return;
+        if (!languageTags || !languageTags[0]) return;
         
         let html = '<div class="topic-languages">';
         html += iconHTML('translate');
