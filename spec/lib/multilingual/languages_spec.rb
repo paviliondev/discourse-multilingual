@@ -2,7 +2,24 @@
 
 require 'rails_helper'
 
-describe Multilingual::Languages, import_languages: true do  
+describe Multilingual::Languages do
+  before(:all) do
+    SiteSetting.multilingual_enabled = true
+    SiteSetting.multilingual_language_source_url = "http://languagesource.com/languages.yml"
+    
+    plugin_root = "#{Rails.root}/plugins/discourse-multilingual"
+    languages_yml = File.open(
+      "#{plugin_root}/spec/fixtures/multilingual/languages.yml"
+    ).read
+    
+    stub_request(:get, /languagesource.com/).to_return(
+      status: 200,
+      body: languages_yml
+    )
+    
+    Multilingual::Languages.import
+  end
+
   describe 'import' do
     it 'should import languages into plugin store' do      
       expect(PluginStoreRow.where("
