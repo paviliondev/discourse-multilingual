@@ -1,5 +1,7 @@
 module Jobs
-  class UpdateLanguageData < ::Jobs::Base
+  class UpdateLanguageData < ::Jobs::Scheduled
+    every 1.day
+    
     def execute(args)
       ::Multilingual::Languages.import
     end

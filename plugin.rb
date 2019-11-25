@@ -4,6 +4,8 @@
 # url: https://github.com/angusmcleod/discourse-multilingual
 # authors: Angus McLeod
 
+enabled_site_setting :multilingual_enabled
+
 register_asset 'stylesheets/multilingual.scss'
 
 if respond_to?(:register_svg_icon)

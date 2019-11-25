@@ -15,6 +15,9 @@ export default {
   initialize(container) {
     const site = container.lookup('site:main');
     const currentUser = container.lookup('current-user:main');
+    const siteSettings = container.lookup('site-settings:main');
+    
+    if (!siteSettings.multilingual_enabled) return;
     
     Composer.serializeOnCreate('languages');
     Composer.serializeToTopic('languages', 'topic.languages');

@@ -1,15 +1,17 @@
-<div class="control-group pref-content-languages">
-  <label class='control-label'>
-    {{i18n 'user.content_languages.title'}}
-  </label>
-  <div class="controls content-languages-selector-container">
-    {{content-languages-selector
-      content=site.content_languages
-      values=model.custom_fields.content_languages
-      valueAttribute="code"
-      noneLabel="user.content_languages.placeholder"}}
+{{#if siteSettings.multilingual_enabled}}
+  <div class="control-group pref-content-languages">
+    <label class='control-label'>
+      {{i18n 'user.content_languages.title'}}
+    </label>
+    <div class="controls content-languages-selector-container">
+      {{content-languages-selector
+        content=site.content_languages
+        values=model.custom_fields.content_languages
+        valueAttribute="code"
+        noneLabel="user.content_languages.placeholder"}}
+    </div>
+    <div class='instructions'>
+      {{i18n 'user.content_languages.instructions'}}
+    </div>
   </div>
-  <div class='instructions'>
-    {{i18n 'user.content_languages.instructions'}}
-  </div>
-</div>
+{{/if}}

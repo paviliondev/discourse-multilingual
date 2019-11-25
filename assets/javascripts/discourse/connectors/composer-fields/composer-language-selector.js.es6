@@ -2,6 +2,8 @@ import { languageTags, languageTag, addLanguageTags } from '../../lib/multilingu
 
 export default {
   setupComponent(attrs, component) {
+    if (!Discourse.SiteSettings.multilingual_enabled) return;
+    
     const composer = attrs.model;
     const user = attrs.model.user;
     const userContentLanguages = user.content_languages.map(l => l.code) || [];

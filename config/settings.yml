@@ -1,2 +1,6 @@
 plugins:
-  multilingual_language_source_url: https://raw.githubusercontent.com/wikimedia/language-data/master/data/langdb.yaml
+  multilingual_enabled:
+    default: false
+    client: true
+  multilingual_language_source_url: 
+    default: ''

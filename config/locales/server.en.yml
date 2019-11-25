@@ -1,3 +1,4 @@
 en:
   site_settings:
-    multilingual_language_source_url: "Language source yml url"
+    multilingual_enabled: Multilingual plugin enabled
+    multilingual_language_source_url: Multilingual content language source yml url

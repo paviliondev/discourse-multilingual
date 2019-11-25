@@ -4,6 +4,7 @@ import computed from "ember-addons/ember-computed-decorators";
 export default DropdownSelectBoxHeaderComponent.extend({
   @computed("currentUser.content_languages")
   btnClassName(contentLanguages) {
-    return `btn no-text btn-icon ${contentLanguages.length ? 'has-languages' : ''}`;
+    let extraClass = contentLanguages && contentLanguages.length ? 'has-languages' : '';
+    return `btn no-text btn-icon ${extraClass}`;
   }
 });

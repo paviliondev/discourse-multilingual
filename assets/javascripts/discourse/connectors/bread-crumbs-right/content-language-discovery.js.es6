@@ -1,6 +1,8 @@
 export default {
   setupComponent(attrs, component) {
-    let languages = component.get('currentUser.content_languages');
+    if (!Discourse.SiteSettings.multilingual_enabled) return;
+    
+    let languages = component.get('currentUser.content_languages') || [];
     let hasSet = languages.find(l => l && (l.code === 'set_content_language'));
     if (!hasSet) {
       languages = [...languages, {
