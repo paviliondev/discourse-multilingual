@@ -32,6 +32,10 @@ class ::Multilingual::Languages
         Multilingual::Languages.new(code: r.key, name: r.value)
       end
   end
+  
+  def self.all_codes
+    self.all.map(&:code)
+  end
       
   def self.import
     source_url = SiteSetting.multilingual_language_source_url

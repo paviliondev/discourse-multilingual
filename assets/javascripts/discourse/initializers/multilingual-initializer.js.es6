@@ -82,6 +82,18 @@ export default {
         hidden() {}
       });
       
+      api.modifyClass('component:tag-drop', {
+        _prepareSearch(query) {
+          const data = {
+            q: query,
+            filterForInput: true,
+            limit: this.get("siteSettings.max_tag_search_results")
+          };
+
+          this.searchTags("/tags/filter/search", data, this._transformJson);
+        }
+      });
+      
       api.addTagsHtmlCallback(function(topic, params) {
         const languageTags = topic.language_tags;
         if (!languageTags || !languageTags[0]) return;

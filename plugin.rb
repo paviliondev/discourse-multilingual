@@ -102,6 +102,22 @@ after_initialize do
     end
   end
   
+  module Multilingual::DiscourseTaggingExtension
+    def filter_allowed_tags(guardian, opts = {})
+      result = super(guardian, opts)
+            
+      if opts[:for_input]
+        result.select { |tag| Multilingual::Languages.all_codes.exclude? tag.name }
+      else
+        result
+      end
+    end
+  end
+
+  class << DiscourseTagging
+    prepend Multilingual::DiscourseTaggingExtension
+  end
+  
   ### Note ###
   # The featured topic list in CategoryList is used in the /categories route:
   #   * when desktop_category_page_style includes 'featured'; and / or
