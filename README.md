@@ -1,5 +1,7 @@
-# Discourse Multilingual Plugin https://travis-ci.org/paviliondev/discourse-multilingual.svg?branch=master
+# Discourse Multilingual Plugin
 This Discourse plugin adds features useful in a multilingual Discourse.
+
+![img](https://travis-ci.org/paviliondev/discourse-multilingual.svg?branch=master)
 
 ## Installation
 
