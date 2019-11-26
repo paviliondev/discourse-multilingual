@@ -41,11 +41,11 @@ Also, the normal tag navigation input will not contain language tags.
 
 The plugin adds a "Languages" input in the new topic composer 
 
-![18%20PM|690x156](upload://lbxcwUBa7XYTQZW4Yq6ptqJQtpO.png) 
+![image|690x156](https://thepavilion.io/uploads/default/optimized/2X/9/947b78b4b192b5331cbe6a95961cfe2d13281064_2_1380x312.png)
 
 and in the "edit topic" UI
 
-![00%20AM|690x151](upload://5eiIlUutugzWSi3xtFe95Hikb93.png) 
+![00%20AM|690x151](https://thepavilion.io/uploads/default/optimized/2X/2/24a8bdc1f726e12f816869a7ffaf0dc5675cff3d_2_1380x302.png) 
 
 These controls allow the user to tag a topic as being in a certain language(s). When a user has a content language set, the content language inputs default to the user's content languages.
 
@@ -57,7 +57,7 @@ When a user sets a content language(s), this is applied to the topic list genera
 
 Content language tags are also distinguished in the topic, and topic list item elements. Content language tags appear after the normal tag list, preceded by a multilingual icon (an svg adapted from the [Google Material Design translate icon](https://material.io/resources/icons/?icon=translate&style=baseline))
 
-![44%20AM|602x138,50%](upload://gJuqiCAYGOLROyb0Pz6u4brTQSb.png) 
+![44%20AM|602x138,50%](https://thepavilion.io/uploads/default/original/2X/7/754734f9c2a98d60c80925c64fe236a18c44af87.png) 
 
 #### Tags
 
