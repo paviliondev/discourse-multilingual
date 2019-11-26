@@ -1,10 +1,10 @@
 import { withPluginApi } from 'discourse/lib/plugin-api';
 import { ajax } from 'discourse/lib/ajax';
 import {
-  default as computed,
+  default as discourseComputed,
   on,
   observes
-} from 'ember-addons/ember-computed-decorators';
+} from "discourse-common/utils/decorators";
 import { languageTag, languageTagRenderer } from '../lib/multilingual';
 import Composer from 'discourse/models/composer';
 import { iconHTML } from "discourse-common/lib/icon-library";
@@ -24,7 +24,7 @@ export default {
     
     withPluginApi('0.8.36', api => {
       api.modifyClass('controller:preferences/interface', {
-        @computed("makeThemeDefault")
+        @discourseComputed("makeThemeDefault")
         saveAttrNames(makeDefault) {
           let attrs = this._super(makeDefault);
           attrs.push('custom_fields');
@@ -57,21 +57,28 @@ export default {
           return content.filter(c => !languageTag(c.id));
         },
 
-        @computed("tags")
+        @discourseComputed("tags")
         selection(tags) {
           return this._super(tags).filter((t) => !languageTag(t.value));
         },
         
-        @computed("tags.[]", "filter", "highlightedSelection.[]")
+        @discourseComputed("tags.[]", "filter", "highlightedSelection.[]")
         collectionHeader(tags, filter, highlightedSelection) {
-          tags = (tags || []).filter((t) => !languageTag(t));
+          let html = this._super(...arguments);
+          let $html = $(html);
+          $html.find('button').each(function() {
+            if (languageTag($(this).data('value'))) {
+              $(this).remove();
+            }
+          });
+          return $html.html();
         }
       });
       
       api.modifyClass('component:bread-crumbs', {
         classNameBindings: ["category::no-category", ":category-breadcrumb"],
         
-        @computed
+        @discourseComputed
         hidden() {}
       });
       
