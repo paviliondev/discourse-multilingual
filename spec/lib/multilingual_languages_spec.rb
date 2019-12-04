@@ -9,7 +9,7 @@ describe Multilingual::Languages do
     
     plugin_root = "#{Rails.root}/plugins/discourse-multilingual"
     languages_yml = File.open(
-      "#{plugin_root}/spec/fixtures/multilingual/languages.yml"
+      "#{plugin_root}/spec/fixtures/multilingual_languages.yml"
     ).read
     
     stub_request(:get, /languagesource.com/).to_return(
@@ -57,13 +57,13 @@ describe Multilingual::Languages do
     }
     
     it "should return list of language tags" do
-      expect(Multilingual::Languages.language_tags(topic)).to eq(['aa','am'])
+      expect(Multilingual::Languages.tags_for(topic).map(&:name)).to eq(['aa','am'])
     end
   end
   
   describe 'all' do
     it 'should return a formatted list of languages' do
-      languages = Multilingual::Languages.all
+      languages = Multilingual::Language.all
       expect(languages.length).to eq(23)
       expect(languages.first.code).to eq('aa')
       expect(languages.first.name).to eq('Qafár af')
@@ -72,12 +72,12 @@ describe Multilingual::Languages do
   
   describe 'get' do
     it 'should return a formatted language' do
-      language = Multilingual::Languages.get('aa')
+      language = Multilingual::Language.get('aa')
       expect(language.first.code).to eq('aa')
     end
     
     it 'should accept an array of language codes' do
-      languages = Multilingual::Languages.get(['aa','am'])
+      languages = Multilingual::Language.get(['aa','am'])
       expect(languages.map(&:code)).to eq(['aa','am'])
       expect(languages.map(&:name)).to eq(['Qafár af','አማርኛ'])
     end

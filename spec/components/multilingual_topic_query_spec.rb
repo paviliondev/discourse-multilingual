@@ -7,7 +7,7 @@ describe TopicQuery do
     
     plugin_root = "#{Rails.root}/plugins/discourse-multilingual"
     languages_yml = File.open(
-      "#{plugin_root}/spec/fixtures/multilingual/languages.yml"
+      "#{plugin_root}/spec/fixtures/multilingual_languages.yml"
     ).read
     
     stub_request(:get, /languagesource.com/).to_return(

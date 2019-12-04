@@ -26,7 +26,9 @@ after_initialize do
   [
     '../jobs/update_language_data.rb',
     '../lib/multilingual/engine.rb',
-    '../lib/multilingual/languages.rb'
+    '../lib/multilingual/languages.rb',
+    '../lib/multilingual/tagging_extension.rb',
+    '../lib/multilingual/category_list_extension.rb'
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
@@ -45,7 +47,8 @@ after_initialize do
   end
   
   TopicQuery.add_custom_filter(:content_language) do |result, query|
-    if query.user && (content_languages = query.user.custom_fields['content_languages'])
+    if query.user && 
+      (content_languages = query.user.custom_fields['content_languages'])
       result.joins(:tags).where("lower(tags.name) in (?)", content_languages)
     else
       result
@@ -61,7 +64,7 @@ after_initialize do
   end
   
   add_to_class(:site, :content_languages) do
-    Multilingual::Languages.all
+    Multilingual::Language.all
   end
   
   class Multilingual::LanguageSerializer < ::ApplicationSerializer
@@ -80,7 +83,7 @@ after_initialize do
     if user_content_languages = object.content_languages
       user_content_languages.map do |code|
         Multilingual::LanguageSerializer.new(
-          Multilingual::Languages.get(code).first,
+          Multilingual::Language.get(code).first,
           root: false
         )
       end
@@ -88,59 +91,27 @@ after_initialize do
   end
   
   add_to_serializer(:topic_view, :language_tags) do
-    Multilingual::Languages.language_tags(topic)
+    Multilingual::Languages.tags_for(topic).map(&:name)
   end
   
   add_to_serializer(:topic_list_item, :language_tags) do
-    Multilingual::Languages.language_tags(topic)
+    Multilingual::Languages.tags_for(topic).map(&:name)
   end
   
-  DiscourseEvent.on(:user_updated) do |user|
+  on(:user_updated) do |user|
     if user.content_languages.include? "none"
       user.custom_fields['content_languages'] = []
       user.save_custom_fields(true)
     end
   end
   
-  module Multilingual::DiscourseTaggingExtension
-    def filter_allowed_tags(guardian, opts = {})
-      result = super(guardian, opts)
-            
-      if opts[:for_input]
-        result.select { |tag| Multilingual::Languages.all_codes.exclude? tag.name }
-      else
-        result
-      end
+  on(:before_create_topic) do |topic, creator|
+    if !DiscourseTagging.validate_require_language_tag(
+        creator.guardian,
+        topic,
+        creator.opts[:tags]
+      )
+      creator.rollback_from_errors!(topic)
     end
-  end
-
-  class << DiscourseTagging
-    prepend Multilingual::DiscourseTaggingExtension
-  end
-  
-  ### Note ###
-  # The featured topic list in CategoryList is used in the /categories route:
-  #   * when desktop_category_page_style includes 'featured'; and / or
-  #   * on mobile
-  # It does not use TopicQuery and does not have access to the current_user.
-  # The approach below ensures non-content-language topics do not appear, but
-  # as it is filtering a limited list of 100 featured topics, may be empty when
-  # relevant topics in the user's content-language remain in the category.
-  ###
-  
-  module Multilingual::CategoryListExtension
-    def trim_results
-      @categories.each do |c|
-        next if c.displayable_topics.blank?
-        c.displayable_topics = c.displayable_topics.select do |topic|
-          Multilingual::Languages.language_tags(topic).any?
-        end
-      end
-      super
-    end
-  end
-  
-  class ::CategoryList
-    prepend Multilingual::CategoryListExtension
   end
 end

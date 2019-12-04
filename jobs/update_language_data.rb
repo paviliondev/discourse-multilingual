@@ -3,7 +3,9 @@ module Jobs
     every 1.day
     
     def execute(args)
-      ::Multilingual::Languages.import
+      if SiteSetting.multilingual_enabled
+        ::Multilingual::Languages.import
+      end
     end
   end
 end

@@ -4,3 +4,10 @@ plugins:
     client: true
   multilingual_language_source_url: 
     default: ''
+  multilingual_require_language_tag:
+    type: enum
+    default: "non-staff"
+    choices:
+      - "no"
+      - "yes"
+      - "non-staff"
