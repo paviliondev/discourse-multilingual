@@ -5,8 +5,8 @@ export default {
     if (!Discourse.SiteSettings.multilingual_enabled) return;
     
     Ember.run.scheduleOnce('afterRender', () => {
-      $(".control-group.pref-content-languages").insertAfter(
-        $('.control-group.pref-locale')
+      $(".control-group.content-languages").prependTo(
+        $('.user-preferences form')
       )
     });
   }
