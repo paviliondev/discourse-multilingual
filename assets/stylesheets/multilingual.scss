@@ -101,3 +101,28 @@ html.mobile-view .list-controls .category-breadcrumb.no-category {
 html.mobile-view .composer-fields .content-languages-selector {
   margin-left: 0;
 }
+
+.admin-multilingual .admin-actions {
+  display: flex;
+  align-items: center;
+  
+  > span {
+    margin-right: 10px;
+  }
+}
+
+.admin-multilingual .languages.controls {
+  display: flex;
+  margin-top: 20px;
+  justify-content: space-between;
+  
+  input {
+    margin-bottom: 0;
+  }
+  
+  .right {
+    button {
+      margin-left: 10px;
+    }
+  }
+}

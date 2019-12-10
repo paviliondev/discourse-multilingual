@@ -2,8 +2,6 @@ plugins:
   multilingual_enabled:
     default: false
     client: true
-  multilingual_language_source_url: 
-    default: ''
   multilingual_require_language_tag:
     type: enum
     default: "non-staff"

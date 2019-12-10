@@ -10,3 +10,18 @@ en:
     topic:
       content_languages:
         placeholder: "select language"
+  
+  admin_js:
+    multilingual:
+      label: "Multilingual"
+      languages:
+        title: "Languages"
+        code: "Code"
+        name: "Name"
+        content: "Content"
+        locale: "Locale"
+        filter: "code or name"
+        upload: "Upload languages"
+        upload_successful: "Languages uploaded"
+        update_tags: "Update tags"
+        update_tags_started: "Tag update has started. Give it a minute to complete."

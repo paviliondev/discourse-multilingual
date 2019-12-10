@@ -1,5 +1,8 @@
 en:
   site_settings:
     multilingual_enabled: Multilingual plugin enabled
-    multilingual_language_source_url: Multilingual content language source yml url
     multilingual_require_language_tag: Require a language tag on all topics
+  
+  multilingual:
+    languages:
+      upload_format_incorrect: "Incorrect format. One language per line: ISO 639-1 code, Native name"

@@ -1,0 +1,47 @@
+<div class='admin-controls'>
+  <nav>
+    <ul class="nav nav-pills">
+      {{nav-item route='adminMultilingualLanguages' label='multilingual.languages.title'}}
+      
+      <div class="admin-actions">
+        {{#if actionMessage}}
+          <span>{{i18n actionMessage}}</span>
+        {{/if}}
+        {{d-button action="updateTags" label="multilingual.languages.update_tags" icon="tag"}}
+        {{languages-uploader uploading=uploading done=(action "uploadComplete")}}
+      </div>
+    </ul>
+  </nav>
+</div>
+
+<div class='languages controls'>
+  {{text-field value=listFilter placeholder=searchHint}}
+  
+  <div class="right">    
+    {{d-button action="update"
+               class="btn-primary"
+               label=updateLabel
+               disabled=updateLanguagesDisabled}}
+  </div>
+</div>
+
+{{#if model}}
+  <table class='table languages-list grid'>
+    <thead>
+      {{admin-directory-toggle field="code" i18nKey='multilingual.languages.code' order=order ascending=ascending}}
+      {{admin-directory-toggle field="name" i18nKey='multilingual.languages.name' order=order ascending=ascending}}
+      {{admin-directory-toggle field="content" i18nKey='multilingual.languages.content' order=order ascending=ascending}}
+      {{!-- {{admin-directory-toggle field="locale" i18nKey='multilingual.languages.locale' order=order ascending=ascending}} --}}
+    </thead>
+    <tbody>
+      {{#each model as |language|}}
+        {{admin-language language=language updatedLanguages=updatedLanguages}}
+      {{/each}}
+    </tbody>
+  </table>
+  
+  {{conditional-loading-spinner condition=refreshing}}
+
+{{else}}
+  <p>{{i18n 'search.no_results'}}</p>
+{{/if}}

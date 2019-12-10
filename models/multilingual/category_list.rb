@@ -13,7 +13,7 @@ module Multilingual::CategoryListExtension
     @categories.each do |c|
       next if c.displayable_topics.blank?
       c.displayable_topics = c.displayable_topics.select do |topic|
-        Multilingual::Languages.language_tags_for_topic(topic).any?
+        Multilingual::Tag.filter(topic).any?
       end
     end
     super
@@ -21,5 +21,5 @@ module Multilingual::CategoryListExtension
 end
 
 class ::CategoryList
-  prepend Multilingual::CategoryListExtension
+  prepend Multilingual::CategoryListExtension if SiteSetting.multilingual_enabled
 end

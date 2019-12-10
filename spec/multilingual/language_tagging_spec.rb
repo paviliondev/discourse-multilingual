@@ -6,10 +6,12 @@ RSpec.describe "language tagging" do
   fab!(:staff) { Fabricate(:moderator) }
   fab!(:user)  { Fabricate(:user) }
   fab!(:tag)  { Fabricate(:tag) }
-  fab!(:topic) { Fabricate(:topic) }
+  fab!(:topic) { Fabricate(:topic, title: 'Topic title', custom_fields: {}) }
   
   let(:valid_attrs) { Fabricate.attributes_for(:topic) }
   let(:language_tag_name) { Tag.where(name: Multilingual::Languages.tag_names).first.name }
+  
+  let(:message) { 'hello' }
 
   before do
     SiteSetting.tagging_enabled = true

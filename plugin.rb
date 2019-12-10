@@ -1,6 +1,6 @@
 # name: discourse-multilingual
 # about: Features to support multilingual forums
-# version: 0.0.1
+# version: 0.1.0
 # url: https://github.com/angusmcleod/discourse-multilingual
 # authors: Angus McLeod
 
@@ -13,22 +13,21 @@ if respond_to?(:register_svg_icon)
   register_svg_icon "translate"
 end
 
-after_initialize do
-  register_seedfu_fixtures(
-    Rails.root.join(
-      "plugins",
-      "discourse-multilingual",
-      "db",
-      "fixtures"
-    ).to_s
-  )
-    
+after_initialize do    
   [
-    '../jobs/update_language_data.rb',
     '../lib/multilingual/engine.rb',
-    '../lib/multilingual/languages.rb',
-    '../lib/multilingual/tagging_extension.rb',
-    '../lib/multilingual/category_list_extension.rb'
+    '../lib/multilingual/language.rb',
+    '../lib/multilingual/language/content.rb',
+    '../lib/multilingual/language/locale.rb',
+    '../lib/multilingual/language/tag.rb',
+    '../lib/multilingual/discourse_tagging.rb',
+    '../config/routes.rb',
+    '../jobs/create_language_tags.rb',
+    '../models/multilingual/category_list.rb',
+    '../serializers/multilingual/basic_language_serializer.rb',
+    '../serializers/multilingual/admin_language_serializer.rb',
+    '../controllers/multilingual/admin_controller.rb',
+    '../controllers/multilingual/admin_languages_controller.rb'
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
@@ -41,10 +40,9 @@ after_initialize do
   if defined? whitelist_public_user_custom_field
     whitelist_public_user_custom_field :content_languages
   end
-
-  Discourse::Application.routes.append do
-    mount ::Multilingual::Engine, at: 'multilingual'
-  end
+  
+  Multilingual::Language.load_custom!
+  Multilingual::Language.initialize_settings!
   
   TopicQuery.add_custom_filter(:content_language) do |result, query|
     if query.user && 
@@ -64,17 +62,13 @@ after_initialize do
   end
   
   add_to_class(:site, :content_languages) do
-    Multilingual::Language.all
-  end
-  
-  class Multilingual::LanguageSerializer < ::ApplicationSerializer
-    attributes :code, :name
+    Multilingual::Content.all
   end
   
   add_to_serializer(:site, :content_languages) do
     ActiveModel::ArraySerializer.new(
       object.content_languages,
-      each_serializer: Multilingual::LanguageSerializer,
+      each_serializer: Multilingual::BasicLanguageSerializer,
       root: false
     ).as_json
   end
@@ -82,8 +76,8 @@ after_initialize do
   add_to_serializer(:current_user, :content_languages) do
     if user_content_languages = object.content_languages
       user_content_languages.map do |code|
-        Multilingual::LanguageSerializer.new(
-          Multilingual::Language.get(code).first,
+        Multilingual::BasicLanguageSerializer.new(
+          Multilingual::Content.get(code).first,
           root: false
         )
       end
@@ -91,11 +85,11 @@ after_initialize do
   end
   
   add_to_serializer(:topic_view, :language_tags) do
-    Multilingual::Languages.tags_for(topic).map(&:name)
+    Multilingual::Tag.filter(topic).map(&:name)
   end
   
   add_to_serializer(:topic_list_item, :language_tags) do
-    Multilingual::Languages.tags_for(topic).map(&:name)
+    Multilingual::Tag.filter(topic).map(&:name)
   end
   
   on(:user_updated) do |user|
@@ -113,5 +107,11 @@ after_initialize do
       )
       creator.rollback_from_errors!(topic)
     end
+  end
+  
+  add_to_class(:guardian, :topic_requires_language_tag) do
+    SiteSetting.multilingual_enabled &&
+    (SiteSetting.multilingual_require_language_tag === 'yes' ||
+    (!is_staff? && SiteSetting.multilingual_require_language_tag === 'non-staff'))
   end
 end
