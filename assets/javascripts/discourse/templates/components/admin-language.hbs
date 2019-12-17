@@ -7,7 +7,24 @@
 <td class="content">
   {{input type="checkbox" checked=language.content}}
 </td>
-
-<!--<td class="locale">
-  {{input type="checkbox" checked=language.locale}}
-</td>-->
+<td class="locale">
+  {{#if language.locale_supported}}
+    {{input type="checkbox" checked=language.locale}}
+  {{else}}
+    <i>{{i18n 'multilingual.languages.locale_not_supported'}}</i>
+  {{/if}}
+</td>
+<td class="type">
+  {{i18n typeKey}}
+</td>
+<td class="actions">
+  {{#if language.custom}}
+    {{#d-button action="remove" disabled=removing}}
+      {{#if removing}}
+        {{loading-spinner size="small"}}
+      {{else}}
+        {{d-icon "times"}}
+      {{/if}}
+    {{/d-button}}
+  {{/if}}
+</td>

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe Multilingual::Languages do
+describe Multilingual::Language do
   before(:all) do
     SiteSetting.multilingual_enabled = true
     SiteSetting.multilingual_language_source_url = "http://languagesource.com/languages.yml"
@@ -17,7 +17,7 @@ describe Multilingual::Languages do
       body: languages_yml
     )
     
-    Multilingual::Languages.import
+    Multilingual::Language.import
   end
 
   describe 'import' do
@@ -57,7 +57,7 @@ describe Multilingual::Languages do
     }
     
     it "should return list of language tags" do
-      expect(Multilingual::Languages.tags_for(topic).map(&:name)).to eq(['aa','am'])
+      expect(Multilingual::Language.tags_for(topic).map(&:name)).to eq(['aa','am'])
     end
   end
   

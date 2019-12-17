@@ -17,13 +17,16 @@ after_initialize do
   [
     '../lib/multilingual/engine.rb',
     '../lib/multilingual/language.rb',
+    '../lib/multilingual/language/admin.rb',
+    '../lib/multilingual/language/base.rb',
     '../lib/multilingual/language/content.rb',
     '../lib/multilingual/language/locale.rb',
     '../lib/multilingual/language/tag.rb',
     '../lib/multilingual/discourse_tagging.rb',
     '../config/routes.rb',
-    '../jobs/create_language_tags.rb',
+    '../jobs/update_language_tags.rb',
     '../models/multilingual/category_list.rb',
+    '../models/multilingual/locale_site_setting.rb',
     '../serializers/multilingual/basic_language_serializer.rb',
     '../serializers/multilingual/admin_language_serializer.rb',
     '../controllers/multilingual/admin_controller.rb',
@@ -40,9 +43,6 @@ after_initialize do
   if defined? whitelist_public_user_custom_field
     whitelist_public_user_custom_field :content_languages
   end
-  
-  Multilingual::Language.load_custom!
-  Multilingual::Language.initialize_settings!
   
   TopicQuery.add_custom_filter(:content_language) do |result, query|
     if query.user && 
@@ -114,4 +114,11 @@ after_initialize do
     (SiteSetting.multilingual_require_language_tag === 'yes' ||
     (!is_staff? && SiteSetting.multilingual_require_language_tag === 'non-staff'))
   end
+  
+  add_class_method(:discourse_plugin_registry, :deregister_locale) do |locale|
+    puts "REMOVING PLUGIN LOCALE"
+    self.locales.delete(locale)
+  end
+  
+  Multilingual::Admin.initialize
 end

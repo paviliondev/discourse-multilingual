@@ -5,6 +5,7 @@ import { i18n } from "discourse/lib/computed";
 import AdminUser from "admin/models/admin-user";
 import { ajax } from 'discourse/lib/ajax';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
+import MultilingualLanguage from '../models/multilingual-language';
 
 export default Controller.extend({
   model: null,
@@ -12,14 +13,13 @@ export default Controller.extend({
   order: null,
   ascending: null,
   refreshing: false,
-  listFilter: null,
+  filter: null,
   selectAll: false,
   searchHint: i18n("multilingual.languages.filter"),
   updateLabel: 'save',
 
   init() {
     this._super(...arguments);
-    this._results = [];
     this._updatedLanguages = [];
     this.updatedLanguages = Ember.A();
     this.tagUpdateStarted = false;
@@ -31,13 +31,8 @@ export default Controller.extend({
   },
 
   _filterLanguages: discourseDebounce(function() {
-    this.resetFilters();
-  }, 250).observes("listFilter"),
-
-  resetFilters() {
-    this._results = [];
     this._refreshLanguages();
-  },
+  }, 250).observes("filter", "ascending", "order"),
   
   @discourseComputed('updatedLanguages.[]', 'updateLabel')
   updateLanguagesDisabled(updatedLanguages, updateLabel) {
@@ -46,23 +41,20 @@ export default Controller.extend({
   
   _refreshLanguages() {
     this.set("refreshing", true);
-
-    ajax('/admin/multilingual/languages', {
-      data: {
-        filter: this.listFilter,
-        order: this.order,
-        ascending: this.ascending
-      }
-    })
-      .then(result => {
-        this._results = this._results.concat(result);
-        this.set("model", this._results);
-      })
-      .finally(() => this.set("refreshing", false));
+    
+    let params = {};
+    ['filter', 'ascending', 'order'].forEach(p => {
+      let val = this.get(p);
+      if (val) params[p] = val;
+    });
+    
+    MultilingualLanguage.all(params).then(result => {
+      this.set("model", result);
+    }).finally(() => this.set("refreshing", false));
   },
   
   actions: {
-    uploadComplete() {
+    languagesChanged() {
       this._refreshLanguages();
     },
   
@@ -72,22 +64,15 @@ export default Controller.extend({
       }
       
       this.set('updateLabel', 'saving');
-            
-      ajax('/admin/multilingual/languages', {
-        method: "PUT",
-        data: {
-          languages: JSON.stringify(this.updatedLanguages)
-        }
-      })
+      
+      MultilingualLanguage.save(this.updatedLanguages)
         .then(result => {
-          console.log(result);
           this.set('model', result);
           this.set('updateLabel', 'saved');
           setTimeout(() => {
             this.set('updateLabel', 'save');
           }, 4000);
-        })
-        .catch(popupAjaxError);
+        });
     },
     
     updateTags() {
@@ -102,6 +87,10 @@ export default Controller.extend({
             }, 10000);
           }
         });
+    },
+    
+    updateModel(languages) {
+      this.set('model', languages);
     }
   }
 });

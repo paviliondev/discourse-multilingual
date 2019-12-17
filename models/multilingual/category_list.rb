@@ -8,7 +8,7 @@
 # relevant topics in the user's content-language remain in the category.
 ###
 
-module Multilingual::CategoryListExtension
+module Multilingual::CategoryList
   def trim_results
     @categories.each do |c|
       next if c.displayable_topics.blank?
@@ -21,5 +21,5 @@ module Multilingual::CategoryListExtension
 end
 
 class ::CategoryList
-  prepend Multilingual::CategoryListExtension if SiteSetting.multilingual_enabled
+  prepend Multilingual::CategoryList if SiteSetting.multilingual_enabled
 end

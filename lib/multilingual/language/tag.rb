@@ -1,15 +1,11 @@
 class Multilingual::Tag
-  GROUP_NAME = 'languages'
+  GROUP_NAME = 'languages'.freeze
   
-  def self.create(code, group)
-    tag = Tag.find_by(name: code)
-
-    if tag.blank?
+  def self.create(code)
+    unless exists?(code)
       tag = Tag.new(name: code)
-      tag.save
-    end
-    
-    if tag.tag_groups.exclude?(group)
+      tag.save!
+      
       membership = TagGroupMembership.new(
         tag_id: tag.id,
         tag_group_id: group.id
@@ -19,43 +15,51 @@ class Multilingual::Tag
   end
   
   def self.destroy(code)
-    
-  end
-  
-  def self.all
-    Tag.where("id IN (
-      #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND 
-      tg.name = '#{Multilingual::Tag::GROUP_NAME}'
-    )")
+    if exists?(code)
+      Tag.where(name: code).destroy_all
+    end
   end
   
   def self.names
-    @tag_names ||= all.pluck(:name)
+    @names ||= Tag.where("id IN (
+      #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND 
+      tg.name = '#{Multilingual::Tag::GROUP_NAME}'
+    )").pluck(:name)
+  end
+  
+  def self.reload!
+    @names = nil
+  end
+  
+  def self.exists?(name)
+    names.include?(name)
   end
   
   def self.filter(topic)
     if topic.tags.any?
-      topic.tags.select { |tag| @tag_names.include? tag.name }
+      topic.tags.select { |tag| names.include?(tag.name) }
     else
       []
     end
   end
   
   def self.group
-    group = TagGroup.find_by(name: Multilingual::Tag::GROUP_NAME)
+    @group ||= begin
+      group = TagGroup.find_by(name: Multilingual::Tag::GROUP_NAME)
 
-    if group.blank?
-      group = TagGroup.new(
-        name: Multilingual::Tag::GROUP_NAME,
-        permissions: { everyone: 1 }
-      )
+      if group.blank?
+        group = TagGroup.new(
+          name: Multilingual::Tag::GROUP_NAME,
+          permissions: { everyone: 1 }
+        )
 
-      group.save
-    else
-      group.permissions = { everyone: 1 }
-      group.save
+        group.save
+      else
+        group.permissions = { everyone: 1 }
+        group.save
+      end
+      
+      group
     end
-    
-    group
   end
 end

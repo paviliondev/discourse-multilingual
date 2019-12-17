@@ -1,12 +1,8 @@
 import { ajax } from 'discourse/lib/ajax';
+import MultilingualLanguage from '../models/multilingual-language';
 
 export default Discourse.Route.extend({
-  queryParams: {
-    order: { refreshModel: true },
-    ascending: { refreshModel: true }
-  },
-
-  model() {
-    return ajax('/admin/multilingual/languages')
+  model(params) {
+    return MultilingualLanguage.all(params);
   }
 });

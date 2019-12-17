@@ -9,7 +9,7 @@ RSpec.describe "language tagging" do
   fab!(:topic) { Fabricate(:topic, title: 'Topic title', custom_fields: {}) }
   
   let(:valid_attrs) { Fabricate.attributes_for(:topic) }
-  let(:language_tag_name) { Tag.where(name: Multilingual::Languages.tag_names).first.name }
+  let(:language_tag_name) { Tag.where(name: Multilingual::Language.tag_names).first.name }
   
   let(:message) { 'hello' }
 
@@ -28,7 +28,7 @@ RSpec.describe "language tagging" do
       body: languages_yml
     )
     
-    Multilingual::Languages.import
+    Multilingual::Language.import
   end
 
   context 'when required to add language tag' do

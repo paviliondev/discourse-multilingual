@@ -1,4 +1,5 @@
-import { observes } from "discourse-common/utils/decorators";
+import { default as computed, observes } from "discourse-common/utils/decorators";
+import MultilingualLanguage from '../models/multilingual-language';
 
 export default Ember.Component.extend({
   tagName: 'tr',
@@ -14,6 +15,23 @@ export default Ember.Component.extend({
       this.updatedLanguages.removeObject(this.language);
     } else {
       this.updatedLanguages.addObject(this.language);
+    }
+  },
+  
+  @computed('language.custom')
+  typeKey(custom) {
+    return `multilingual.languages.${custom ? 'custom': 'core'}`;
+  },
+  
+  actions: {
+    remove() {
+      this.set('removing', true);
+      let codes = [this.get('language.code')];
+      MultilingualLanguage.remove(codes)
+        .then((result) => {
+          this.set('removing', false);
+          this.removed(result);
+        })
     }
   }
 });

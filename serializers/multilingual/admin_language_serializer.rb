@@ -1,3 +1,6 @@
 class Multilingual::AdminLanguageSerializer < Multilingual::BasicLanguageSerializer
-  attributes :content, :locale
+  attributes :content,
+             :locale,
+             :locale_supported,
+             :custom
 end

@@ -15,7 +15,7 @@ describe TopicQuery do
       body: languages_yml
     )
     
-    Multilingual::Languages.import
+    Multilingual::Language.import
   end
 
   context "user has content languages" do
