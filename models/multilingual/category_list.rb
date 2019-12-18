@@ -21,5 +21,5 @@ module Multilingual::CategoryList
 end
 
 class ::CategoryList
-  prepend Multilingual::CategoryList if SiteSetting.multilingual_enabled
+  prepend Multilingual::CategoryList
 end

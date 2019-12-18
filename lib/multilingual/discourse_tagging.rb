@@ -39,5 +39,5 @@ module Multilingual::DiscourseTaggingExtension
 end
 
 class << DiscourseTagging
-  prepend Multilingual::DiscourseTaggingExtension if SiteSetting.multilingual_enabled
+  prepend Multilingual::DiscourseTaggingExtension
 end

@@ -7,6 +7,6 @@ module Multilingual::LocaleSiteSetting
 end
 
 class ::LocaleSiteSetting
-  prepend Multilingual::LocaleSiteSetting if SiteSetting.multilingual_enabled
+  prepend Multilingual::LocaleSiteSetting
 end
 
