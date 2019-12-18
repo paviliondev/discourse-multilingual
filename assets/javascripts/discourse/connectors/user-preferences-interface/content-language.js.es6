@@ -1,7 +1,7 @@
 export default {
   setupComponent(attrs, component) {
     if (!Discourse.SiteSettings.multilingual_enabled) return;
-    
+        
     Ember.run.scheduleOnce('afterRender', () => {
       const content = '.control-group.content-languages';
       const locale = '.control-group.pref-locale';

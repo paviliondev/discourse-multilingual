@@ -65,4 +65,16 @@ function addLanguageTags(topic, languageTags) {
   topic.set('tags', nonLanguageTags.concat(languageTags));
 }
 
-export { languageTag, languageTags, languageTagRenderer, addLanguageTags };
+function userContentLanguageCodes() {
+  const currentUser = Discourse.User.current();
+  if (!currentUser) return null;
+  return currentUser.content_languages.map(l => l.code) || [];
+}
+
+export {
+  languageTag,
+  languageTags,
+  languageTagRenderer,
+  addLanguageTags,
+  userContentLanguageCodes
+};

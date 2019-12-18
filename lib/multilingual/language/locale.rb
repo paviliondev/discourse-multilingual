@@ -13,7 +13,7 @@ class ::Multilingual::Locale
     self.exclusions.exclude?(code)
   end
   
-  def self.supported?(code)
+  def self.has_translations?(code)
     Multilingual::Base.locales.include?(code)
   end
   

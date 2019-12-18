@@ -8,10 +8,10 @@
   {{input type="checkbox" checked=language.content}}
 </td>
 <td class="locale">
-  {{#if language.locale_supported}}
+  {{#if language.locale_translations}}
     {{input type="checkbox" checked=language.locale}}
   {{else}}
-    <i>{{i18n 'multilingual.languages.locale_not_supported'}}</i>
+    <i>{{i18n 'multilingual.languages.no_locale_translations'}}</i>
   {{/if}}
 </td>
 <td class="type">

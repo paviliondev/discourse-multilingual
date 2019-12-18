@@ -1,4 +1,9 @@
-import { languageTags, languageTag, addLanguageTags } from '../../lib/multilingual';
+import {
+  languageTags,
+  languageTag,
+  addLanguageTags,
+  userContentLanguageCodes
+} from '../../lib/multilingual';
 
 export default {
   setupComponent(attrs, component) {
@@ -6,15 +11,15 @@ export default {
     
     const composer = attrs.model;
     const user = attrs.model.user;
-    const userContentLanguages = user.content_languages.map(l => l.code) || [];
+    const userTags = userContentLanguageCodes();
     
     let languageTags = composer.draftKey == 'new_topic' ?
-      [...userContentLanguages]
+      [...userTags]
       : languageTags(composer.tags);
-    
+          
     component.set('languageTags', languageTags);
     
-    component.addObserver('languageTags', () => {
+    component.addObserver('languageTags.[]', () => {
       if (this._state === 'destroying') return;
       addLanguageTags(composer, component.get('languageTags'));
     });

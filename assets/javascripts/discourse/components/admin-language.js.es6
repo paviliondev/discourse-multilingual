@@ -20,7 +20,7 @@ export default Ember.Component.extend({
   
   @computed('language.custom')
   typeKey(custom) {
-    return `multilingual.languages.${custom ? 'custom': 'core'}`;
+    return `multilingual.languages.${custom ? 'custom': 'base'}`;
   },
   
   actions: {

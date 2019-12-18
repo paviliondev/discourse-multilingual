@@ -24,7 +24,6 @@ after_initialize do
     '../lib/multilingual/language/tag.rb',
     '../lib/multilingual/discourse_tagging.rb',
     '../config/routes.rb',
-    '../jobs/update_language_tags.rb',
     '../models/multilingual/category_list.rb',
     '../models/multilingual/locale_site_setting.rb',
     '../serializers/multilingual/basic_language_serializer.rb',
@@ -116,7 +115,6 @@ after_initialize do
   end
   
   add_class_method(:discourse_plugin_registry, :deregister_locale) do |locale|
-    puts "REMOVING PLUGIN LOCALE"
     self.locales.delete(locale)
   end
   

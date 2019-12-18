@@ -12,9 +12,7 @@ class ::Multilingual::Content
   
   def self.get(language_codes)
     [*language_codes].map do |code|
-      locale = Multilingual::Base.list[code]
-      name = locale ? locale['nativeName'] : code
-      self.new(code, name)
+      self.new(code, Multilingual::Base.list[code])
     end      
   end
   
@@ -23,7 +21,7 @@ class ::Multilingual::Content
       self.exclusions.exclude? k
     end.map do |k, v|
       Multilingual::Content.new(k, v)
-    end
+    end.sort_by(&:code)
   end
   
   def self.exclusions

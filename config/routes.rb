@@ -8,6 +8,5 @@ Discourse::Application.routes.append do
     put 'admin/multilingual/languages' => 'admin_languages#update'
     post 'admin/multilingual/languages.json' => 'admin_languages#upload'
     delete 'admin/multilingual/languages' => 'admin_languages#remove'
-    put 'admin/multilingual/languages/tags' => 'admin_languages#update_tags'
   end
 end

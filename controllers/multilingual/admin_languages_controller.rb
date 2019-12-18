@@ -19,11 +19,6 @@ class Multilingual::AdminLanguagesController < Admin::AdminController
     end
   end
   
-  def update_tags
-    Jobs.enqueue(:update_language_tags)
-    render json: success_json
-  end
-  
   def upload
     file = params[:file] || params[:files].first
     

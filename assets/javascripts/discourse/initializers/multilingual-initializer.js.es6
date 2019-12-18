@@ -5,7 +5,7 @@ import {
   on,
   observes
 } from "discourse-common/utils/decorators";
-import { languageTag, languageTagRenderer } from '../lib/multilingual';
+import { languageTag, languageTagRenderer, userContentLanguageCodes } from '../lib/multilingual';
 import Composer from 'discourse/models/composer';
 import { iconHTML } from "discourse-common/lib/icon-library";
 import renderTag from "discourse/lib/render-tag";
@@ -21,7 +21,7 @@ export default {
     
     Composer.serializeOnCreate('languages');
     Composer.serializeToTopic('languages', 'topic.languages');
-    
+        
     withPluginApi('0.8.36', api => {
       api.modifyClass('controller:preferences/interface', {
         @discourseComputed("makeThemeDefault")
@@ -106,6 +106,18 @@ export default {
         html += '</div>';
         return html;
       }, { priority: 100  });
+      
+      api.modifyClass('controller:composer', {
+        _setModel(composerModel, opts) {
+          if (opts.draftKey === 'new_topic') {
+            let userTags = userContentLanguageCodes();
+            if (userTags) {
+              opts.topicTags = (opts.topicTags || []).concat(userTags);
+            }  
+          }
+          this._super(composerModel, opts);
+        }
+      })
     });
   }
 }

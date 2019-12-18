@@ -8,35 +8,37 @@ import { popupAjaxError } from 'discourse/lib/ajax-error';
 import MultilingualLanguage from '../models/multilingual-language';
 
 export default Controller.extend({
-  model: null,
-  query: null,
-  order: null,
-  ascending: null,
+  queryParams: ['filter', 'ascending', 'order'],
   refreshing: false,
-  filter: null,
-  selectAll: false,
-  searchHint: i18n("multilingual.languages.filter"),
-  updateLabel: 'save',
-
-  init() {
-    this._super(...arguments);
-    this._updatedLanguages = [];
-    this.updatedLanguages = Ember.A();
-    this.tagUpdateStarted = false;
-  },
+  filterHint: i18n("multilingual.languages.filter"),
+  updateState: 'save',
+  updatedLanguages: Ember.A(),
 
   @discourseComputed
   title() {
     return I18n.t("multilingual.languages.title");
   },
-
+  
+  setupObservers() {
+    this.addObserver('filter', this._filterLanguages);
+    this.addObserver('ascending', this._filterLanguages);
+    this.addObserver('order', this._filterLanguages);
+  },
+  
   _filterLanguages: discourseDebounce(function() {
     this._refreshLanguages();
-  }, 250).observes("filter", "ascending", "order"),
+  }, 250),
   
-  @discourseComputed('updatedLanguages.[]', 'updateLabel')
-  updateLanguagesDisabled(updatedLanguages, updateLabel) {
-    return updatedLanguages.length === 0 || updateLabel !== 'save';
+  @discourseComputed('updatedLanguages.[]', 'updateState')
+  updateLanguagesDisabled(updatedLanguages, updateState) {
+    return updatedLanguages.length === 0 || updateState !== 'save';
+  },
+  
+  _updateLanguages(languages) {
+    this.setProperties({
+      updatedLanguages: Ember.A(),
+      languages
+    });
   },
   
   _refreshLanguages() {
@@ -49,8 +51,10 @@ export default Controller.extend({
     });
     
     MultilingualLanguage.all(params).then(result => {
-      this.set("model", result);
-    }).finally(() => this.set("refreshing", false));
+      this._updateLanguages(result);
+    }).finally(() => {
+      this.set("refreshing", false)
+    });
   },
   
   actions: {
@@ -59,38 +63,22 @@ export default Controller.extend({
     },
   
     update() {
-      if (this.updateLanguagesDisabled) {
-        return;
-      }
+      if (this.updateLanguagesDisabled) return;
       
-      this.set('updateLabel', 'saving');
+      this.set('updateState', 'saving');
       
       MultilingualLanguage.save(this.updatedLanguages)
-        .then(result => {
-          this.set('model', result);
-          this.set('updateLabel', 'saved');
+        .then(results => {
+          this._updateLanguages(result);
+          this.set('updateState', 'saved');
           setTimeout(() => {
-            this.set('updateLabel', 'save');
+            this.set('updateState', 'save');
           }, 4000);
         });
     },
-    
-    updateTags() {
-      ajax('/admin/multilingual/languages/tags', {
-        type: 'PUT'
-      })
-        .then(result => {
-          if (result.success) {
-            this.set('actionMessage', 'multilingual.languages.update_tags_started');
-            setTimeout(() => {
-              this.set('actionMessage', null);
-            }, 10000);
-          }
-        });
-    },
-    
-    updateModel(languages) {
-      this.set('model', languages);
+
+    updateLanguages(languages) {
+      this._updateLanguages(languages);
     }
   }
 });

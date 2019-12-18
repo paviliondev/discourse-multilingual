@@ -7,7 +7,7 @@ class ::Multilingual::Language
                 :name,
                 :content,
                 :locale,
-                :locale_supported,
+                :locale_translations,
                 :custom
   
   def initialize(attrs)
@@ -15,7 +15,7 @@ class ::Multilingual::Language
     @name = attrs[:name]
     @content = Multilingual::Content.active?(attrs[:code])
     @locale = Multilingual::Locale.active?(attrs[:code])
-    @locale_supported = Multilingual::Locale.supported?(attrs[:code])
+    @locale_translations = Multilingual::Locale.has_translations?(attrs[:code])
     @custom = Multilingual::Language.is_custom?(attrs[:code])
   end
   
@@ -27,6 +27,8 @@ class ::Multilingual::Language
   
   def self.destroy(code)
     PluginStore.remove(Multilingual::PLUGIN_NAME, "#{CUSTOM_KEY}_#{code}")
+    toggle_exclusion(code, Multilingual::Locale::EXCLUSION_KEY, true)
+    toggle_exclusion(code, Multilingual::Content::EXCLUSION_KEY, true)
   end
    
   def self.update(language)
@@ -72,7 +74,7 @@ class ::Multilingual::Language
   def self.all
     @all ||= Multilingual::Base.list.map do |k, v|
       Multilingual::Language.new(code: k, name: v)
-    end
+    end.sort_by(&:code)
   end
   
   def self.reload!
@@ -102,10 +104,10 @@ class ::Multilingual::Language
       
       if [:code, :name].include?(type)
         val
-      elsif type == :content
+      elsif [:content, :custom].include?(type)
         ( val ? 0 : 1 )
       elsif type == :locale
-        [ (val ? 0 : 1), (l.locale_supported ? 0 : 1) ] 
+        [ (val ? 0 : 1), (l.locale_translations ? 0 : 1) ] 
       end
     end
         
