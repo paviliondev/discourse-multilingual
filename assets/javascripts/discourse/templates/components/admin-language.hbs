@@ -1,30 +1,33 @@
 <td class="code">
   {{language.code}}
 </td>
+
 <td class='name'>
   {{language.name}}
 </td>
+
 <td class="content">
-  {{input type="checkbox" checked=language.content}}
+  {{input type="checkbox" checked=language.content_enabled}}
 </td>
+
 <td class="locale">
-  {{#if language.locale_translations}}
-    {{input type="checkbox" checked=language.locale}}
+  {{#if language.locale_supported}}
+    {{input type="checkbox" checked=language.locale_enabled}}
   {{else}}
-    <i>{{i18n 'multilingual.languages.no_locale_translations'}}</i>
+    <i>{{i18n 'multilingual.languages.locale_not_supported'}}</i>
   {{/if}}
 </td>
-<td class="type">
-  {{i18n typeKey}}
-</td>
-<td class="actions">
-  {{#if language.custom}}
-    {{#d-button action="remove" disabled=removing}}
-      {{#if removing}}
-        {{loading-spinner size="small"}}
-      {{else}}
-        {{d-icon "times"}}
-      {{/if}}
-    {{/d-button}}
-  {{/if}}
-</td>
+
+{{#if showActions}}
+  <td class="actions">
+    {{#if language.custom}}
+      {{#d-button action="remove" disabled=removing}}
+        {{#if removing}}
+          {{loading-spinner size="small"}}
+        {{else}}
+          {{d-icon "times"}}
+        {{/if}}
+      {{/d-button}}
+    {{/if}}
+  </td>
+{{/if}}

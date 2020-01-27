@@ -9,7 +9,7 @@ export default Ember.Component.extend({
     this.currentLanguage = JSON.parse(JSON.stringify(this.language));
   },
   
-  @observes('language.content', 'language.locale')
+  @observes('language.content_enabled', 'language.locale_enabled')
   trackUpdates() {
     if (_.isEqual(this.currentLanguage, this.language)) {
       this.updatedLanguages.removeObject(this.language);

@@ -1,12 +1,12 @@
-import { languageTags, languageTag, addLanguageTags } from '../../lib/multilingual';
+import { contentLanguageTags, contentLanguageTag, addContentLanguageTags } from '../../lib/multilingual';
 
 export default {
   setupComponent(attrs, component) {
     if (!Discourse.SiteSettings.multilingual_enabled) return;
     
-    attrs.buffered.addObserver('language_tags', () => {
+    attrs.buffered.addObserver('content_language_tags', () => {
       if (this._state === 'destroying') return;
-      addLanguageTags(attrs.buffered, attrs.buffered.get('language_tags'));
+      addContentLanguageTags(attrs.buffered, attrs.buffered.get('content_language_tags'));
     });
   }
 }

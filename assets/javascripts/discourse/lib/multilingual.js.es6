@@ -1,27 +1,29 @@
 import { get } from "@ember/object";
 
-function languageTag(tag) {
+function contentLanguageTag(tag) {
   if (!tag) return;
   const site = Discourse.Site.current();
   return site.content_languages.find(cl => cl.code == tag);
 }
 
-function languageTags(tags = []) {
-  return tags.filter(t => languageTag(t));
+function contentLanguageTags(tags = []) {
+  return tags.filter(t => contentLanguageTag(t));
 }
 
-function languageTagRenderer(tag, params) {
+function multilingualTagRenderer(tag, params) {
   params = params || {};
-  const language = languageTag(tag);
+  const language = contentLanguageTag(tag);
     
   if (language && !params.language) return '';
   
   tag = Handlebars.Utils.escapeExpression(tag).toLowerCase();
-  const visibleName = language ? language.name : tag;
+  const translatedTag = I18n.translate_tag(tag);
+  const visibleName = language ? language.name : translatedTag;
   
   const classes = ["discourse-tag"];
   const tagName = params.tagName || "a";
   let path;
+  
   if (tagName === "a" && !params.noHref) {
     if ((params.isPrivateMessage || params.pmOnly) && User.current()) {
       const username = params.tagsForUser
@@ -32,6 +34,7 @@ function languageTagRenderer(tag, params) {
       path = `/tags/${tag}`;
     }
   }
+  
   const href = path ? ` href='${Discourse.getURL(path)}' ` : "";
 
   if (Discourse.SiteSettings.tag_style || params.style) {
@@ -59,10 +62,10 @@ function languageTagRenderer(tag, params) {
   return val;
 }
 
-function addLanguageTags(topic, languageTags) {
+function addContentLanguageTags(topic, contentLanguageTags) {
   const tags = get(topic, 'tags') || [];
-  const nonLanguageTags = tags.filter(t => !languageTag(t));
-  topic.set('tags', nonLanguageTags.concat(languageTags));
+  const nonContentLanguageTags = tags.filter(t => !contentLanguageTag(t));
+  topic.set('tags', nonContentLanguageTags.concat(contentLanguageTags));
 }
 
 function userContentLanguageCodes() {
@@ -71,10 +74,19 @@ function userContentLanguageCodes() {
   return currentUser.content_languages.map(l => l.code) || [];
 }
 
+function contentLanguageTagsFilter(tags, valueAttr = null, labelAttr = null, context) {
+  return tags.filter(t => !contentLanguageTag(valueAttr ? t[valueAttr] : t))
+    .map(t => {
+      let translated = I18n.translate_tag(valueAttr ? t[valueAttr] : t);
+      return labelAttr ? Object.assign(t, { [labelAttr]: translated }) : translated;
+    });
+}
+
 export {
-  languageTag,
-  languageTags,
-  languageTagRenderer,
-  addLanguageTags,
+  contentLanguageTag,
+  contentLanguageTags,
+  contentLanguageTagsFilter,
+  addContentLanguageTags,
+  multilingualTagRenderer,
   userContentLanguageCodes
 };

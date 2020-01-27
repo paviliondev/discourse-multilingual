@@ -2,6 +2,7 @@ en:
   site_settings:
     multilingual_enabled: Multilingual plugin enabled
     multilingual_require_language_tag: Require a language tag on all topics
+    multilingual_tag_translations_enforce_formatting: Enforce tag formatting on tag translations
   
   multilingual:
     languages:

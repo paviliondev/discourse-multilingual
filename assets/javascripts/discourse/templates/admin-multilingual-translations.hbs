@@ -1,0 +1,30 @@
+<div class='controls'>
+  <div class="buttons">    
+    {{multilingual-uploader
+      uploading=uploading
+      done=(action "refresh")
+      uploadUrl="/admin/multilingual/translations"
+      class="translations-uploader"}}
+  </div>
+</div>
+
+{{#if refreshing}}
+  {{loading-spinner}}
+{{else}}
+  {{#if translations}}
+    <table class='table translations-list grid'>
+      <thead>
+        {{admin-directory-toggle field="code" i18nKey='multilingual.code'}}
+        {{admin-directory-toggle field="type" i18nKey='multilingual.translations.type'}}
+        <th>Actions</th>
+      </thead>
+      <tbody>
+        {{#each translations as |translation|}}
+          {{admin-translation translation=translation removed=(action "refresh")}}
+        {{/each}}
+      </tbody>
+    </table>
+  {{else}}
+    <p>{{i18n 'search.no_results'}}</p>
+  {{/if}}
+{{/if}}

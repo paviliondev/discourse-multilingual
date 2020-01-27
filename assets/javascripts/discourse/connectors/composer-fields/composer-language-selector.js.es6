@@ -1,7 +1,7 @@
 import {
-  languageTags,
-  languageTag,
-  addLanguageTags,
+  contentLanguageTags,
+  contentLanguageTag,
+  addContentLanguageTags,
   userContentLanguageCodes
 } from '../../lib/multilingual';
 
@@ -13,15 +13,15 @@ export default {
     const user = attrs.model.user;
     const userTags = userContentLanguageCodes();
     
-    let languageTags = composer.draftKey == 'new_topic' ?
+    let contentLanguageTags = composer.draftKey == 'new_topic' ?
       [...userTags]
-      : languageTags(composer.tags);
+      : contentLanguageTags(composer.tags);
           
-    component.set('languageTags', languageTags);
+    component.set('contentLanguageTags', contentLanguageTags);
     
-    component.addObserver('languageTags.[]', () => {
+    component.addObserver('contentLanguageTags.[]', () => {
       if (this._state === 'destroying') return;
-      addLanguageTags(composer, component.get('languageTags'));
+      addContentLanguageTags(composer, component.get('contentLanguageTags'));
     });
     
     Ember.run.scheduleOnce('afterRender', () => {

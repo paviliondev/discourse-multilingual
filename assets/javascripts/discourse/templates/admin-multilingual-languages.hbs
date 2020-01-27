@@ -1,23 +1,21 @@
-<div class='admin-controls'>
-  <nav>
-    <ul class="nav nav-pills">
-      {{nav-item route='adminMultilingualLanguages' label='multilingual.languages.title'}}
-      
-      <div class="admin-actions">        
-        {{languages-uploader uploading=uploading done=(action "languagesChanged")}}
-      </div>
-    </ul>
-  </nav>
-</div>
-
-<div class='languages controls'>
-  {{text-field value=filter placeholder=filterHint}}
+<div class='controls'>
+  <div class="query">
+    {{text-field value=query placeholder=queryPlaceholder}}
+  </div>
   
-  <div class="right">    
-    {{d-button action="update"
-               class="btn-primary"
-               label=updateState
-               disabled=updateLanguagesDisabled}}
+  <div class="buttons">    
+    {{multilingual-uploader
+      uploading=uploading
+      done=languagesChanged
+      uploadType="language"
+      uploadUrl="/admin/multilingual/languages"
+      class="languages-uploader"}}
+    
+    {{d-button 
+      action="update"
+      class="btn-primary"
+      label=updateState
+      disabled=updateLanguagesDisabled}}
   </div>
 </div>
 
@@ -25,23 +23,20 @@
   {{loading-spinner}}
 {{else}}
   {{#if languages}}
-    <table class='table languages-list grid'>
-      <thead>
-        {{admin-directory-toggle field="code" i18nKey='multilingual.languages.code' order=order ascending=ascending}}
-        {{admin-directory-toggle field="name" i18nKey='multilingual.languages.name' order=order ascending=ascending}}
-        {{admin-directory-toggle field="content" i18nKey='multilingual.languages.content' order=order ascending=ascending}}
-        {{admin-directory-toggle field="locale" i18nKey='multilingual.languages.locale' order=order ascending=ascending}}
-        {{admin-directory-toggle field="custom" i18nKey='multilingual.languages.type' order=order ascending=ascending}}
-        <th>Actions</th>
-      </thead>
-      <tbody>
-        {{#each languages as |language|}}
-          {{admin-language language=language
-                           updatedLanguages=updatedLanguages
-                           removed=(action "updateLanguages")}}
-        {{/each}}
-      </tbody>
-    </table>
+    {{#if anyCustomLanguages}}
+      {{admin-language-list type="custom"
+                            languages=customLanguages
+                            order=order
+                            ascending=ascending
+                            updatedLanguages=updatedLanguages
+                            updateLanguages=(action "updateLanguages")}}
+    {{/if}}
+    {{admin-language-list type="base"
+                          languages=baseLanguages
+                          order=order
+                          ascending=ascending
+                          updatedLanguages=updatedLanguages
+                          updateLanguages=(action "updateLanguages")}}
   {{else}}
     <p>{{i18n 'search.no_results'}}</p>
   {{/if}}

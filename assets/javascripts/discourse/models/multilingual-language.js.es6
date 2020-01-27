@@ -9,7 +9,7 @@ function getParams() {
   const searchParams = new URLSearchParams(window.location.search);
   let params = {};
   for (var pair of searchParams.entries()) {
-    if (['filter', 'order', 'ascending'].indexOf(pair[0]) > -1) {
+    if (['query', 'order', 'ascending'].indexOf(pair[0]) > -1) {
       params[pair[0]] = pair[1];
     }
   }

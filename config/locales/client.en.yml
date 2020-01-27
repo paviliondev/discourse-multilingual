@@ -14,9 +14,10 @@ en:
   admin_js:
     multilingual:
       label: "Multilingual"
+      code: "Code"
+      
       languages:
         title: "Languages"
-        code: "Code"
         custom: "Custom"
         base: "Base"
         name: "Name"
@@ -24,7 +25,11 @@ en:
         locale: "Locale"
         type: "Type"
         actions: "Actions"
-        no_locale_translations: "no translations"
-        filter: "code or name"
-        upload: "Upload Languages"
-        upload_successful: "Languages uploaded"
+        locale_not_supported: "not supported"
+        filter_placeholder: "code or name"
+        filter_btn: "Filter"
+      
+      translations:
+        type: "Type"
+        remove: "Remove"
+        title: "Translations"

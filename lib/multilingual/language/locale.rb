@@ -1,23 +1,28 @@
-class ::Multilingual::Locale
-    
-  EXCLUSION_KEY = 'locale_exclusions'.freeze
-
-  def self.exclusions
-    @exclusions ||= begin
-      data = PluginStore.get(Multilingual::PLUGIN_NAME, EXCLUSION_KEY) || ''
-      data.split(',')
+class Multilingual::Locale
+  def self.custom
+    @custom ||= begin
+      custom = {}
+      PluginStoreRow.where("
+        plugin_name = '#{Multilingual::PLUGIN_NAME}' AND
+        key LIKE '#{Multilingual::Language::CUSTOM_KEY}_%'
+      ").each do |record|
+        custom[record.key.split('_').last] = record.value
+      end
+      custom
     end
   end
   
-  def self.active?(code)
-    self.exclusions.exclude?(code)
-  end
-  
-  def self.has_translations?(code)
-    Multilingual::Base.locales.include?(code)
-  end
-  
   def self.reload!
-    @exclusions = nil
+    @custom = nil
   end
-end 
+  
+  def self.all
+    all = {}
+    ::LocaleSiteSetting.language_names.each { |k, v| all[k] = v['nativeName'] }
+    all.merge(custom)
+  end
+  
+  def self.supported
+    ::LocaleSiteSetting.supported_locales
+  end
+end

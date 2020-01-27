@@ -2,36 +2,24 @@
 
 require 'rails_helper'
 
-RSpec.describe "language tagging" do
+describe TopicCreator do
   fab!(:staff) { Fabricate(:moderator) }
   fab!(:user)  { Fabricate(:user) }
   fab!(:tag)  { Fabricate(:tag) }
-  fab!(:topic) { Fabricate(:topic, title: 'Topic title', custom_fields: {}) }
+  fab!(:topic) { Fabricate(:topic, title: 'Topic title test', custom_fields: {}) }
   
   let(:valid_attrs) { Fabricate.attributes_for(:topic) }
-  let(:language_tag_name) { Tag.where(name: Multilingual::Language.tag_names).first.name }
+  let(:language_tag_name) { Tag.where(name: Multilingual::ContentTag.names.first).first.name }
   
   let(:message) { 'hello' }
 
-  before do
+  before(:each) do
     SiteSetting.tagging_enabled = true
     SiteSetting.multilingual_enabled = true
-    SiteSetting.multilingual_language_source_url = "http://languagesource.com/languages.yml"
-    
-    plugin_root = "#{Rails.root}/plugins/discourse-multilingual"
-    languages_yml = File.open(
-      "#{plugin_root}/spec/fixtures/multilingual_languages.yml"
-    ).read
-    
-    stub_request(:get, /languagesource.com/).to_return(
-      status: 200,
-      body: languages_yml
-    )
-    
-    Multilingual::Language.import
+    Multilingual::Language.setup
   end
 
-  context 'when required to add language tag' do
+  context 'when a language tag is required' do
     before(:each) do
       SiteSetting.multilingual_require_language_tag = 'yes'
     end
@@ -58,13 +46,13 @@ RSpec.describe "language tagging" do
       expect(topic).to be_valid
     end
     
-    it "returns the correct error no language tag is present" do
+    it "returns the correct error when no language tag is present" do
       valid = DiscourseTagging.tag_topic_by_names(topic, Guardian.new(user), [tag.name])
       expect(valid).to eq(false)
       expect(topic.errors[:base]&.first).to eq(I18n.t(
         "tags.required_tags_from_group",
         count: 1,
-        tag_group_name: 'language'
+        tag_group_name: 'languages'
       ))
     end
     

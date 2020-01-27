@@ -6,13 +6,14 @@ import AdminUser from "admin/models/admin-user";
 import { ajax } from 'discourse/lib/ajax';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
 import MultilingualLanguage from '../models/multilingual-language';
+import { notEmpty } from "@ember/object/computed";
 
 export default Controller.extend({
-  queryParams: ['filter', 'ascending', 'order'],
   refreshing: false,
-  filterHint: i18n("multilingual.languages.filter"),
+  queryPlaceholder: i18n("multilingual.languages.query_placeholder"),
   updateState: 'save',
   updatedLanguages: Ember.A(),
+  anyCustomLanguages: notEmpty('customLanguages'),
 
   @discourseComputed
   title() {
@@ -20,7 +21,7 @@ export default Controller.extend({
   },
   
   setupObservers() {
-    this.addObserver('filter', this._filterLanguages);
+    this.addObserver('query', this._filterLanguages);
     this.addObserver('ascending', this._filterLanguages);
     this.addObserver('order', this._filterLanguages);
   },
@@ -34,6 +35,16 @@ export default Controller.extend({
     return updatedLanguages.length === 0 || updateState !== 'save';
   },
   
+  @discourseComputed('languages.[]')
+  customLanguages(languages) {
+    return languages.filter(l => l.custom);
+  },
+  
+  @discourseComputed('languages.[]')
+  baseLanguages(languages) {
+    return languages.filter(l => !l.custom);
+  },
+  
   _updateLanguages(languages) {
     this.setProperties({
       updatedLanguages: Ember.A(),
@@ -45,11 +56,11 @@ export default Controller.extend({
     this.set("refreshing", true);
     
     let params = {};
-    ['filter', 'ascending', 'order'].forEach(p => {
+    ['query', 'ascending', 'order'].forEach(p => {
       let val = this.get(p);
       if (val) params[p] = val;
     });
-    
+        
     MultilingualLanguage.all(params).then(result => {
       this._updateLanguages(result);
     }).finally(() => {
@@ -68,12 +79,10 @@ export default Controller.extend({
       this.set('updateState', 'saving');
       
       MultilingualLanguage.save(this.updatedLanguages)
-        .then(results => {
+        .then(result => {
           this._updateLanguages(result);
           this.set('updateState', 'saved');
-          setTimeout(() => {
-            this.set('updateState', 'save');
-          }, 4000);
+          setTimeout(() => { this.set('updateState', 'save') }, 4000);
         });
     },
 

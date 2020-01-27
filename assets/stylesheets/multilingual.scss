@@ -111,18 +111,35 @@ html.mobile-view .composer-fields .content-languages-selector {
   }
 }
 
-.admin-multilingual .languages.controls {
-  display: flex;
-  margin-top: 20px;
-  justify-content: space-between;
-  
-  input {
-    margin-bottom: 0;
+.admin-multilingual {
+  .controls {
+    display: flex;
+    margin-top: 20px;
+    justify-content: space-between;
+    
+    input {
+      margin-bottom: 0;
+    }
+    
+    .buttons {
+      display: flex;
+            
+      button {
+        margin-left: 10px;
+      }
+      
+      span {
+        margin-left: 10px;
+      }
+    }
   }
   
-  .right {
-    button {
-      margin-left: 10px;
-    }
+  .admin-language-list {
+    margin: 20px 0;
+  }
+  
+  .language-list-title {
+    margin: 10px 8px;
+    text-decoration: underline;
   }
 }

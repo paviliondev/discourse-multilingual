@@ -9,3 +9,4 @@ plugins:
       - "no"
       - "yes"
       - "non-staff"
+  multilingual_tag_translations_enforce_formatting: true

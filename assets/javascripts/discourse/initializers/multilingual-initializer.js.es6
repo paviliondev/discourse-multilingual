@@ -5,7 +5,12 @@ import {
   on,
   observes
 } from "discourse-common/utils/decorators";
-import { languageTag, languageTagRenderer, userContentLanguageCodes } from '../lib/multilingual';
+import {
+  contentLanguageTag,
+  contentLanguageTagsFilter,
+  multilingualTagRenderer,
+  userContentLanguageCodes
+} from '../lib/multilingual';
 import Composer from 'discourse/models/composer';
 import { iconHTML } from "discourse-common/lib/icon-library";
 import renderTag from "discourse/lib/render-tag";
@@ -21,7 +26,11 @@ export default {
     
     Composer.serializeOnCreate('languages');
     Composer.serializeToTopic('languages', 'topic.languages');
-        
+    
+    I18n.translate_tag = function(tag) {
+      return I18n.translate(`_tag.${tag}`) || tag;
+    }
+            
     withPluginApi('0.8.36', api => {
       api.modifyClass('controller:preferences/interface', {
         @discourseComputed("makeThemeDefault")
@@ -50,27 +59,37 @@ export default {
         }
       });
       
-      api.replaceTagRenderer(languageTagRenderer);
+      api.replaceTagRenderer(multilingualTagRenderer);
       
       api.modifyClass('component:mini-tag-chooser', {
         willComputeAsyncContent(content) {
-          return content.filter(c => !languageTag(c.id));
+          return contentLanguageTagsFilter(content, 'name', 'name', 'willComputeAsyncContent');
         },
 
         @discourseComputed("tags")
         selection(tags) {
-          return this._super(tags).filter((t) => !languageTag(t.value));
+          return contentLanguageTagsFilter(this._super(tags), 'value', 'value', 'selection');
         },
         
         @discourseComputed("tags.[]", "filter", "highlightedSelection.[]")
         collectionHeader(tags, filter, highlightedSelection) {
           let html = this._super(...arguments);
           let $html = $(html);
+          
           $html.find('button').each(function() {
-            if (languageTag($(this).data('value'))) {
+            let tag = $(this).data('value');
+            if (contentLanguageTag(tag)) {
               $(this).remove();
+              return;
             }
+            let translatedTag = I18n.translate_tag(tag);
+            $(this).attr({
+              'aria-label': translatedTag,
+              "title": translatedTag
+            });
+            $(this).html(`${translatedTag} ${iconHTML("times")}`)
           });
+          
           return $html.html();
         }
       });
@@ -95,12 +114,12 @@ export default {
       });
       
       api.addTagsHtmlCallback(function(topic, params) {
-        const languageTags = topic.language_tags;
-        if (!languageTags || !languageTags[0]) return;
+        const contentLanguageTags = topic.content_language_tags;
+        if (!contentLanguageTags || !contentLanguageTags[0]) return;
         
         let html = '<div class="topic-languages">';
         html += iconHTML('translate');
-        languageTags.forEach(t => {
+        contentLanguageTags.forEach(t => {
           html += renderTag(t, { language: true }) + " ";
         });
         html += '</div>';

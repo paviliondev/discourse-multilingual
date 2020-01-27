@@ -1,4 +1,4 @@
-class Multilingual::Tag
+class Multilingual::ContentTag
   GROUP_NAME = 'languages'.freeze
   
   def self.create(code)
@@ -10,7 +10,7 @@ class Multilingual::Tag
         tag_id: tag.id,
         tag_group_id: group.id
       )
-      membership.save
+      membership.save!
     end
   end
   
@@ -23,7 +23,7 @@ class Multilingual::Tag
   def self.names
     @names ||= Tag.where("id IN (
       #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND 
-      tg.name = '#{Multilingual::Tag::GROUP_NAME}'
+      tg.name = '#{Multilingual::ContentTag::GROUP_NAME}'
     )").pluck(:name)
   end
   
@@ -32,12 +32,12 @@ class Multilingual::Tag
   end
   
   def self.exists?(name)
-    names.include?(name)
+    self.names.include?(name)
   end
   
-  def self.filter(topic)
-    if topic.tags.any?
-      topic.tags.select { |tag| names.include?(tag.name) }
+  def self.filter(tags)
+    if tags.any?
+      tags.select { |tag| names.include?(tag.name) }
     else
       []
     end
@@ -45,11 +45,11 @@ class Multilingual::Tag
   
   def self.group
     @group ||= begin
-      group = TagGroup.find_by(name: Multilingual::Tag::GROUP_NAME)
+      group = TagGroup.find_by(name: Multilingual::ContentTag::GROUP_NAME)
 
       if group.blank?
         group = TagGroup.new(
-          name: Multilingual::Tag::GROUP_NAME,
+          name: Multilingual::ContentTag::GROUP_NAME,
           permissions: { everyone: 1 }
         )
 
@@ -60,6 +60,18 @@ class Multilingual::Tag
       end
       
       group
+    end
+  end
+  
+  def self.bulk_update_all
+    Multilingual::Language.all.each do |l|
+      bulk_update(l.code, l.content_enabled ? "create" : "destroy" )
+    end
+  end
+  
+  def self.bulk_update(codes, action)
+    [*codes].each do |c|
+      Multilingual::ContentTag.send(action, c)
     end
   end
 end

@@ -16,20 +16,24 @@ end
 after_initialize do    
   [
     '../lib/multilingual/engine.rb',
-    '../lib/multilingual/language.rb',
-    '../lib/multilingual/language/admin.rb',
-    '../lib/multilingual/language/base.rb',
+    '../lib/multilingual/language/content_tag.rb',
     '../lib/multilingual/language/content.rb',
+    '../lib/multilingual/language/interface.rb',
     '../lib/multilingual/language/locale.rb',
-    '../lib/multilingual/language/tag.rb',
-    '../lib/multilingual/discourse_tagging.rb',
+    '../lib/multilingual/language.rb',
+    '../lib/multilingual/translation/file.rb',
+    '../lib/multilingual/translation.rb',
+    '../lib/i18n.rb',
+    '../lib/js_locale_helper.rb',
     '../config/routes.rb',
     '../models/multilingual/category_list.rb',
     '../models/multilingual/locale_site_setting.rb',
     '../serializers/multilingual/basic_language_serializer.rb',
-    '../serializers/multilingual/admin_language_serializer.rb',
+    '../serializers/multilingual/language_serializer.rb',
+    '../serializers/multilingual/translation_serializer.rb',
     '../controllers/multilingual/admin_controller.rb',
-    '../controllers/multilingual/admin_languages_controller.rb'
+    '../controllers/multilingual/admin_languages_controller.rb',
+    '../controllers/multilingual/admin_translations_controller.rb'
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
@@ -76,19 +80,19 @@ after_initialize do
     if user_content_languages = object.content_languages
       user_content_languages.map do |code|
         Multilingual::BasicLanguageSerializer.new(
-          Multilingual::Content.get(code).first,
+          Multilingual::Language.get(code).first,
           root: false
         )
       end
     end
   end
   
-  add_to_serializer(:topic_view, :language_tags) do
-    Multilingual::Tag.filter(topic).map(&:name)
+  add_to_serializer(:topic_view, :content_language_tags) do
+    Multilingual::ContentTag.filter(topic.tags).map(&:name)
   end
   
-  add_to_serializer(:topic_list_item, :language_tags) do
-    Multilingual::Tag.filter(topic).map(&:name)
+  add_to_serializer(:topic_list_item, :content_language_tags) do
+    Multilingual::ContentTag.filter(topic.tags).map(&:name)
   end
   
   on(:user_updated) do |user|
@@ -114,9 +118,59 @@ after_initialize do
     (!is_staff? && SiteSetting.multilingual_require_language_tag === 'non-staff'))
   end
   
-  add_class_method(:discourse_plugin_registry, :deregister_locale) do |locale|
-    self.locales.delete(locale)
+  add_class_method(:discourse_tagging, :validate_require_language_tag) do |guardian, topic, tag_names|
+    if guardian.topic_requires_language_tag && (tag_names.blank? || 
+       !Tag.where(name: tag_names).where("id IN (
+          #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL}
+          AND tg.name = '#{Multilingual::ContentTag::GROUP_NAME}'
+        )").exists?)
+
+      topic.errors.add(:base,
+        I18n.t(
+         "tags.required_tags_from_group",
+         count: 1,
+         tag_group_name: Multilingual::ContentTag::GROUP_NAME
+        )
+      )
+      
+      false
+    else
+      true
+    end
   end
   
-  Multilingual::Admin.initialize
+  DiscourseTagging.singleton_class.send(
+    :alias_method,
+    :tag_topic_by_names_core,
+    :tag_topic_by_names
+  )
+  
+  add_class_method(:discourse_tagging, :tag_topic_by_names) do |topic, guardian, tag_names_arg, append: false|
+    return false unless validate_require_language_tag(guardian, topic, tag_names_arg)
+    tag_topic_by_names_core(topic, guardian, tag_names_arg, append: append)
+  end
+  
+  DiscourseTagging.singleton_class.send(
+    :alias_method,
+    :filter_allowed_tags_core,
+    :filter_allowed_tags
+  )
+  
+  add_class_method(:discourse_tagging, :filter_allowed_tags) do |guardian, opts = {}|
+    result = filter_allowed_tags_core(guardian, opts)
+          
+    if opts[:for_input]
+      result.select do |tag|
+        Multilingual::ContentTag.names.exclude? tag.name
+      end
+    else
+      result
+    end
+  end
+  
+  add_to_serializer(:site_category, :name) do
+    Multilingual::Translation.category_names[slug] || super()
+  end
+  
+  Multilingual::Language.setup
 end

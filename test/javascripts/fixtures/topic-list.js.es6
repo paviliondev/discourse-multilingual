@@ -23,7 +23,7 @@ export const topicList = [ 200, { "Content-Type": "application/json" },
           "highest_post_number": 1,
           "id": 926,
           "image_url": null,
-          "language_tags": [
+          "content_language_tags": [
             "aa"
           ],
           "last_posted_at": "2019-11-22T06:17:34.126Z",
