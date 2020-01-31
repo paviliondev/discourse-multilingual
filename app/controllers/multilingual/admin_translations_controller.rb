@@ -8,26 +8,31 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
   end
 
   def upload
-    file = params[:file] || params[:files].first
+    raw_file = params[:file] || params[:files].first
+    
+    unless raw_file && raw_file.respond_to?(:tempfile)
+      raise Discourse::InvalidParameters.new(:file)
+    end
     
     Scheduler::Defer.later("Upload translation file") do
       data = {}
+      tempfile = 
       
       begin
-        yml = YAML.safe_load(file.tempfile)
-        
-        opts = process_filename(file.filename)
+        yml = YAML.safe_load(raw_file.tempfile)
+                
+        opts = Multilingual::TranslationFile.process_filename(raw_file.original_filename)
         raise opts[:error] if opts[:error]
         
-        translation_file = Multilingual::TranslationFile.new(opts)
+        file = Multilingual::TranslationFile.new(opts)
         
-        result = translation_file.save(yml)
+        result = file.save(yml)
         raise result[:error] if result[:error]
         
         data = {
           uploaded: true,
-          code: opts[:code],
-          type: opts[:type]
+          code: file.code,
+          type: file.type
         }
       rescue => e
         data = failed_json.merge(errors: [e.message])
@@ -45,22 +50,23 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
   end
   
   def remove
-    file = Multilingual::TranslationFile.new(translation_params)
+    opts = translation_params
+    file = Multilingual::TranslationFile.new(opts)
     file.remove
     
     render json: {
       removed: true,
-      code: file[:code],
-      type: file[:type]
+      code: opts[:code],
+      type: opts[:type]
     }
   end
   
   def download
-    translation_file = Multilingual::TranslationFile.new(translation_params)
+    file = Multilingual::TranslationFile.new(translation_params)
     
     send_file(
-      translation.path,
-      filename: translation.filename,
+      file.path,
+      filename: file.filename,
       type: "yml"
     )
   end

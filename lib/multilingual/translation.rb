@@ -12,9 +12,9 @@ class ::Multilingual::Translation
     TYPES.include?(type)
   end
   
-  def self.load_server(locale)
+  def self.load_server(code)
     files = Multilingual::TranslationFile.all.select do |f|
-      f.code == locale && CLIENT_TYPES.exclude?(f.type)
+      f.code == code && CLIENT_TYPES.exclude?(f.type)
     end
     
     files.each { |f| self.send("#{f.type.to_s.pluralize}=", f.open) }
@@ -23,5 +23,10 @@ class ::Multilingual::Translation
   def self.reset_server!
     types = TYPES.select { |t| CLIENT_TYPES.exclude?(t) }
     types.each { |t| self.send("#{t.pluralize}=", {}) }
+  end
+  
+  def self.setup!
+    Multilingual::Translation.reset_server!
+    Multilingual::TranslationFile.reset!
   end
 end

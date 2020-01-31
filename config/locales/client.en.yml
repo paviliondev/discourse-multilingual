@@ -22,12 +22,12 @@ en:
         base: "Base"
         name: "Name"
         content: "Content"
-        locale: "Locale"
+        interface: "Interface"
         type: "Type"
         actions: "Actions"
-        locale_not_supported: "not supported"
-        filter_placeholder: "code or name"
-        filter_btn: "Filter"
+        interface_not_supported: "not supported"
+        query_placeholder: "code or name"
+        custom_only: "custom only"
       
       translations:
         type: "Type"

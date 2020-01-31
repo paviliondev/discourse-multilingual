@@ -1,7 +1,8 @@
 class ::Multilingual::TranslationFile
   include ActiveModel::Serialization
   
-  BASE_PATH = "#{Rails.root}/plugins/discourse-multilingual/config/translations"
+  BASE_PATH ||= "#{Rails.root}/plugins/discourse-multilingual/config/translations"
+  FILE_KEY ||= 'files'
     
   attr_accessor :code, :type
     
@@ -56,7 +57,7 @@ class ::Multilingual::TranslationFile
       
       ## Add any additional translation processing here
       
-      if @type == :tag && SiteSetting.multilingual_tag_translations_enforce_formatting
+      if @type == :tag && SiteSetting.multilingual_tag_translations_enforce_format
         translations[key] = DiscourseTagging.clean_tag(translation)
       end
     end
@@ -69,23 +70,35 @@ class ::Multilingual::TranslationFile
   def format(content)
     file = Hash.new
     
-    if Multilingual::Translation::CLIENT_TYPES.include?(@type)
+    if Multilingual::Translation::CLIENT_TYPES.include?(@type.to_s)
       
       ## Format to make it easier to integrate with JsLocaleHelper
       
-      file[@code]['js']["_#{@type}"] = content
+      file[@code.to_s] = {
+        "js" => {
+          "_#{@type.to_s}" => content
+        }
+      }
     else
       file = content
     end
+    
+    puts "FORMATED FILE: #{file.inspect}"
     
     file
   end
   
   def self.all
-    @all ||= filenames.reduce([]) do |result, filename|
-      opts = process_filename(filename)
-      result.push(Multilingual::TranslationFile.new(opts)) if !opts[:error]
-      result
+    if files = Multilingual::Cache.read(FILE_KEY)
+      files
+    else
+      files = filenames.reduce([]) do |result, filename|
+        opts = process_filename(filename)
+        result.push(Multilingual::TranslationFile.new(opts)) if !opts[:error]
+        result
+      end
+      Multilingual::Cache.write(FILE_KEY, files)
+      files
     end
   end
   
@@ -118,7 +131,7 @@ class ::Multilingual::TranslationFile
   end
   
   def self.reset!
-    @all = nil
+    Multilingual::Cache.delete(FILE_KEY)
     JsLocaleHelper.clear_cache!
   end
 end

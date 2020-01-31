@@ -4,7 +4,7 @@ export default {
         
     Ember.run.scheduleOnce('afterRender', () => {
       const content = '.control-group.content-languages';
-      const locale = '.control-group.pref-locale';
+      const int = '.control-group.pref-locale';
       const text = '.control-group.text-size';
       const form = '.user-preferences form';
             
@@ -12,8 +12,8 @@ export default {
          !$(form).children(content).length) {
         $(content).prependTo(form)
       }
-      if (!$(content).next(locale).length) {
-        $(locale).insertAfter(content);
+      if (!$(content).next(int).length) {
+        $(int).insertAfter(content);
       }
     });
   }

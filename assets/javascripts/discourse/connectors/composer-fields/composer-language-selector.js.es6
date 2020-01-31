@@ -13,11 +13,9 @@ export default {
     const user = attrs.model.user;
     const userTags = userContentLanguageCodes();
     
-    let contentLanguageTags = composer.draftKey == 'new_topic' ?
-      [...userTags]
-      : contentLanguageTags(composer.tags);
+    let tags = composer.draftKey == 'new_topic' ? [userTags[0]] : contentLanguageTags(composer.tags);
           
-    component.set('contentLanguageTags', contentLanguageTags);
+    component.set('contentLanguageTags', tags);
     
     component.addObserver('contentLanguageTags.[]', () => {
       if (this._state === 'destroying') return;

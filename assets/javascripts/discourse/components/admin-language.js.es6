@@ -9,7 +9,7 @@ export default Ember.Component.extend({
     this.currentLanguage = JSON.parse(JSON.stringify(this.language));
   },
   
-  @observes('language.content_enabled', 'language.locale_enabled')
+  @observes('language.content_enabled', 'language.interface_enabled')
   trackUpdates() {
     if (_.isEqual(this.currentLanguage, this.language)) {
       this.updatedLanguages.removeObject(this.language);
@@ -21,6 +21,11 @@ export default Ember.Component.extend({
   @computed('language.custom')
   typeKey(custom) {
     return `multilingual.languages.${custom ? 'custom': 'base'}`;
+  },
+  
+  @computed('language.code')
+  interfaceToggleDisabled(code) {
+    return code === 'en'
   },
   
   actions: {

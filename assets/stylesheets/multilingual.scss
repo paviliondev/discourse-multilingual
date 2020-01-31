@@ -112,6 +112,15 @@ html.mobile-view .composer-fields .content-languages-selector {
 }
 
 .admin-multilingual {
+  .query {
+    display: flex;
+    align-items: center;
+    
+    .custom-only {
+      margin-left: 10px;
+    }
+  }
+  
   .controls {
     display: flex;
     margin-top: 20px;
@@ -123,12 +132,13 @@ html.mobile-view .composer-fields .content-languages-selector {
     
     .buttons {
       display: flex;
+      margin-left: auto;
             
       button {
         margin-left: 10px;
       }
       
-      span {
+      > span {
         margin-left: 10px;
       }
     }
@@ -136,10 +146,41 @@ html.mobile-view .composer-fields .content-languages-selector {
   
   .admin-language-list {
     margin: 20px 0;
+    
+    .actions {
+      .btn {
+        height: 36px;
+        width: 40px;
+      }
+      .spinner {
+        width: 7px;
+        height: 7px;
+      }
+    }
   }
   
   .language-list-title {
     margin: 10px 8px;
     text-decoration: underline;
+  }
+}
+
+.edit-category-modal .field-item.category-name {
+  > span, > label {
+    display: inline-block;
+  }
+  
+  > span {
+    margin-left: 7px;
+  }
+  
+  .d-icon {
+    width: 0.9em;
+    height: 0.9em; 
+  }
+  
+  input:disabled {
+    background-color: #f1f1f1;
+    color: rgba(#333, 0.7);
   }
 }

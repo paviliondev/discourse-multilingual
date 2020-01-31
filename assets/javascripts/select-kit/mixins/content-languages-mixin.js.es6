@@ -13,13 +13,7 @@ export default Mixin.create({
   mutateLanguages(values) {
     if (typeof values === 'string') {
       values = [values];
-    } else if (Array.isArray(values)) {
-      if (values.length === 0) {
-        values = ["none"];
-      } else {
-        values = values.filter(v => v !== 'none');
-      }
-    } else {
+    } else if (!Array.isArray(values)) {
       values = [];
     }
     return values;

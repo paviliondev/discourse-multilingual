@@ -10,24 +10,22 @@
   {{input type="checkbox" checked=language.content_enabled}}
 </td>
 
-<td class="locale">
-  {{#if language.locale_supported}}
-    {{input type="checkbox" checked=language.locale_enabled}}
+<td class="interface">
+  {{#if language.interface_supported}}
+    {{input type="checkbox" checked=language.interface_enabled disabled=interfaceToggleDisabled}}
   {{else}}
-    <i>{{i18n 'multilingual.languages.locale_not_supported'}}</i>
+    <i>{{i18n 'multilingual.languages.interface_not_supported'}}</i>
   {{/if}}
 </td>
 
-{{#if showActions}}
-  <td class="actions">
-    {{#if language.custom}}
-      {{#d-button action="remove" disabled=removing}}
-        {{#if removing}}
-          {{loading-spinner size="small"}}
-        {{else}}
-          {{d-icon "times"}}
-        {{/if}}
-      {{/d-button}}
-    {{/if}}
-  </td>
-{{/if}}
+<td class="actions">
+  {{#if language.custom}}
+    {{#d-button action="remove" disabled=removing}}
+      {{#if removing}}
+        {{loading-spinner size="small"}}
+      {{else}}
+        {{d-icon "times"}}
+      {{/if}}
+    {{/d-button}}
+  {{/if}}
+</td>

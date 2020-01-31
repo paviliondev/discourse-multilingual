@@ -2,23 +2,23 @@ import { alias } from "@ember/object/computed";
 import Component from "@ember/component";
 import UploadMixin from "discourse/mixins/upload";
 import { on } from "@ember/object/evented";
+import { default as discourseComputed } from "discourse-common/utils/decorators";
 
 export default Component.extend(UploadMixin, {
   type: "yml",
   addDisabled: alias("uploading"),
+  classNameBindings: [':multilingual-uploader', 'uploadType'],
   code: null,
-  uploadType: 'language',
   message: null,
   
   _init: on("didInsertElement", function() {
     this.messageBus.subscribe("/uploads/" + this.type, msg => {
-      console.log(msg);
       if (msg.uploaded) {
         this.setProperties({
           uploading: false,
           message: I18n.t('uploaded')
         });
-        this.done(msg);
+        this.done();
       } else if (msg.errors) {
         this.set('message', msg.errors[0]);
       }
@@ -28,6 +28,11 @@ export default Component.extend(UploadMixin, {
       }, 10000)
     });
   }),
+  
+  @discourseComputed('uploadType')
+  uploadUrl(uploadType) {
+    return `/admin/multilingual/${uploadType}s`;
+  },
 
   uploadDone() {
     // wait for message that uploaded file is processed.

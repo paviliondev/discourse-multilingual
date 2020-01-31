@@ -1,5 +1,6 @@
 class ::Multilingual::Language
   CUSTOM_KEY = 'custom_language'.freeze
+  LANGUAGE_KEY = 'language'.freeze
   
   include ActiveModel::Serialization
   
@@ -11,8 +12,8 @@ class ::Multilingual::Language
                 :custom
   
   def initialize(attrs)
-    @code = attrs[:code]
-    @name = attrs[:name]
+    @code = attrs[:code].to_s
+    @name = attrs[:name].to_s
     @content_enabled = Multilingual::Content.enabled?(@code)
     @interface_enabled = Multilingual::Interface.enabled?(@code)
     @interface_supported = Multilingual::Interface.supported?(@code)
@@ -20,25 +21,23 @@ class ::Multilingual::Language
   end
   
   def self.create(code, name)
-    if PluginStore.set(Multilingual::PLUGIN_NAME, "#{CUSTOM_KEY}_#{code}", name)
+    if PluginStore.set(Multilingual::PLUGIN_NAME, "#{CUSTOM_KEY}_#{code.to_s}", name.to_s)
       Multilingual::Language.reload!
-      true
     end
   end
   
-  def self.destroy(code)    
+  def self.destroy(code)
     set_exclusion(code, 'interface', true)
     set_exclusion(code, 'content', true)
     
-    if PluginStore.remove(Multilingual::PLUGIN_NAME, "#{CUSTOM_KEY}_#{code}")
+    if PluginStore.remove(Multilingual::PLUGIN_NAME, "#{CUSTOM_KEY}_#{code.to_s}")
       Multilingual::Language.reload!
-      true
     end
   end
    
   def self.update(language)
     language = language.with_indifferent_access
-    
+        
     ['interface', 'content'].each do |type|
       prop = "#{type}_enabled".to_sym
     
@@ -48,8 +47,6 @@ class ::Multilingual::Language
     end
     
     Multilingual::Language.reload!
-    
-    true
   end
   
   def self.get(codes)
@@ -59,9 +56,15 @@ class ::Multilingual::Language
   end
   
   def self.all
-    @all ||= Multilingual::Locale.all.map do |k, v|
-      Multilingual::Language.new(code: k, name: v)
-    end.sort_by(&:code)
+    if languages = Multilingual::Cache.read(LANGUAGE_KEY)
+      languages
+    else
+      languages = Multilingual::Locale.all.map do |k, v|
+        Multilingual::Language.new(code: k, name: v)
+      end.sort_by(&:code)
+      Multilingual::Cache.write(LANGUAGE_KEY, languages)
+      languages
+    end
   end
   
   def self.filter(params = {})
@@ -94,24 +97,30 @@ class ::Multilingual::Language
        !ActiveModel::Type::Boolean.new.cast(params[:ascending])
       languages = languages.reverse
     end
-                
+                    
     languages
   end
   
   def self.reload!
-    Multilingual::Content.reload!
-    Multilingual::Interface.reload!
-    Multilingual::ContentTag.reload!
-    Multilingual::Locale.reload!
-    @all = nil
+    [
+      Multilingual::Locale::CUSTOM_KEY,
+      Multilingual::Interface::EXCLUSION_KEY,
+      Multilingual::ContentTag::NAME_KEY,
+      Multilingual::Content::EXCLUSION_KEY,
+      Multilingual::Content::CONTENT_KEY,
+      Multilingual::Language::LANGUAGE_KEY
+    ].each { |key| Multilingual::Cache.delete(key) }
+    
+    true
   end
   
   def self.set_exclusion(code, type, enabled)
+    code = code.to_s
     klass = "Multilingual::#{type.to_s.classify}".constantize
     key = klass::EXCLUSION_KEY
     enabled = ActiveModel::Type::Boolean.new.cast(enabled)
     exclusions = PluginStore.get(Multilingual::PLUGIN_NAME, key) || []
-
+    
     return if enabled && exclusions.empty?
 
     exclusions = exclusions.split(',')
@@ -119,14 +128,14 @@ class ::Multilingual::Language
     if enabled
       exclusions.delete(code)
     else
-      exclusions.push(code) unless exclusions.include?(code)
+      exclusions.push(code) unless (exclusions.include?(code) || code == 'en')
     end
     
     PluginStore.set(Multilingual::PLUGIN_NAME, key, exclusions.join(','))
   end
   
   def self.is_custom?(code)
-    Multilingual::Locale.custom.keys.include?(code)
+    Multilingual::Locale.custom.keys.include?(code.to_s)
   end
   
   def self.bulk_create(languages = {})
@@ -144,7 +153,7 @@ class ::Multilingual::Language
     
     Multilingual::Language.reload!
     
-    added
+    Multilingual::Language.get(added)
   end
   
   ## TODO make this more targeted
@@ -157,7 +166,7 @@ class ::Multilingual::Language
     
     Multilingual::Language.reload!
     
-    languages.map { |l| l['code'] }
+    languages.map { |l| Multilingual::Language.get(l['code']) }
   end
   
   def self.bulk_destroy(codes)
@@ -178,7 +187,7 @@ class ::Multilingual::Language
     removed
   end
   
-  def self.setup
+  def self.setup!
     extensions = SiteSetting.authorized_extensions_for_staff.split('|')
     extensions.push('yml') unless extensions.include?('yml')
     SiteSetting.authorized_extensions_for_staff = extensions.join('|')

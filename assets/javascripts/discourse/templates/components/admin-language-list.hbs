@@ -1,23 +1,16 @@
-<div class="language-list-title">
-  {{i18n titleKey}}
-</div>
-
 <table class='table languages-list grid'>
   <thead>
     {{admin-directory-toggle field="code" i18nKey='multilingual.code' order=order ascending=ascending}}
     {{admin-directory-toggle field="name" i18nKey='multilingual.languages.name' order=order ascending=ascending}}
     {{admin-directory-toggle field="content_enabled" i18nKey='multilingual.languages.content' order=order ascending=ascending}}
-    {{admin-directory-toggle field="locale_enabled" i18nKey='multilingual.languages.locale' order=order ascending=ascending}}
-    {{#if showActions}}
-      <th>Actions</th>
-    {{/if}}
+    {{admin-directory-toggle field="interface_enabled" i18nKey='multilingual.languages.interface' order=order ascending=ascending}}
+    <th>Actions</th>
   </thead>
   <tbody>
     {{#each languages as |language|}}
       {{admin-language language=language
                        updatedLanguages=updatedLanguages
-                       removed=updateLanguages
-                       showActions=showActions}}
+                       removed=updateLanguages}}
     {{/each}}
   </tbody>
 </table>

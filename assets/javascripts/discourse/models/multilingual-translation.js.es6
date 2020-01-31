@@ -29,8 +29,6 @@ MultilingualTranslation.reopenClass({
       xhrFields: {
         responseType: 'blob'
       }
-    }).then(result => {
-      console.log(result.responseText)
     })
   }
 });

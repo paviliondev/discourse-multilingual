@@ -28,7 +28,8 @@ export default {
     Composer.serializeToTopic('languages', 'topic.languages');
     
     I18n.translate_tag = function(tag) {
-      return I18n.translate(`_tag.${tag}`) || tag;
+      let locale = I18n.currentLocale().split('_')[0];
+      return I18n.lookup(`_tag.${tag}`, { locale }) || tag;
     }
             
     withPluginApi('0.8.36', api => {
@@ -42,17 +43,26 @@ export default {
         
         actions: {
           save() {
+            // jQuery ajax removes empty arrays. This is a workaround
+            let contentLanguages = this.model.custom_fields.content_languages;
+            if (!contentLanguages || !contentLanguages.length) {
+              this.set('model.custom_fields.content_languages', [""]);
+            }
+             
             return this._super().then(result => {
               const contentLanguages = this.site.content_languages;
               const rawUserLanguages = this.model.custom_fields.content_languages;
               let userLanguages = [];
-              
-              if (rawUserLanguages && rawUserLanguages[0] !== 'none') {
+                            
+              if (rawUserLanguages) {
                 userLanguages = rawUserLanguages.map(code => {
                   return contentLanguages.find(cl => cl.code === code);
                 });
               }
-                
+              
+              // See workaround above
+              userLanguages = userLanguages.filter(l => l !== "" && l !== undefined);
+                              
               currentUser.set('content_languages', userLanguages);
             })
           }
@@ -130,8 +140,8 @@ export default {
         _setModel(composerModel, opts) {
           if (opts.draftKey === 'new_topic') {
             let userTags = userContentLanguageCodes();
-            if (userTags) {
-              opts.topicTags = (opts.topicTags || []).concat(userTags);
+            if (userTags && userTags.length) {
+              opts.topicTags = (opts.topicTags || []).concat([userTags[0]]);
             }  
           }
           this._super(composerModel, opts);

@@ -1,19 +1,20 @@
 class Multilingual::Locale
+  CUSTOM_KEY = "custom_locale".freeze
+  
   def self.custom
-    @custom ||= begin
+    if custom = Multilingual::Cache.read(CUSTOM_KEY)
+      custom
+    else
       custom = {}
       PluginStoreRow.where("
         plugin_name = '#{Multilingual::PLUGIN_NAME}' AND
         key LIKE '#{Multilingual::Language::CUSTOM_KEY}_%'
       ").each do |record|
-        custom[record.key.split('_').last] = record.value
+        custom[record.key.split("#{Multilingual::Language::CUSTOM_KEY}_").last] = record.value
       end
+      Multilingual::Cache.write(CUSTOM_KEY, custom)
       custom
     end
-  end
-  
-  def self.reload!
-    @custom = nil
   end
   
   def self.all

@@ -147,21 +147,21 @@ describe Multilingual::Language do
   context 'set_exclusion' do    
     it 'should add content exclusions' do
       Multilingual::Language.set_exclusion('en', 'content', false)
-      Multilingual::Content.reload!
+      Multilingual::Language.reload!
       expect(Multilingual::Content.exclusions).to include('en')
     end
     
     it 'should add interface exclusions' do
       Multilingual::Language.set_exclusion('sl', 'interface', false)
-      Multilingual::Interface.reload!
+      Multilingual::Language.reload!
       expect(Multilingual::Interface.exclusions).to include('sl')
     end
     
     it 'should remove exclusions' do
       Multilingual::Language.set_exclusion('sv', 'interface', false)
-      Multilingual::Interface.reload!
+      Multilingual::Language.reload!
       Multilingual::Language.set_exclusion('sv', 'interface', true)
-      Multilingual::Interface.reload!
+      Multilingual::Language.reload!
       expect(Multilingual::Interface.exclusions).not_to include('sv')
     end
   end

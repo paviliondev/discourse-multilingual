@@ -1,4 +1,5 @@
 class Multilingual::ContentTag
+  NAME_KEY = 'content_tag_names'.freeze
   GROUP_NAME = 'languages'.freeze
   
   def self.create(code)
@@ -21,14 +22,16 @@ class Multilingual::ContentTag
   end
   
   def self.names
-    @names ||= Tag.where("id IN (
-      #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND 
-      tg.name = '#{Multilingual::ContentTag::GROUP_NAME}'
-    )").pluck(:name)
-  end
-  
-  def self.reload!
-    @names = nil
+    if names = Multilingual::Cache.read(NAME_KEY)
+      names
+    else
+      names = Tag.where("id IN (
+        #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND 
+        tg.name = '#{Multilingual::ContentTag::GROUP_NAME}'
+      )").pluck(:name)
+      Multilingual::Cache.write(NAME_KEY, names)
+      names
+    end
   end
   
   def self.exists?(name)

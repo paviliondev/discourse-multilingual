@@ -17,20 +17,22 @@ function getParams() {
 }
 
 MultilingualLanguage.reopenClass({
-  all(params = {}) {
+  filter(params = {}) {
     return ajax(LanguagesPath, {
       data: Object.assign(getParams(), params)
+    }).then(result => {
+      return result.map(l => MultilingualLanguage.create(l));
     }).catch(popupAjaxError)
   },
 
   save(languages, params = {}) {
-    let data = {
-      languages: JSON.stringify(languages)
-    };
-    
+    params = Object.assign(getParams(), params);
+    let data = Object.assign({ languages }, params);
     return ajax(LanguagesPath, {
       method: "PUT",
-      data: Object.assign(data, Object.assign(getParams(), params))
+      data: JSON.stringify(data),
+      dataType: 'json',
+      contentType: 'application/json'
     }).catch(popupAjaxError)
   },
   

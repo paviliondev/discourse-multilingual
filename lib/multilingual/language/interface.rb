@@ -2,18 +2,18 @@ class ::Multilingual::Interface
   EXCLUSION_KEY = 'interface_exclusions'.freeze
   
   def self.exclusions
-    @exclusions ||= begin
+    if exclusions = Multilingual::Cache.read(EXCLUSION_KEY)
+      exclusions
+    else
       data = PluginStore.get(Multilingual::PLUGIN_NAME, EXCLUSION_KEY) || ''
-      data.split(',')
+      exclusions = data.split(',')
+      Multilingual::Cache.write(EXCLUSION_KEY, exclusions)
+      exclusions
     end
   end
   
   def self.enabled?(code)
     self.exclusions.exclude?(code)
-  end
-  
-  def self.reload!
-    @exclusions = nil
   end
   
   def self.supported?(code)

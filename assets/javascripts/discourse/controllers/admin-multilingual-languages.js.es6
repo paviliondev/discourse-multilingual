@@ -12,8 +12,9 @@ export default Controller.extend({
   refreshing: false,
   queryPlaceholder: i18n("multilingual.languages.query_placeholder"),
   updateState: 'save',
+  languages: [],
   updatedLanguages: Ember.A(),
-  anyCustomLanguages: notEmpty('customLanguages'),
+  anyLanguages: notEmpty('filteredLanguages'),
 
   @discourseComputed
   title() {
@@ -35,14 +36,10 @@ export default Controller.extend({
     return updatedLanguages.length === 0 || updateState !== 'save';
   },
   
-  @discourseComputed('languages.[]')
-  customLanguages(languages) {
-    return languages.filter(l => l.custom);
-  },
-  
-  @discourseComputed('languages.[]')
-  baseLanguages(languages) {
-    return languages.filter(l => !l.custom);
+  @discourseComputed('languages.[]', 'customOnly')
+  filteredLanguages(languages, customOnly) {
+    if (customOnly) return languages.filter(l => l.custom);
+    return languages;
   },
   
   _updateLanguages(languages) {
@@ -60,8 +57,8 @@ export default Controller.extend({
       let val = this.get(p);
       if (val) params[p] = val;
     });
-        
-    MultilingualLanguage.all(params).then(result => {
+            
+    MultilingualLanguage.filter(params).then(result => {
       this._updateLanguages(result);
     }).finally(() => {
       this.set("refreshing", false)
@@ -69,7 +66,7 @@ export default Controller.extend({
   },
   
   actions: {
-    languagesChanged() {
+    refreshLanguages() {
       this._refreshLanguages();
     },
   
@@ -88,6 +85,11 @@ export default Controller.extend({
 
     updateLanguages(languages) {
       this._updateLanguages(languages);
+    },
+    
+    languagesUploaded() {
+      this.set('customOnly', true);
+      this._refreshLanguages();
     }
   }
 });
