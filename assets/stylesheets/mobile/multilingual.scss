@@ -1,0 +1,26 @@
+.locale-selection {
+  width: 100%;
+  border-top: 1px solid $primary-low;
+  box-sizing: border-box;
+  box-shadow: 0px 1px 10px rgba(0,0,0,0.15);
+  background-color: $secondary;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding: 5px 10px 8px 10px;
+  z-index: 100;
+
+  a, .btn {
+    font-size: 0.9em;
+  }
+
+  .btn {
+    padding: 3px 6px;
+  }
+
+  .hidden-locales {
+    max-width: 90vw;
+    max-height: 70vh;
+    right: initial;
+  }
+}

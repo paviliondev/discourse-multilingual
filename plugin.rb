@@ -6,7 +6,8 @@
 
 enabled_site_setting :multilingual_enabled
 
-register_asset 'stylesheets/multilingual.scss'
+register_asset 'stylesheets/common/multilingual.scss'
+register_asset 'stylesheets/mobile/multilingual.scss', :mobile
 
 if respond_to?(:register_svg_icon)
   register_svg_icon "language"
