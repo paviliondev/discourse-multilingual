@@ -3,6 +3,8 @@ en:
     multilingual_enabled: Multilingual plugin enabled
     multilingual_require_language_tag: Require a language tag on all topics
     multilingual_tag_translations_enforce_format: Enforce Discourse tag formatting on tag translations
+    multilingual_locale_switcher_enabled: Enable guest locale switcher
+    multilingual_locale_switcher_default: Locales initially visible in the locale switcher
   
   multilingual:
     languages:

@@ -10,3 +10,7 @@ plugins:
       - "yes"
       - "non-staff"
   multilingual_tag_translations_enforce_format: false
+  multilingual_guest_visible_locales:
+    type: list
+    default: ar|zh_CN|en|es|fr|ru
+    client: true
