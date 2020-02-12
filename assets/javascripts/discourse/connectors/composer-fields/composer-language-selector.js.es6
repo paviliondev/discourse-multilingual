@@ -1,27 +1,12 @@
-import {
-  contentLanguageTags,
-  contentLanguageTag,
-  addContentLanguageTags,
-  userContentLanguageCodes
-} from '../../lib/multilingual';
+import { CREATE_TOPIC, EDIT } from 'discourse/models/composer';
 
-export default {
+export default {  
+  shouldRender(attrs, ctx) {
+    console.log(attrs.model.topicFirstPost)
+    return ctx.siteSettings.multilingual_enabled && attrs.model.topicFirstPost;
+  },
+  
   setupComponent(attrs, component) {
-    if (!Discourse.SiteSettings.multilingual_enabled) return;
-    
-    const composer = attrs.model;
-    const user = attrs.model.user;
-    const userTags = userContentLanguageCodes();
-    
-    let tags = composer.draftKey == 'new_topic' ? [userTags[0]] : contentLanguageTags(composer.tags);
-          
-    component.set('contentLanguageTags', tags);
-    
-    component.addObserver('contentLanguageTags.[]', () => {
-      if (this._state === 'destroying') return;
-      addContentLanguageTags(composer, component.get('contentLanguageTags'));
-    });
-    
     Ember.run.scheduleOnce('afterRender', () => {
       $('.content-languages-selector').appendTo('.title-and-category');
     });

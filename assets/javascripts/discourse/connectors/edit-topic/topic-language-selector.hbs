@@ -1,7 +1,4 @@
-{{#if siteSettings.multilingual_enabled}}
-  {{content-languages-selector
-    content=site.content_languages
-    values=buffered.content_language_tags
-    valueAttribute="code"
-    filterPlaceholder="topic.content_languages.placeholder"}}
-{{/if}}
+{{content-languages-selector
+  content=site.content_languages
+  value=buffered.content_language_tags
+  filterPlaceholder="topic.content_languages.placeholder"}}

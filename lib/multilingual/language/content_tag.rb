@@ -3,7 +3,7 @@ class Multilingual::ContentTag
   GROUP_NAME = 'languages'.freeze
   
   def self.create(code)
-    unless exists?(code)
+    unless Tag.exists?(name: code)
       tag = Tag.new(name: code)
       tag.save!
       
@@ -76,5 +76,24 @@ class Multilingual::ContentTag
     [*codes].each do |c|
       Multilingual::ContentTag.send(action, c)
     end
+  end
+  
+  def self.add_to_topic(topic, tags)
+    topic_tags = topic.tags
+    
+    content_language_tags = tags.reduce([]) do |result, tag_name|
+      if self.exists?(tag_name) && topic_tags.map(&:name).exclude?(tag_name)
+        result.push(Tag.find_by(name: tag_name)) 
+      end
+      
+      result
+    end
+            
+    if content_language_tags.any?
+      topic.tags = topic_tags + content_language_tags 
+      topic.custom_fields['content_languages'] = content_language_tags.map(&:name)
+    end
+        
+    topic
   end
 end

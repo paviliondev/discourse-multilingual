@@ -5,7 +5,7 @@ en:
         title: "Content Languages"
         placeholder: "Select content languages"
         instructions: "User content languages."
-        set: "Set Languages"
+        set: "Set content languages"
     
     topic:
       content_languages:
@@ -25,7 +25,7 @@ en:
         interface: "Interface"
         type: "Type"
         actions: "Actions"
-        interface_not_supported: "not supported"
+        interface_not_supported: "no translations"
         query_placeholder: "code or name"
         custom_only: "custom only"
       

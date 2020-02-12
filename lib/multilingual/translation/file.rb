@@ -82,9 +82,7 @@ class ::Multilingual::TranslationFile
     else
       file = content
     end
-    
-    puts "FORMATED FILE: #{file.inspect}"
-    
+        
     file
   end
   

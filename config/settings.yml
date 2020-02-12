@@ -1,6 +1,6 @@
 plugins:
   multilingual_enabled:
-    default: false
+    default: true
     client: true
   multilingual_require_language_tag:
     type: enum

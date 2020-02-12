@@ -1,0 +1,35 @@
+.discourse-tags .discourse-tag.simple:not(:last-child)::after,
+.list-tags .discourse-tag.simple:not(:last-child)::after {
+  content: "";
+  margin-left: 0;
+}
+
+.discourse-tags a.discourse-tag.simple:not(:last-of-type)::after,
+.list-tags a.discourse-tag.simple:not(:last-of-type)::after,
+.content-language-tags a.content-language-tag:not(:last-of-type)::after {
+  content: ", ";
+  margin-left: 1px;
+}
+
+.discourse-tags a {
+  display: inline-block;
+  
+  &+ .content-language-tags {
+    margin-left: 8px;
+  }
+}
+
+.content-language-tags {
+  display: inline-block;
+  vertical-align: middle;
+  
+  > .d-icon {
+    margin-right: 3px;
+    height: .8706em;
+    width: .8706em;
+  }
+  
+  .content-language-tag {
+    @extend .discourse-tag.simple;
+  }
+}
