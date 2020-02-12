@@ -1,24 +1,12 @@
-import { get } from "@ember/object";
-
-function contentLanguageTag(tag) {
-  if (!tag) return;
-  const site = Discourse.Site.current();
-  return site.content_languages.find(cl => cl.code == tag);
-}
-
-function contentLanguageTags(tags = []) {
-  return tags.filter(t => contentLanguageTag(t));
-}
-
 function multilingualTagRenderer(tag, params) {
   params = params || {};
-  const language = contentLanguageTag(tag);
+  const clt = contentLanguageTag(tag);
     
-  if (language && !params.language) return '';
+  if (clt && !params.contentLanguageTag) return '';
   
   tag = Handlebars.Utils.escapeExpression(tag).toLowerCase();
   const translatedTag = I18n.translate_tag(tag);
-  const visibleName = language ? language.name : translatedTag;
+  const visibleName = clt ? clt.name : translatedTag;
   
   const classes = ["discourse-tag"];
   const tagName = params.tagName || "a";
@@ -62,31 +50,13 @@ function multilingualTagRenderer(tag, params) {
   return val;
 }
 
-function addContentLanguageTags(topic, contentLanguageTags) {
-  const tags = get(topic, 'tags') || [];
-  const nonContentLanguageTags = tags.filter(t => !contentLanguageTag(t));
-  topic.set('tags', nonContentLanguageTags.concat(contentLanguageTags));
-}
-
-function userContentLanguageCodes() {
-  const currentUser = Discourse.User.current();
-  if (!currentUser) return null;
-  return currentUser.content_languages.map(l => l.code) || [];
-}
-
-function contentLanguageTagsFilter(tags, valueAttr = null, labelAttr = null, context) {
-  return tags.filter(t => !contentLanguageTag(valueAttr ? t[valueAttr] : t))
-    .map(t => {
-      let translated = I18n.translate_tag(valueAttr ? t[valueAttr] : t);
-      return labelAttr ? Object.assign(t, { [labelAttr]: translated }) : translated;
-    });
+function contentLanguageTag(tag) {
+  if (!tag) return;
+  const site = Discourse.Site.current();
+  return site.content_languages.find(cl => cl.code == tag);
 }
 
 export {
-  contentLanguageTag,
-  contentLanguageTags,
-  contentLanguageTagsFilter,
-  addContentLanguageTags,
   multilingualTagRenderer,
-  userContentLanguageCodes
+  contentLanguageTag
 };

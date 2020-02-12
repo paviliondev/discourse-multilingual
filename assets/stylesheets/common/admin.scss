@@ -1,0 +1,62 @@
+.admin-multilingual .admin-actions {
+  display: flex;
+  align-items: center;
+  
+  > span {
+    margin-right: 10px;
+  }
+}
+
+.admin-multilingual {
+  .query {
+    display: flex;
+    align-items: center;
+    
+    .custom-only {
+      margin-left: 10px;
+    }
+  }
+  
+  .controls {
+    display: flex;
+    margin-top: 20px;
+    justify-content: space-between;
+    
+    input {
+      margin-bottom: 0;
+    }
+    
+    .buttons {
+      display: flex;
+      margin-left: auto;
+            
+      button {
+        margin-left: 10px;
+      }
+      
+      > span {
+        margin-left: 10px;
+      }
+    }
+  }
+  
+  .admin-language-list {
+    margin: 20px 0;
+    
+    .actions {
+      .btn {
+        height: 36px;
+        width: 40px;
+      }
+      .spinner {
+        width: 7px;
+        height: 7px;
+      }
+    }
+  }
+  
+  .language-list-title {
+    margin: 10px 8px;
+    text-decoration: underline;
+  }
+}

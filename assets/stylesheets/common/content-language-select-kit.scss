@@ -1,0 +1,41 @@
+.content-languages-selector.select-kit {
+  width: initial;
+  min-width: 300px;
+  
+  .select-kit-header {
+    height: 30px;
+  }
+}
+
+.content-languages-dropdown.select-kit {
+  .select-kit-header {
+    outline-style: none !important;
+    margin-left: 5px;
+    
+    &.has-languages {
+      background-color: $tertiary;
+      
+      .d-icon {
+        color: $secondary;
+      }
+    }
+  }
+  
+  .select-kit-collection {
+    font-size: 1em;
+  }
+  
+  li.select-kit-row {
+    width: 100%;
+    cursor: initial;
+    padding: 10px;
+    
+    .texts .name {
+      font-weight: initial;
+    }
+    
+    &[data-value="set_content_language"] {
+      cursor: pointer;
+    }
+  }
+}

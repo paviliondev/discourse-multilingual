@@ -1,16 +1,6 @@
 import { withPluginApi } from 'discourse/lib/plugin-api';
-import { ajax } from 'discourse/lib/ajax';
-import {
-  default as discourseComputed,
-  on,
-  observes
-} from "discourse-common/utils/decorators";
-import {
-  contentLanguageTag,
-  contentLanguageTagsFilter,
-  multilingualTagRenderer,
-  userContentLanguageCodes
-} from '../lib/multilingual';
+import { default as discourseComputed } from "discourse-common/utils/decorators";
+import { multilingualTagRenderer } from '../lib/multilingual';
 import Composer from 'discourse/models/composer';
 import { iconHTML } from "discourse-common/lib/icon-library";
 import renderTag from "discourse/lib/render-tag";
@@ -18,14 +8,11 @@ import renderTag from "discourse/lib/render-tag";
 export default {
   name: 'multilingual',
   initialize(container) {
-    const site = container.lookup('site:main');
-    const currentUser = container.lookup('current-user:main');
     const siteSettings = container.lookup('site-settings:main');
-    
     if (!siteSettings.multilingual_enabled) return;
     
-    Composer.serializeOnCreate('languages');
-    Composer.serializeToTopic('languages', 'topic.languages');
+    Composer.serializeOnCreate('content_language_tags', 'contentLanguageTags');
+    Composer.serializeToTopic('content_language_tags', 'topic.contentLanguageTags');
     
     I18n.translate_tag = function(tag) {
       let locale = I18n.currentLocale().split('_')[0];
@@ -63,46 +50,13 @@ export default {
               // See workaround above
               userLanguages = userLanguages.filter(l => l !== "" && l !== undefined);
                               
-              currentUser.set('content_languages', userLanguages);
+              this.currentUser.set('content_languages', userLanguages);
             })
           }
         }
       });
       
       api.replaceTagRenderer(multilingualTagRenderer);
-      
-      api.modifyClass('component:mini-tag-chooser', {
-        willComputeAsyncContent(content) {
-          return contentLanguageTagsFilter(content, 'name', 'name', 'willComputeAsyncContent');
-        },
-
-        @discourseComputed("tags")
-        selection(tags) {
-          return contentLanguageTagsFilter(this._super(tags), 'value', 'value', 'selection');
-        },
-        
-        @discourseComputed("tags.[]", "filter", "highlightedSelection.[]")
-        collectionHeader(tags, filter, highlightedSelection) {
-          let html = this._super(...arguments);
-          let $html = $(html);
-          
-          $html.find('button').each(function() {
-            let tag = $(this).data('value');
-            if (contentLanguageTag(tag)) {
-              $(this).remove();
-              return;
-            }
-            let translatedTag = I18n.translate_tag(tag);
-            $(this).attr({
-              'aria-label': translatedTag,
-              "title": translatedTag
-            });
-            $(this).html(`${translatedTag} ${iconHTML("times")}`)
-          });
-          
-          return $html.html();
-        }
-      });
       
       api.modifyClass('component:bread-crumbs', {
         classNameBindings: ["category::no-category", ":category-breadcrumb"],
@@ -127,26 +81,21 @@ export default {
         const contentLanguageTags = topic.content_language_tags;
         if (!contentLanguageTags || !contentLanguageTags[0]) return;
         
-        let html = '<div class="topic-languages">';
+        let html = '<div class="content-language-tags">';
+        
         html += iconHTML('translate');
+        
         contentLanguageTags.forEach(t => {
-          html += renderTag(t, { language: true }) + " ";
+          html += renderTag(t, {
+            contentLanguageTag: true,
+            style: 'content-language-tag'
+          }) + " ";
         });
+        
         html += '</div>';
+        
         return html;
-      }, { priority: 100  });
-      
-      api.modifyClass('controller:composer', {
-        _setModel(composerModel, opts) {
-          if (opts.draftKey === 'new_topic') {
-            let userTags = userContentLanguageCodes();
-            if (userTags && userTags.length) {
-              opts.topicTags = (opts.topicTags || []).concat([userTags[0]]);
-            }  
-          }
-          this._super(composerModel, opts);
-        }
-      })
+      }, { priority: 100 });
     });
   }
 }

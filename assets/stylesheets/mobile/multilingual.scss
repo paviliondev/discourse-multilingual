@@ -1,3 +1,24 @@
+.edit-topic-title .content-languages-selector {
+  width: calc(100vw - 20px);
+}
+
+.list-controls .category-breadcrumb.no-category {
+  flex: initial;
+  
+  &> li:not(.content-language-discovery) {
+    display: none;
+  }
+  
+  .content-languages-dropdown {
+    height: 35px;
+    margin-bottom: 0;
+  }
+}
+
+.composer-fields .content-languages-selector {
+  margin-left: 0;
+}
+
 .locale-selection {
   width: 100%;
   border-top: 1px solid $primary-low;
