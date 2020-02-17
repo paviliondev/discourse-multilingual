@@ -44,9 +44,7 @@ after_initialize do
     Multilingual::Language.setup
   end
   
-  
   ### Site changes
-  
     
   add_to_class(:site, :content_languages) do
     Multilingual::Content.all
@@ -87,7 +85,6 @@ after_initialize do
     @values ||= supported_locales.reduce([]) do |result, locale|
       if Multilingual::Interface.enabled?(locale)
         lang = Multilingual::Language.all[locale] || Multilingual::Language.all[locale.split("_")[0]]
-        puts "VALUES: #{locale}; #{lang}"
         result.push(
           name: lang ? lang['nativeName'] : locale,
           value: locale
@@ -125,7 +122,6 @@ after_initialize do
   
   ### User changes
 
-  
   if defined? register_editable_user_custom_field
     register_editable_user_custom_field :content_languages 
     register_editable_user_custom_field content_languages: []
@@ -174,9 +170,7 @@ after_initialize do
     end
   end
   
-  
   ### Topic changes
-  
   
   if SiteSetting.multilingual_enabled
     TopicQuery.add_custom_filter(:content_language) do |result, query|
@@ -295,9 +289,7 @@ after_initialize do
     end
   end
   
-  
   ### Category changes
-  
     
   add_to_serializer(:basic_category, :name) do
     Multilingual::Translation.category_names[slug] ||

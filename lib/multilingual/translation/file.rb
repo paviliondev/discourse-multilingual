@@ -58,6 +58,7 @@ class ::Multilingual::TranslationFile
   end
   
   def after_all
+    Multilingual::Language.refresh!
     Multilingual::Translation.refresh!
     Multilingual::Language.refresh!
     Multilingual.refresh_clients(@code)
