@@ -163,4 +163,8 @@ class ::Multilingual::TranslationFile
   def self.refresh!
     Multilingual::Cache.refresh(FILE_KEY)
   end
+  
+  def self.load
+    Dir.mkdir(TRANSLATION_PATH) unless Dir.exist?(TRANSLATION_PATH)
+  end
 end

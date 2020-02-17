@@ -34,6 +34,7 @@ class ::Multilingual::Translation
   end
   
   def self.setup
+    Multilingual::TranslationFile.load
     Multilingual::TranslationLocale.load
     Multilingual::Translation.refresh!
   end
