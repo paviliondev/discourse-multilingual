@@ -1,8 +1,8 @@
 class ::Multilingual::TranslationFile
   include ActiveModel::Serialization
   
-  BASE_PATH ||= "#{Rails.root}/plugins/discourse-multilingual/config/translations"
-  FILE_KEY ||= 'files'
+  TRANSLATION_PATH ||= "#{Multilingual::PLUGIN_PATH}/config/translations".freeze
+  FILE_KEY ||= 'files'.freeze
     
   attr_accessor :code, :type
     
@@ -20,44 +20,77 @@ class ::Multilingual::TranslationFile
   end
   
   def save(translations)
-    save_result = Hash.new
+    result = Hash.new
     
-    process_result = process_translations(translations)
-    save_result[:error] = process_result[:error] if process_result[:error]
+    processed = process(translations)
+    result[:error] = processed[:error] if processed[:error]
     
-    return save_result if save_result[:error]
+    return result if result[:error]
     
-    file = format(process_result[:translations])
+    file = format(processed[:translations])
+    
     File.open(path, 'w') { |f| f.write file.to_yaml }
     
-    Multilingual::TranslationFile.reset!
+    after_save
     
-    save_result
+    result
+  end
+  
+  def interface_file
+    @type === :server || @type === :client
+  end
+  
+  def after_save
+    Multilingual::TranslationLocale.register(self) if interface_file
+    Multilingual::Translation.refresh!
+    Multilingual::Language.refresh!
   end
   
   def remove
     if exists?
       File.delete(path)
-      Multilingual::TranslationFile.reset!
+      after_remove
     end
   end
   
+  def after_remove
+    Multilingual::TranslationLocale.deregister(self) if interface_file
+    Multilingual::Translation.refresh!
+    Multilingual::Language.refresh!
+  end
+  
   def path
-    BASE_PATH + "/#{filename}"
+    TRANSLATION_PATH + "/#{filename}"
   end
   
   def filename
     "#{@type.to_s}.#{@code.to_s}.yml"
   end
   
-  def process_translations(translations) 
+  def process(translations) 
     result = Hash.new
+  
+    if interface_file
+      if translations.keys.length != 1
+        result[:error] = "file format error"
+      end
+            
+      if Multilingual::Language.all[translations.keys.first].blank?
+        result[:error] = "language not supported"
+      end
+            
+      if @type === :client && 
+        (translations.values.first.keys + ['js', 'admin_js', 'wizard_js']).uniq.length != 3
+        
+        result[:error] = "file format error"
+      end
+    end
+    
+    return result if result[:error]
        
     translations.each do |key, translation|
       
-      ## Add any additional translation processing here
-      
-      if @type == :tag && SiteSetting.multilingual_tag_translations_enforce_format
+      if @type === :tag && SiteSetting.multilingual_tag_translations_enforce_format
         translations[key] = DiscourseTagging.clean_tag(translation)
       end
     end
@@ -70,10 +103,8 @@ class ::Multilingual::TranslationFile
   def format(content)
     file = Hash.new
     
-    if Multilingual::Translation::CLIENT_TYPES.include?(@type.to_s)
-      
+    if @type == :tag
       ## Format to make it easier to integrate with JsLocaleHelper
-      
       file[@code.to_s] = {
         "js" => {
           "_#{@type.to_s}" => content
@@ -87,21 +118,21 @@ class ::Multilingual::TranslationFile
   end
   
   def self.all
-    if files = Multilingual::Cache.read(FILE_KEY)
-      files
-    else
-      files = filenames.reduce([]) do |result, filename|
+    Multilingual::Cache.wrap(FILE_KEY) do
+      filenames.reduce([]) do |result, filename|
         opts = process_filename(filename)
         result.push(Multilingual::TranslationFile.new(opts)) if !opts[:error]
         result
       end
-      Multilingual::Cache.write(FILE_KEY, files)
-      files
     end
   end
   
+  def self.by_type(types)
+    all.select { |f| [*types].map(&:to_sym).include?(f.type) }
+  end
+  
   def self.filenames
-    Dir.entries(BASE_PATH)
+    Dir.entries(TRANSLATION_PATH)
   end
   
   def self.process_filename(filename)
@@ -116,10 +147,6 @@ class ::Multilingual::TranslationFile
     if !Multilingual::Translation.validate_type(result[:type])
       result[:error] = 'invalid type'
     end
-    
-    if !Multilingual::Locale.supported.include?(result[:code])
-      result[:error] = "locale not supported"
-    end
 
     if result[:ext] != 'yml'
       result[:error] = "incorrect format"
@@ -128,8 +155,7 @@ class ::Multilingual::TranslationFile
     result
   end
   
-  def self.reset!
-    Multilingual::Cache.delete(FILE_KEY)
-    JsLocaleHelper.clear_cache!
+  def self.refresh!
+    Multilingual::Cache.refresh(FILE_KEY)
   end
 end

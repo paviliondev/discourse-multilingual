@@ -10,4 +10,18 @@ class Multilingual::Cache
   def self.delete(key)
     Discourse.cache.delete("#{Multilingual::PLUGIN_NAME}_#{key}")
   end
+  
+  def self.wrap(key, &block)
+    if cached = read(key)
+      cached
+    else
+      result = block.call()
+      write(key, result)
+      result
+    end
+  end
+  
+  def self.refresh(keys)
+    [*keys].each { |key| self.delete(key) }
+  end
 end

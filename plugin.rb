@@ -15,6 +15,8 @@ if respond_to?(:register_svg_icon)
   register_svg_icon "save"
 end
 
+Rails.application.config.i18n.load_path += Dir["#{Rails.root}/plugins/discourse-multilingual/config/translations/{client,server}.*.yml"]
+
 after_initialize do    
   %w[
     ../lib/multilingual/engine.rb
@@ -22,9 +24,9 @@ after_initialize do
     ../lib/multilingual/language/content_tag.rb
     ../lib/multilingual/language/content.rb
     ../lib/multilingual/language/interface.rb
-    ../lib/multilingual/language/locale.rb
     ../lib/multilingual/language.rb
     ../lib/multilingual/translation/file.rb
+    ../lib/multilingual/translation/locale.rb
     ../lib/multilingual/translation.rb
     ../config/routes.rb
     ../app/serializers/multilingual/basic_language_serializer.rb
@@ -37,10 +39,12 @@ after_initialize do
     load File.expand_path(path, __FILE__)
   end
   
+  Multilingual::Translation.setup
+  Multilingual::Language.setup
   
   ### Site changes
   
-  
+    
   add_to_class(:site, :content_languages) do
     Multilingual::Content.all
   end
@@ -53,33 +57,54 @@ after_initialize do
     ).as_json
   end
   
+  module ::I18nMultilingualExtension
+    def ensure_all_loaded!
+      super
+      
+      if SiteSetting.multilingual_enabled
+        Multilingual::Translation.refresh_server!
+        Multilingual::Translation.load_server(locale)
+      end
+    end
+    
+    def available_locales
+      result = super
+      
+      if SiteSetting.multilingual_enabled
+        result = result.select { |l| Multilingual::Interface.enabled?(l) }
+      end
+      
+      result
+    end
+  end
+  
+  module ::I18n
+    class << self
+      prepend I18nMultilingualExtension
+    end
+  end
+  
   add_class_method(:locale_site_setting, :valid_value?) do |val|
     supported_locales.include?(val) && Multilingual::Interface.enabled?(val)
   end
   
-  LocaleSiteSetting.singleton_class.send(:alias_method, :values_core, :values)
-
   add_class_method(:locale_site_setting, :values) do
-    @values ||= values_core.select { |v| Multilingual::Interface.enabled?(v[:locale]) }
-  end
-  
-  I18n.singleton_class.send(:alias_method, :ensure_all_loaded_core!, :ensure_all_loaded!)
-  I18n.singleton_class.send(:alias_method, :available_locales_core, :available_locales)
-  
-  add_class_method(:i18n, :ensure_all_loaded!) do
-    ensure_all_loaded_core!
-    Multilingual::Translation.reset_server!
-    Multilingual::Translation.load_server(locale)
-  end
-  
-  add_class_method(:i18n, :available_locales) do
-    available_locales_core.select { |l| Multilingual::Interface.enabled?(l) }
+    @values ||= supported_locales.reduce([]) do |result, locale|
+      if Multilingual::Interface.enabled?(locale)
+        lang = language_names[locale] || language_names[locale.split("_")[0]]
+        result.push(
+          name: lang ? lang['nativeName'] : locale,
+          value: locale
+        )
+      end
+      result
+    end
   end
   
   add_class_method(:js_locale_helper, :plugin_client_files) do |locale_str|
     Dir[
       "#{Rails.root}/plugins/*/config/locales/client.#{locale_str}.yml",
-      "#{Multilingual::TranslationFile::BASE_PATH}/{#{Multilingual::Translation::CLIENT_TYPES.join(',')}}.#{locale_str}.yml"
+      "#{Multilingual::TranslationFile::TRANSLATION_PATH}/{#{Multilingual::Translation::CLIENT.join(',')}}.#{locale_str}.yml"
     ]
   end
   
@@ -97,27 +122,20 @@ after_initialize do
   end
     
   add_to_class(:user, :effective_locale) do
-    if SiteSetting.allow_user_locale &&
-       self.locale.present? &&
-       Multilingual::Interface.enabled?(self.locale)
+    if SiteSetting.allow_user_locale && self.locale.present? && Multilingual::Interface.enabled?(self.locale)
       self.locale
     else
       SiteSetting.default_locale
     end
   end
   
-  add_to_class(:user, :content_languages) do
-    content_languages = self.custom_fields['content_languages'] || []
-    [*content_languages].select { |l| Multilingual::Content.enabled?(l) }
+  add_to_serializer(:user, :locale) do
+    Multilingual::Interface.enabled?(object.locale) ? object.locale : nil
   end
   
-  ## This is necessary due to the workaround for jquery
-  ## ajax added in multilingual-initializer
-  on(:user_updated) do |user|
-    if user.custom_fields['content_languages'].blank?
-      user.custom_fields['content_languages'] = []
-      user.save_custom_fields(true)
-    end
+  add_to_class(:user, :content_languages) do
+    content_languages = self.custom_fields['content_languages'] || []
+    [*content_languages].select{ |l| Multilingual::Content.enabled?(l) }
   end
   
   add_to_serializer(:current_user, :content_languages) do
@@ -128,6 +146,15 @@ after_initialize do
           root: false
         )
       end
+    end
+  end
+  
+  ## This is necessary due to the workaround for jquery
+  ## ajax added in multilingual-initializer
+  on(:user_updated) do |user|
+    if user.custom_fields['content_languages'].blank?
+      user.custom_fields['content_languages'] = []
+      user.save_custom_fields(true)
     end
   end
   
@@ -220,36 +247,35 @@ after_initialize do
     end
   end
   
-  DiscourseTagging.singleton_class.send(:alias_method, :filter_allowed_tags_core, :filter_allowed_tags)
-  
-  add_class_method(:discourse_tagging, :filter_allowed_tags) do |guardian, opts = {}|
-    result = filter_allowed_tags_core(guardian, opts)
-          
-    if opts[:for_input]
-      result.select { |tag| Multilingual::ContentTag.names.exclude? tag.name }
-    else
-      result
+  module DiscourseTaggingMultilingualExtension
+    def filter_allowed_tags(guardian, opts = {})
+      result = super(guardian, opts)
+      
+      if SiteSetting.multilingual_enabled
+        if opts[:for_input]
+          result.select { |tag| Multilingual::ContentTag.names.exclude? tag.name }
+        else
+          result
+        end
+      end
+    end
+  end
+    
+  module ::DiscourseTagging
+    class << self
+      prepend DiscourseTaggingMultilingualExtension
     end
   end
   
   
   ### Category changes
   
-  
-  SiteCategorySerializer.send(:alias_method, :name_core, :name)
-  
-  add_to_serializer(:site_category, :name) do
-    Multilingual::Translation.category_names[slug] || name_core
-  end
-  
-  add_to_serializer(:site_category, :name_translated) do
-    Multilingual::Translation.category_names[slug].present?
-  end
-  
-  BasicCategorySerializer.send(:alias_method, :name_core, :name)
-  
+    
   add_to_serializer(:basic_category, :name) do
-    Multilingual::Translation.category_names[slug] || name_core
+    Multilingual::Translation.category_names[slug] ||
+    (object.uncategorized? ? 
+    I18n.t('uncategorized_category_name', locale: SiteSetting.default_locale) :
+    object.name)
   end
   
   add_to_serializer(:basic_category, :name_translated) do
@@ -265,22 +291,22 @@ after_initialize do
   # as it is filtering a limited list of 100 featured topics, may be empty when
   # relevant topics in the user's content-language remain in the category.
   ##
-  CategoryList.send(:alias_method, :trim_results_core, :trim_results)
   
-  add_to_class(:category_list, :trim_results) do
-    @categories.each do |c|
-      next if c.displayable_topics.blank?
-      c.displayable_topics = c.displayable_topics.select do |topic|
-        Multilingual::ContentTag.filter(topic).any?
+  module CategoryListMultilingualExtension
+    def trim_results
+      if SiteSetting.multilingual_enabled
+        @categories.each do |c|
+          next if c.displayable_topics.blank?
+          c.displayable_topics = c.displayable_topics.select do |topic|
+            Multilingual::ContentTag.filter(topic).any?
+          end
+        end
       end
+      super
     end
-    trim_results_core
   end
   
-  
-  ### Setup
-  
-  
-  Multilingual::Language.setup!
-  Multilingual::Translation.setup!
+  class ::CategoryList
+    prepend CategoryListMultilingualExtension
+  end
 end

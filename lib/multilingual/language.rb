@@ -6,33 +6,51 @@ class ::Multilingual::Language
   
   attr_accessor :code,
                 :name,
+                :nativeName,
                 :content_enabled,
                 :interface_enabled,
                 :interface_supported,
                 :custom
   
-  def initialize(attrs)
-    @code = attrs[:code].to_s
-    @name = attrs[:name].to_s
+  def initialize(code, opts = {})
+    opts = opts.is_a?(String) ? { name: opts } : opts.with_indifferent_access
+    
+    @code = code.to_s
+    @name = opts[:name].to_s
+    @nativeName = opts[:nativeName].to_s
     @content_enabled = Multilingual::Content.enabled?(@code)
     @interface_enabled = Multilingual::Interface.enabled?(@code)
     @interface_supported = Multilingual::Interface.supported?(@code)
     @custom = Multilingual::Language.is_custom?(@code)
   end
   
-  def self.create(code, name)
-    if PluginStore.set(Multilingual::PLUGIN_NAME, "#{CUSTOM_KEY}_#{code.to_s}", name.to_s)
-      Multilingual::Language.reload!
+  def self.create(code, opts = {}, run_hooks: false)
+    if PluginStore.set(Multilingual::PLUGIN_NAME, "#{CUSTOM_KEY}_#{code.to_s}", opts)
+      after_create([code]) if run_hooks
     end
   end
   
-  def self.destroy(code)
+  def self.destroy(code, run_hooks: false)
     set_exclusion(code, 'interface', true)
     set_exclusion(code, 'content', true)
     
     if PluginStore.remove(Multilingual::PLUGIN_NAME, "#{CUSTOM_KEY}_#{code.to_s}")
-      Multilingual::Language.reload!
+      after_destroy([code]) if run_hooks
     end
+  end
+  
+  def self.after_create(created)
+    Multilingual::Language.refresh!
+    Multilingual::ContentTag.bulk_update(created, "create")
+    Multilingual::TranslationLocale.load
+    Multilingual::Language.refresh!
+  end
+  
+  def self.after_destroy(destroyed)
+    Multilingual::Language.refresh!
+    Multilingual::ContentTag.bulk_update(destroyed, "destroy")
+    Multilingual::TranslationLocale.load
+    Multilingual::Language.refresh!
   end
    
   def self.update(language)
@@ -46,29 +64,53 @@ class ::Multilingual::Language
       end
     end
     
-    Multilingual::Language.reload!
+    self.refresh!
   end
   
   def self.get(codes)
-    [*codes].map do |code|
-      self.new(code: code, name: Multilingual::Locale.all[code])
-    end      
+    [*codes].map { |code| self.new(code, self.all[code]) }
+  end
+  
+  def self.list
+    self.all.map { |k, v| self.new(k, v) }.sort_by(&:code)
+  end
+  
+  def self.exists?(code)
+    self.all[code.to_s].present?
   end
   
   def self.all
-    if languages = Multilingual::Cache.read(LANGUAGE_KEY)
-      languages
-    else
-      languages = Multilingual::Locale.all.map do |k, v|
-        Multilingual::Language.new(code: k, name: v)
-      end.sort_by(&:code)
-      Multilingual::Cache.write(LANGUAGE_KEY, languages)
-      languages
+    Multilingual::Cache.wrap(LANGUAGE_KEY) do
+      base_languages.merge(custom_languages)
     end
   end
   
+  def self.custom_languages
+    Multilingual::Cache.wrap(CUSTOM_KEY) do 
+      result = {}
+      
+      PluginStoreRow.where("
+        plugin_name = '#{Multilingual::PLUGIN_NAME}' AND
+        key LIKE '#{Multilingual::Language::CUSTOM_KEY}_%'
+      ").each do |record|
+        begin
+          code = record.key.split("#{Multilingual::Language::CUSTOM_KEY}_").last
+          result[code] = JSON.parse(record.value)
+        rescue JSON::ParserError => e
+          puts e.message
+        end
+      end
+      
+      result
+    end
+  end
+  
+  def self.base_languages
+    ::LocaleSiteSetting.language_names
+  end
+  
   def self.filter(params = {})
-    languages = self.all
+    languages = self.list
         
     if params[:query].present?
       q = params[:query].downcase
@@ -84,7 +126,7 @@ class ::Multilingual::Language
     languages = languages.sort_by do |l|
       val = l.send(type)
       
-      if [:code, :name].include?(type)
+      if [:code, :name, :nativeName].include?(type)
         val
       elsif [:content_enabled, :custom].include?(type)
         ( val ? 0 : 1 )
@@ -101,16 +143,17 @@ class ::Multilingual::Language
     languages
   end
   
-  def self.reload!
-    [
-      Multilingual::Locale::CUSTOM_KEY,
+  def self.refresh!
+    Multilingual::Cache.refresh([
+      Multilingual::Interface::INTERFACE_KEY,
       Multilingual::Interface::EXCLUSION_KEY,
-      Multilingual::ContentTag::NAME_KEY,
       Multilingual::Content::EXCLUSION_KEY,
       Multilingual::Content::CONTENT_KEY,
-      Multilingual::Language::LANGUAGE_KEY
-    ].each { |key| Multilingual::Cache.delete(key) }
-    
+      Multilingual::Language::CUSTOM_KEY,
+      Multilingual::Language::LANGUAGE_KEY,
+      Multilingual::ContentTag::NAME_KEY
+    ])
+        
     true
   end
   
@@ -135,64 +178,60 @@ class ::Multilingual::Language
   end
   
   def self.is_custom?(code)
-    Multilingual::Locale.custom.keys.include?(code.to_s)
+    custom_languages.keys.include?(code.to_s)
   end
   
   def self.bulk_create(languages = {})
-    added = []
+    created = []
     
     PluginStoreRow.transaction do
       languages.each do |k, v|
-        if Multilingual::Language.create(k, v)
-          added.push(k)
+        if self.create(k, v)
+          created.push(k)
         end
       end
       
-      Multilingual::ContentTag.bulk_update(added, "create")
+      after_create(created)
     end
-    
-    Multilingual::Language.reload!
-    
-    Multilingual::Language.get(added)
+        
+    self.get(created)
   end
   
   ## TODO make this more targeted
   def self.bulk_update(languages)
     PluginStoreRow.transaction do  
-      [*languages].each { |l| Multilingual::Language.update(l) }
+      [*languages].each { |l| update(l) }
       
       Multilingual::ContentTag.bulk_update_all
     end
     
-    Multilingual::Language.reload!
+    self.refresh!
     
-    languages.map { |l| Multilingual::Language.get(l['code']) }
+    languages.map { |l| get(l['code']) }
   end
   
   def self.bulk_destroy(codes)
-    removed = []
+    destroyed = []
     
     PluginStoreRow.transaction do
       [*codes].each do |c|
-        if Multilingual::Language.destroy(c)
-          removed.push(c)
+        if self.destroy(c)
+          destroyed.push(c)
         end
       end
       
-      Multilingual::ContentTag.bulk_update(removed, "destroy")
+      after_destroy(destroyed)
     end
-    
-    Multilingual::Language.reload!
-    
-    removed
+        
+    destroyed
   end
   
-  def self.setup!
+  def self.setup
     extensions = SiteSetting.authorized_extensions_for_staff.split('|')
     extensions.push('yml') unless extensions.include?('yml')
     SiteSetting.authorized_extensions_for_staff = extensions.join('|')
     
+    Multilingual::Language.refresh!
     Multilingual::ContentTag.bulk_update_all
-    Multilingual::Language.reload!
   end
 end

@@ -14,6 +14,8 @@ export default {
     Composer.serializeOnCreate('content_language_tags', 'contentLanguageTags');
     Composer.serializeToTopic('content_language_tags', 'topic.contentLanguageTags');
     
+    console.log(I18n.currentLocale())
+    
     I18n.translate_tag = function(tag) {
       let locale = I18n.currentLocale().split('_')[0];
       return I18n.lookup(`_tag.${tag}`, { locale }) || tag;
@@ -38,8 +40,12 @@ export default {
              
             return this._super().then(result => {
               const contentLanguages = this.site.content_languages;
-              const rawUserLanguages = this.model.custom_fields.content_languages;
+              let rawUserLanguages = this.model.custom_fields.content_languages;
               let userLanguages = [];
+              
+              if (typeof rawUserLanguages === 'string') {
+                rawUserLanguages = [rawUserLanguages];
+              }
                             
               if (rawUserLanguages) {
                 userLanguages = rawUserLanguages.map(code => {

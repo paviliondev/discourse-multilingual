@@ -67,6 +67,7 @@ class Multilingual::AdminLanguagesController < Admin::AdminController
       languages: [
         :code,
         :name,
+        :nativeName,
         :custom,
         :content_enabled,
         :interface_enabled,

@@ -21,6 +21,7 @@ MultilingualLanguage.reopenClass({
     return ajax(LanguagesPath, {
       data: Object.assign(getParams(), params)
     }).then(result => {
+      console.log(result);
       return result.map(l => MultilingualLanguage.create(l));
     }).catch(popupAjaxError)
   },

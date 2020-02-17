@@ -12,27 +12,16 @@ class ::Multilingual::Content
   end
   
   def self.all
-    if content = Multilingual::Cache.read(CONTENT_KEY)
-      content
-    else
-      content = Multilingual::Locale.all.select do |k, v|
+    Multilingual::Cache.wrap(CONTENT_KEY) do
+      Multilingual::Language.all.select do |k, v|
         self.exclusions.exclude? k
-      end.map do |k, v|
-        Multilingual::Content.new(k, v)
-      end.sort_by(&:code)
-      Multilingual::Cache.write(CONTENT_KEY, content)
-      content
+      end.map { |k, v| self.new(k, v['nativeName']) }.sort_by(&:code)
     end
   end
   
   def self.exclusions
-    if exclusions = Multilingual::Cache.read(EXCLUSION_KEY)
-      exclusions
-    else
-      data = PluginStore.get(Multilingual::PLUGIN_NAME, EXCLUSION_KEY) || ''
-      exclusions = data ? [*data.split(',')] : []
-      Multilingual::Cache.write(EXCLUSION_KEY, exclusions)
-      exclusions
+    Multilingual::Cache.wrap(EXCLUSION_KEY) do
+      [*(PluginStore.get(Multilingual::PLUGIN_NAME, EXCLUSION_KEY) || '').split(',')]
     end
   end
   

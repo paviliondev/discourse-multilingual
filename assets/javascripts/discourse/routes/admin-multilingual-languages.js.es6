@@ -7,6 +7,7 @@ export default Discourse.Route.extend({
   },
   
   setupController(controller, model) {
+    console.log('model: ', model);
     controller.set('languages', model);
     controller.setupObservers();
   }

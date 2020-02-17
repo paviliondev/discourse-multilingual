@@ -21,6 +21,7 @@ en:
         custom: "Custom"
         base: "Base"
         name: "Name"
+        native_name: "Native Name"
         content: "Content"
         interface: "Interface"
         type: "Type"

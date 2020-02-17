@@ -3,7 +3,8 @@
     {{text-field value=query placeholder=queryPlaceholder}}
     
     <div class="custom-only">
-      {{input type="checkbox" checked=customOnly}}<span>{{i18n 'multilingual.languages.custom_only'}}</span>
+      {{input type="checkbox" checked=customOnly}}
+      <span>{{i18n 'multilingual.languages.custom_only'}}</span>
     </div>
   </div>
   
@@ -26,12 +27,13 @@
   {{loading-spinner}}
 {{else}}
   {{#if anyLanguages}}
-    {{admin-language-list type="custom"
-                          languages=filteredLanguages
-                          order=order
-                          ascending=ascending
-                          updatedLanguages=updatedLanguages
-                          updateLanguages=(action "updateLanguages")}}
+    {{admin-language-list
+      type="custom"
+      languages=filteredLanguages
+      order=order
+      ascending=ascending
+      updatedLanguages=updatedLanguages
+      updateLanguages=(action "updateLanguages")}}
   {{else}}
     <p>{{i18n 'search.no_results'}}</p>
   {{/if}}

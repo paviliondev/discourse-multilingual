@@ -9,7 +9,7 @@ describe Multilingual::Language do
   end
   
   before(:each) do
-    Multilingual::Language.reload!
+    Multilingual::Language.refresh!
   end
   
   context 'custom language' do
@@ -90,8 +90,8 @@ describe Multilingual::Language do
   
   context 'all' do
     it 'should return all languages' do
-      Multilingual::Language.reload!
-      languages = Multilingual::Language.all
+      Multilingual::Language.refresh!
+      languages = Multilingual::Language.list
       expect(languages.length).to eq(187)
       expect(languages.first.code).to eq('aa')
       expect(languages.first.name).to eq('Afaraf')
@@ -147,21 +147,21 @@ describe Multilingual::Language do
   context 'set_exclusion' do    
     it 'should add content exclusions' do
       Multilingual::Language.set_exclusion('en', 'content', false)
-      Multilingual::Language.reload!
+      Multilingual::Language.refresh!
       expect(Multilingual::Content.exclusions).to include('en')
     end
     
     it 'should add interface exclusions' do
       Multilingual::Language.set_exclusion('sl', 'interface', false)
-      Multilingual::Language.reload!
+      Multilingual::Language.refresh!
       expect(Multilingual::Interface.exclusions).to include('sl')
     end
     
     it 'should remove exclusions' do
       Multilingual::Language.set_exclusion('sv', 'interface', false)
-      Multilingual::Language.reload!
+      Multilingual::Language.refresh!
       Multilingual::Language.set_exclusion('sv', 'interface', true)
-      Multilingual::Language.reload!
+      Multilingual::Language.refresh!
       expect(Multilingual::Interface.exclusions).not_to include('sv')
     end
   end
@@ -172,8 +172,8 @@ describe Multilingual::Language do
     end
     
     it 'should create custom languages' do
-      expect(Multilingual::Language.all.map(&:code)).to include("cus1")
-      expect(Multilingual::Language.all.map(&:code)).to include("cus2")
+      expect(Multilingual::Language.list.map(&:code)).to include("cus1")
+      expect(Multilingual::Language.list.map(&:code)).to include("cus2")
     end
     
     it 'should create content tags for the custom languages' do
@@ -197,8 +197,8 @@ describe Multilingual::Language do
     end
     
     it 'should destroy custom languages' do
-      expect(Multilingual::Language.all.map(&:code)).not_to include("cus1")
-      expect(Multilingual::Language.all.map(&:code)).not_to include("cus2")
+      expect(Multilingual::Language.list.map(&:code)).not_to include("cus1")
+      expect(Multilingual::Language.list.map(&:code)).not_to include("cus2")
     end
     
     it 'should destroy associated custom language tags' do
