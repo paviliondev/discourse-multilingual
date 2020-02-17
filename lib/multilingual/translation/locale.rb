@@ -62,6 +62,7 @@ class ::Multilingual::TranslationLocale
   def self.refresh!
     LocaleSiteSetting.reset!
     JsLocaleHelper.clear_cache!
-    SiteSetting.refresh!
+    Discourse.cache.delete(SiteSettingExtension.client_settings_cache_key)
+    Site.clear_anon_cache!
   end
 end

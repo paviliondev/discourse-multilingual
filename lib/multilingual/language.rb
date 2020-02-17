@@ -143,8 +143,7 @@ class ::Multilingual::Language
       end
     end
         
-    if params[:order].present? && 
-       !ActiveModel::Type::Boolean.new.cast(params[:ascending])
+    if params[:order].present? && !ActiveModel::Type::Boolean.new.cast(params[:ascending])
       languages = languages.reverse
     end
                     
