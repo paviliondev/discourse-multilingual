@@ -36,6 +36,12 @@ ol.category-breadcrumb li.content-language-discovery {
   color: rgba(#333, 0.7);
 }
 
+.locale-selection-container {
+  position: fixed;
+  right: 40px;
+  bottom: 40px;
+}
+
 .locale-selection {
   position: relative;
   margin-top: 40px;

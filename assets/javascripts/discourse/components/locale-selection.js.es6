@@ -6,7 +6,7 @@ export default Ember.Component.extend({
 
   @on('init')
   setup() {
-    const localeValues = this.siteSettings.multilingual_locale_switcher_default.split(',');
+    const localeValues = this.siteSettings.multilingual_language_switcher_visible.split('|');
     const availableLocales = JSON.parse(this.siteSettings.available_locales);
     let visibleLocales = [];
     let hiddenLocales = [];
@@ -18,7 +18,7 @@ export default Ember.Component.extend({
         hiddenLocales.push(l);
       }
     });
-
+    
     this.setProperties({ visibleLocales, hiddenLocales });
   },
 

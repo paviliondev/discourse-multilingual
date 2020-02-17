@@ -26,6 +26,6 @@ class ::Multilingual::Content
   end
   
   def self.enabled?(code)
-    self.exclusions.exclude?(code)
+    Multilingual::Language.exists?(code) && self.exclusions.exclude?(code)
   end
 end

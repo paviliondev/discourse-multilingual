@@ -40,12 +40,6 @@ class ::Multilingual::TranslationFile
     @type === :server || @type === :client
   end
   
-  def after_save
-    Multilingual::TranslationLocale.register(self) if interface_file
-    Multilingual::Translation.refresh!
-    Multilingual::Language.refresh!
-  end
-  
   def remove
     if exists?
       File.delete(path)
@@ -53,10 +47,20 @@ class ::Multilingual::TranslationFile
     end
   end
   
+  def after_save
+    Multilingual::TranslationLocale.register(self) if interface_file
+    after_all
+  end
+  
   def after_remove
     Multilingual::TranslationLocale.deregister(self) if interface_file
+    after_all
+  end
+  
+  def after_all
     Multilingual::Translation.refresh!
     Multilingual::Language.refresh!
+    Multilingual.refresh_clients(@code)
   end
   
   def path
@@ -67,7 +71,7 @@ class ::Multilingual::TranslationFile
     "#{@type.to_s}.#{@code.to_s}.yml"
   end
   
-  def process(translations) 
+  def process(translations)
     result = Hash.new
   
     if interface_file

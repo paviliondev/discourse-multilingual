@@ -9,11 +9,14 @@ class ::Multilingual::Interface
   end
   
   def self.enabled?(code)
-    Multilingual::Interface.exclusions.exclude?(code.to_s)
+    code = code.to_s
+    Multilingual::Language.exists?(code) &&
+    self.supported?(code) &&
+    self.exclusions.exclude?(code)
   end
   
   def self.supported?(code)
-    Multilingual::Interface.all.include?(code.to_s)
+    self.all.include?(code.to_s)
   end
   
   def self.all
@@ -23,6 +26,6 @@ class ::Multilingual::Interface
   end
   
   def self.list_enabled
-    self.all.select { |l| Multilingual::Interface.enabled?(l) }
+    self.all.select { |l| self.enabled?(l) }
   end
 end 

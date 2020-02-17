@@ -39,8 +39,11 @@ after_initialize do
     load File.expand_path(path, __FILE__)
   end
   
-  Multilingual::Translation.setup
-  Multilingual::Language.setup
+  if SiteSetting.multilingual_enabled
+    Multilingual::Translation.setup
+    Multilingual::Language.setup
+  end
+  
   
   ### Site changes
   
@@ -61,26 +64,18 @@ after_initialize do
     def ensure_all_loaded!
       super
       
-      if SiteSetting.multilingual_enabled
-        Multilingual::Translation.refresh_server!
-        Multilingual::Translation.load_server(locale)
-      end
+      Multilingual::Translation.refresh_server!
+      Multilingual::Translation.load_server(locale)
     end
     
     def available_locales
-      result = super
-      
-      if SiteSetting.multilingual_enabled
-        result = result.select { |l| Multilingual::Interface.enabled?(l) }
-      end
-      
-      result
+      super.select { |l| Multilingual::Interface.enabled?(l) }
     end
   end
   
   module ::I18n
     class << self
-      prepend I18nMultilingualExtension
+      prepend I18nMultilingualExtension if SiteSetting.multilingual_enabled
     end
   end
   
@@ -91,7 +86,8 @@ after_initialize do
   add_class_method(:locale_site_setting, :values) do
     @values ||= supported_locales.reduce([]) do |result, locale|
       if Multilingual::Interface.enabled?(locale)
-        lang = language_names[locale] || language_names[locale.split("_")[0]]
+        lang = Multilingual::Language.all[locale] || Multilingual::Language.all[locale.split("_")[0]]
+        puts "VALUES: #{locale}; #{lang}"
         result.push(
           name: lang ? lang['nativeName'] : locale,
           value: locale
@@ -108,6 +104,24 @@ after_initialize do
     ]
   end
   
+  module MultilingualApplicationControllerExtension
+    def set_locale
+      if SiteSetting.multilingual_language_switcher != "off" &&
+         !current_user &&
+         cookies[:discourse_guest_locale] &&
+         I18n.locale_available?(cookies[:discourse_guest_locale])
+        
+        I18n.locale = cookies[:discourse_guest_locale]
+        I18n.ensure_all_loaded!
+      else
+        super
+      end
+    end
+  end
+  
+  class ::ApplicationController
+    prepend MultilingualApplicationControllerExtension if SiteSetting.multilingual_enabled
+  end
   
   ### User changes
 
@@ -122,7 +136,9 @@ after_initialize do
   end
     
   add_to_class(:user, :effective_locale) do
-    if SiteSetting.allow_user_locale && self.locale.present? && Multilingual::Interface.enabled?(self.locale)
+    if SiteSetting.allow_user_locale &&
+      self.locale.present? &&
+      Multilingual::Interface.enabled?(self.locale)
       self.locale
     else
       SiteSetting.default_locale
@@ -162,11 +178,13 @@ after_initialize do
   ### Topic changes
   
   
-  TopicQuery.add_custom_filter(:content_language) do |result, query|
-    if query.user && query.user.content_languages.any?
-      result.joins(:tags).where("lower(tags.name) in (?)", query.user.content_languages)
-    else
-      result
+  if SiteSetting.multilingual_enabled
+    TopicQuery.add_custom_filter(:content_language) do |result, query|
+      if query.user && query.user.content_languages.any?
+        result.joins(:tags).where("lower(tags.name) in (?)", query.user.content_languages)
+      else
+        result
+      end
     end
   end
   
@@ -178,10 +196,19 @@ after_initialize do
     Multilingual::ContentTag.filter(topic.tags).map(&:name)
   end
   
-  TopicViewSerializer.send(:alias_method, :tags_core, :tags)
-  TopicListItemSerializer.send(:alias_method, :tags_core, :tags)
-  add_to_serializer(:topic_view, :tags) { tags_core - content_language_tags }
-  add_to_serializer(:topic_list_item, :tags) { tags_core - content_language_tags }
+  module TopicSerializerMultilingualExtension
+    def tags
+      super - content_language_tags
+    end
+  end
+  
+  class ::TopicViewSerializer
+    prepend TopicSerializerMultilingualExtension if SiteSetting.multilingual_enabled
+  end
+  
+  class ::TopicListItemSerializer
+    prepend TopicSerializerMultilingualExtension if SiteSetting.multilingual_enabled
+  end
   
   add_to_class(:topic, :content_languages) do
     if custom_fields['content_languages']
@@ -205,19 +232,22 @@ after_initialize do
     Multilingual::ContentTag.add_to_topic(topic, content_language_tags)
   end
   
-  tags_cb = ::PostRevisor.tracked_topic_fields[:tags]
   
-  ::PostRevisor.tracked_topic_fields[:tags] = lambda do |tc, tags|
-    content_languages = tc.topic.content_languages
-    combined = (tags + content_languages).uniq
-    tc.check_result(DiscourseTagging.validate_require_language_tag(tc.guardian, tc.topic, combined))
-    tags_cb.call(tc, combined)
-  end
-  
-  ::PostRevisor.track_topic_field(:content_language_tags) do |tc, content_language_tags|
-    content_language_tags = [*content_language_tags]
-    tc.check_result(DiscourseTagging.validate_require_language_tag(tc.guardian, tc.topic, content_language_tags))
-    tc.check_result(Multilingual::ContentTag.add_to_topic(tc.topic, content_language_tags))
+  if SiteSetting.multilingual_enabled
+    tags_cb = ::PostRevisor.tracked_topic_fields[:tags]
+    
+    ::PostRevisor.tracked_topic_fields[:tags] = lambda do |tc, tags|
+      content_languages = tc.topic.content_languages
+      combined = (tags + content_languages).uniq
+      tc.check_result(DiscourseTagging.validate_require_language_tag(tc.guardian, tc.topic, combined))
+      tags_cb.call(tc, combined)
+    end
+    
+    ::PostRevisor.track_topic_field(:content_language_tags) do |tc, content_language_tags|
+      content_language_tags = [*content_language_tags]
+      tc.check_result(DiscourseTagging.validate_require_language_tag(tc.guardian, tc.topic, content_language_tags))
+      tc.check_result(Multilingual::ContentTag.add_to_topic(tc.topic, content_language_tags))
+    end
   end
   
   add_to_class(:guardian, :topic_requires_language_tag) do
@@ -251,19 +281,17 @@ after_initialize do
     def filter_allowed_tags(guardian, opts = {})
       result = super(guardian, opts)
       
-      if SiteSetting.multilingual_enabled
-        if opts[:for_input]
-          result.select { |tag| Multilingual::ContentTag.names.exclude? tag.name }
-        else
-          result
-        end
+      if opts[:for_input]
+        result.select { |tag| Multilingual::ContentTag.names.exclude? tag.name }
+      else
+        result
       end
     end
   end
     
   module ::DiscourseTagging
     class << self
-      prepend DiscourseTaggingMultilingualExtension
+      prepend DiscourseTaggingMultilingualExtension if SiteSetting.multilingual_enabled
     end
   end
   
@@ -307,6 +335,6 @@ after_initialize do
   end
   
   class ::CategoryList
-    prepend CategoryListMultilingualExtension
+    prepend CategoryListMultilingualExtension if SiteSetting.multilingual_enabled
   end
 end

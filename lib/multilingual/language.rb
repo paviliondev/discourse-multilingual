@@ -13,11 +13,12 @@ class ::Multilingual::Language
                 :custom
   
   def initialize(code, opts = {})
-    opts = opts.is_a?(String) ? { name: opts } : opts.with_indifferent_access
-    
     @code = code.to_s
+    
+    opts = opts.is_a?(String) ? { name: opts } : opts.with_indifferent_access
     @name = opts[:name].to_s
     @nativeName = opts[:nativeName].to_s
+    
     @content_enabled = Multilingual::Content.enabled?(@code)
     @interface_enabled = Multilingual::Interface.enabled?(@code)
     @interface_supported = Multilingual::Interface.supported?(@code)
@@ -39,21 +40,7 @@ class ::Multilingual::Language
     end
   end
   
-  def self.after_create(created)
-    Multilingual::Language.refresh!
-    Multilingual::ContentTag.bulk_update(created, "create")
-    Multilingual::TranslationLocale.load
-    Multilingual::Language.refresh!
-  end
-  
-  def self.after_destroy(destroyed)
-    Multilingual::Language.refresh!
-    Multilingual::ContentTag.bulk_update(destroyed, "destroy")
-    Multilingual::TranslationLocale.load
-    Multilingual::Language.refresh!
-  end
-   
-  def self.update(language)
+  def self.update(language, run_hooks: false)
     language = language.with_indifferent_access
         
     ['interface', 'content'].each do |type|
@@ -64,7 +51,28 @@ class ::Multilingual::Language
       end
     end
     
-    self.refresh!
+    after_update([language.code]) if run_hooks
+  end
+  
+  def self.after_create(created)
+    Multilingual::ContentTag.bulk_update(created, "create")
+    after_all(created)
+  end
+  
+  def self.after_destroy(destroyed)
+    Multilingual::ContentTag.bulk_update(destroyed, "destroy")
+    after_all(destroyed)
+  end
+  
+  def self.after_update(updated)
+    Multilingual::ContentTag.bulk_update_all
+    after_all(updated)
+  end
+  
+  def self.after_all(codes)
+    Multilingual::Language.refresh!
+    Multilingual::Translation.setup
+    Multilingual.refresh_clients(codes)
   end
   
   def self.get(codes)
@@ -186,28 +194,30 @@ class ::Multilingual::Language
     
     PluginStoreRow.transaction do
       languages.each do |k, v|
-        if self.create(k, v)
-          created.push(k)
-        end
+        self.create(k, v)
+        created.push(k)
       end
       
       after_create(created)
     end
         
-    self.get(created)
+    created
   end
   
   ## TODO make this more targeted
   def self.bulk_update(languages)
+    updated = []
+    
     PluginStoreRow.transaction do  
-      [*languages].each { |l| update(l) }
+      [*languages].each do |l|
+        self.update(l)
+        updated.push(l['code'])
+      end
       
-      Multilingual::ContentTag.bulk_update_all
+      after_update(updated)
     end
     
-    self.refresh!
-    
-    languages.map { |l| get(l['code']) }
+    updated  
   end
   
   def self.bulk_destroy(codes)
@@ -215,9 +225,8 @@ class ::Multilingual::Language
     
     PluginStoreRow.transaction do
       [*codes].each do |c|
-        if self.destroy(c)
-          destroyed.push(c)
-        end
+        self.destroy(c)
+        destroyed.push(c)
       end
       
       after_destroy(destroyed)

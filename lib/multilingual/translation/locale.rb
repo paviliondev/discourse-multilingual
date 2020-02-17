@@ -5,9 +5,7 @@ class ::Multilingual::TranslationLocale
     "#{JS_PATH}/#{code.to_s}.js.erb"
   end
   
-  def self.register(file)
-    return unless Multilingual::Language.exists?(file.code)
-      
+  def self.register(file)      
     code = file.code.to_s
     type = file.type.to_s
     opts = {}
@@ -64,5 +62,6 @@ class ::Multilingual::TranslationLocale
   def self.refresh!
     LocaleSiteSetting.reset!
     JsLocaleHelper.clear_cache!
+    SiteSetting.refresh!
   end
 end
