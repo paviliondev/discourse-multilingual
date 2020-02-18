@@ -120,6 +120,37 @@ after_initialize do
     prepend MultilingualApplicationControllerExtension if SiteSetting.multilingual_enabled
   end
   
+  module ExtraLocalesControllerMultilingualExtension
+    def load_custom?
+      Multilingual::Language.is_custom?(I18n.locale.to_s)
+    end
+    
+    def bundle_js(bundle)
+      if bundle === "js"
+        JsLocaleHelper.output_extra_locales(bundle, I18n.locale.to_s)
+      else
+        super(bundle)
+      end
+    end
+  end
+  
+  class ::ExtraLocalesController
+    singleton_class.prepend ExtraLocalesControllerMultilingualExtension
+  end
+  
+  register_html_builder('server:before-head-close') do
+    if ExtraLocalesController.load_custom?
+      url = ExtraLocalesController.url('js')
+      
+      <<~HTML.html_safe
+        <link rel="preload" href="#{url}" as="script">
+        <script src="#{url}"></script>
+      HTML
+    else
+      ""
+    end
+  end
+  
   ### User changes
 
   if defined? register_editable_user_custom_field
