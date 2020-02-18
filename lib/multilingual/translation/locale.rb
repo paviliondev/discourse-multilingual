@@ -9,15 +9,15 @@ class ::Multilingual::TranslationLocale
     code = file.code.to_s
     type = file.type.to_s
     opts = {}
+    is_client = type === 'client'
     
     opts["#{type}_locale_file".to_sym] = file.path
     js_path = js_locale_path(code)
     
-    if type === 'client' && !File.file?(js_path)
+    if is_client && !File.file?(js_path)
       File.open(js_path, "w") do |f| 
         f.puts(
           [
-            "//= depend_on 'client.#{code}.yml'",
             "//= require locales/i18n",
             "<%= JsLocaleHelper.output_locale(:#{code}) %>"
           ]
@@ -35,6 +35,8 @@ class ::Multilingual::TranslationLocale
     new_locale = current_locale.merge(opts)
     
     DiscoursePluginRegistry.register_locale(code, new_locale)
+    
+    add_to_csp(code) if is_client
   end
   
   def self.deregister(file)
@@ -56,6 +58,16 @@ class ::Multilingual::TranslationLocale
   
   def self.files
     Multilingual::TranslationFile.by_type([:client, :server])
+  end
+  
+  def self.add_to_csp(code)
+    public_js_url = "#{Discourse.base_uri}/locales/#{code}.js"
+    
+    Discourse.plugins.each do |p|
+      if p.metadata.name === Multilingual::PLUGIN_NAME && p.csp_extensions.exclude?(public_js_url)
+        p.csp_extensions.push(script_src: [public_js_url]) 
+      end
+    end
   end
   
   def self.refresh!
