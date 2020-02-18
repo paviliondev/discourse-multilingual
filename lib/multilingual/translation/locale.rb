@@ -61,7 +61,7 @@ class ::Multilingual::TranslationLocale
   end
   
   def self.add_to_csp(code)
-    public_js_url = "#{Discourse.base_uri}/locales/#{code}.js"
+    public_js_url = "#{ContentSecurityPolicy.base_url}/locales/#{code}.js"
     
     Discourse.plugins.each do |p|
       if p.metadata.name === Multilingual::PLUGIN_NAME && p.csp_extensions.exclude?(public_js_url)
