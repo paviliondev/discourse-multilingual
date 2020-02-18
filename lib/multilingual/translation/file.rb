@@ -61,6 +61,10 @@ class ::Multilingual::TranslationFile
     Multilingual::Translation.refresh!
     Multilingual::Language.refresh!
     Multilingual.refresh_clients(@code)
+    
+    ## Ensure new values are loaded
+    LocaleSiteSetting.supported_locales
+    Multilingual::Interface.all
   end
   
   def path

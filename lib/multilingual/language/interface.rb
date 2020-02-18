@@ -20,9 +20,7 @@ class ::Multilingual::Interface
   end
   
   def self.all
-    Multilingual::Cache.wrap(INTERFACE_KEY) do
-      ::LocaleSiteSetting.supported_locales
-    end
+    Multilingual::Cache.wrap(INTERFACE_KEY) { ::LocaleSiteSetting.supported_locales }
   end
   
   def self.list_enabled

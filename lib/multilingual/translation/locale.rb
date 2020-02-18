@@ -46,7 +46,7 @@ class ::Multilingual::TranslationLocale
       File.delete(js_path)
     end
     
-    DiscoursePluginRegistry.locales[code] = {}
+    DiscoursePluginRegistry.locales.delete(code)
   end
   
   def self.load
@@ -59,12 +59,8 @@ class ::Multilingual::TranslationLocale
   
   def self.refresh!
     LocaleSiteSetting.reset!
-    
     JsLocaleHelper.clear_cache!
     Discourse.cache.delete(SiteSettingExtension.client_settings_cache_key)
     Site.clear_anon_cache!
-    
-    ## Ensure new values are loaded
-    new_locales = LocaleSiteSetting.supported_locales
   end
 end
