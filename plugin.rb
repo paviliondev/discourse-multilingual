@@ -121,35 +121,71 @@ after_initialize do
   end
   
   module ExtraLocalesControllerMultilingualExtension
-    def load_custom?
-      Multilingual::Language.is_custom?(I18n.locale.to_s)
+    def current_locale
+      I18n.locale.to_s
+    end
+    
+    def custom_locale?
+      Multilingual::Language.is_custom?(current_locale)
     end
     
     def bundle_js(bundle)
-      if bundle === "js"
-        JsLocaleHelper.output_extra_locales(bundle, I18n.locale.to_s)
+      if bundle === "js" && custom_locale?
+        JsLocaleHelper.output_locale(current_locale)
       else
         super(bundle)
       end
     end
   end
   
-  class ::ExtraLocalesController
-    singleton_class.prepend ExtraLocalesControllerMultilingualExtension
-  end
-  
-  register_html_builder('server:before-head-close') do
-    if ExtraLocalesController.load_custom?
-      url = ExtraLocalesController.url('js')
+  if SiteSetting.multilingual_enabled
+    class ::ExtraLocalesController
+      singleton_class.prepend ExtraLocalesControllerMultilingualExtension
       
-      <<~HTML.html_safe
-        <link rel="preload" href="#{url}" as="script">
-        <script src="#{url}"></script>
-      HTML
-    else
-      ""
+      private def valid_bundle?(bundle)
+        bundle == OVERRIDES_BUNDLE ||
+        (bundle =~ /^(admin|wizard)$/ && current_user&.staff?) ||
+        (bundle === 'js' && ExtraLocalesController.custom_locale?)
+      end
     end
   end
+  
+  if SiteSetting.multilingual_enabled
+    module ::ApplicationHelper
+      def current_locale
+        I18n.locale.to_s
+      end
+      
+      def custom_locale?
+        Multilingual::Language.is_custom?(current_locale)
+      end
+      
+      def preload_script(script)
+        return if custom_locale? && script === "locales/#{I18n.locale}"
+        path = script_asset_path(script)
+        preload_script_url(path)
+      end
+      
+      def preload_i18n
+        preload_script("locales/i18n") if custom_locale?
+      end
+      
+      def preload_custom_locale
+        preload_script_url(ExtraLocalesController.url('js')) if custom_locale?
+      end
+      
+      def asset_path(url)
+        ActionController::Base.helpers.asset_path(url)
+      end
+    end
+  end
+  
+  class ::CustomLocaleLoader
+    include ::ApplicationHelper
+  end
+  
+  register_html_builder('server:before-script-load') { CustomLocaleLoader.new.preload_i18n }
+  register_html_builder('server:before-script-load') { CustomLocaleLoader.new.preload_custom_locale }
   
   ### User changes
 

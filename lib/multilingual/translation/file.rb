@@ -69,7 +69,6 @@ class ::Multilingual::TranslationFile
     Multilingual::Content.all
     
     I18n.reload!
-    MessageBus.publish('/i18n-flush', refresh: true)
   end
   
   def path
@@ -174,6 +173,5 @@ class ::Multilingual::TranslationFile
   
   def self.load
     Dir.mkdir(TRANSLATION_PATH) unless Dir.exist?(TRANSLATION_PATH)
-    Dir.mkdir(Multilingual::TranslationLocale::JS_PATH) unless Dir.exist?(Multilingual::TranslationLocale::JS_PATH)
   end
 end
