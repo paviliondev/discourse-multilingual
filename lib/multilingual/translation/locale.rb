@@ -60,6 +60,10 @@ class ::Multilingual::TranslationLocale
   def self.refresh!
     LocaleSiteSetting.reset!
     JsLocaleHelper.clear_cache!
-    SiteSetting.refresh!
+    I18n.reload!
+    Discourse.cache.delete(SiteSettingExtension.client_settings_cache_key)
+    Site.clear_anon_cache!   
+    ExtraLocalesController.clear_cache!
+    MessageBus.publish('/i18n-flush', refresh: true)
   end
 end
