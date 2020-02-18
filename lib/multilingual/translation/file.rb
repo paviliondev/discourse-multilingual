@@ -65,6 +65,8 @@ class ::Multilingual::TranslationFile
     ## Ensure new values are loaded
     LocaleSiteSetting.supported_locales
     Multilingual::Interface.all
+    Multilingual::Language.all
+    Multilingual::Content.all
   end
   
   def path
