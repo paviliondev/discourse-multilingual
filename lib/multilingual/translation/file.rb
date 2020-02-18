@@ -59,7 +59,6 @@ class ::Multilingual::TranslationFile
   
   def after_all
     Multilingual::Translation.refresh!
-    I18n.reload!
     Multilingual::Language.refresh!
     Multilingual.refresh_clients(@code)
     
@@ -68,6 +67,10 @@ class ::Multilingual::TranslationFile
     Multilingual::Interface.all
     Multilingual::Language.all
     Multilingual::Content.all
+    
+    I18n.reload!
+    
+    Multilingual::Language.refresh!
   end
   
   def path
