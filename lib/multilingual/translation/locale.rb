@@ -16,16 +16,7 @@ class ::Multilingual::TranslationLocale
   end
   
   def self.deregister(file)
-    code = file.code.to_s
-    type = file.type.to_s
-    
-    js_path = js_locale_path(code)
-    
-    if type === 'client' && File.file?(js_path)
-      File.delete(js_path)
-    end
-    
-    DiscoursePluginRegistry.locales.delete(code)
+    DiscoursePluginRegistry.locales.delete(file.code.to_s)
   end
   
   def self.load
