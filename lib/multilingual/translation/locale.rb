@@ -30,6 +30,7 @@ class ::Multilingual::TranslationLocale
   def self.refresh!
     LocaleSiteSetting.reset!
     JsLocaleHelper.clear_cache!
-    SiteSetting.refresh! 
+    SiteSetting.refresh!
+    I18n.reload!
   end
 end

@@ -67,8 +67,6 @@ class ::Multilingual::TranslationFile
     Multilingual::Interface.all
     Multilingual::Language.all
     Multilingual::Content.all
-    
-    I18n.reload!
   end
   
   def path
