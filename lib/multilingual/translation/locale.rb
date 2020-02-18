@@ -31,6 +31,5 @@ class ::Multilingual::TranslationLocale
     LocaleSiteSetting.reset!
     JsLocaleHelper.clear_cache!
     SiteSetting.refresh!
-    I18n.reload!
   end
 end
