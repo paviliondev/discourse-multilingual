@@ -63,6 +63,7 @@ class ::Multilingual::TranslationFile
     Multilingual.refresh_clients(@code)
     
     ## Ensure new values are loaded
+    I18n.reload!
     LocaleSiteSetting.supported_locales
     Multilingual::Interface.all
     Multilingual::Language.all
