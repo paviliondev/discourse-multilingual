@@ -63,11 +63,13 @@ class ::Multilingual::TranslationFile
     Multilingual.refresh_clients(@code)
     
     ## Ensure new values are loaded
-    I18n.reload!
     LocaleSiteSetting.supported_locales
     Multilingual::Interface.all
     Multilingual::Language.all
     Multilingual::Content.all
+    
+    I18n.reload!
+    MessageBus.publish('/i18n-flush', refresh: true)
   end
   
   def path
