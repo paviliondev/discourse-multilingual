@@ -61,7 +61,6 @@ class ::Multilingual::TranslationLocale
     LocaleSiteSetting.reset!
     JsLocaleHelper.clear_cache!
     I18n.reload!
-    Discourse.cache.delete(SiteSettingExtension.client_settings_cache_key)
-    Site.clear_anon_cache!   
+    SiteSetting.refresh! 
   end
 end
