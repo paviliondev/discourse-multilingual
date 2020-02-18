@@ -17,6 +17,7 @@ class ::Multilingual::TranslationLocale
       File.open(js_path, "w") do |f| 
         f.puts(
           [
+            "//= depend_on 'client.#{code}.yml'",
             "//= require locales/i18n",
             "<%= JsLocaleHelper.output_locale(:#{code}) %>"
           ]
