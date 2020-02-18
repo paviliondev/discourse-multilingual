@@ -1,27 +1,41 @@
 class Multilingual::Cache
-  def self.write(key, data)
-    Discourse.cache.write("#{Multilingual::PLUGIN_NAME}_#{key}", data)
+  def initialize(key)
+    @key = "#{Multilingual::PLUGIN_NAME}_#{key}"
   end
   
-  def self.read(key)
-    Discourse.cache.read("#{Multilingual::PLUGIN_NAME}_#{key}")
+  def write(data)
+    synchronize { cache.write(@key, data) }
   end
   
-  def self.delete(key)
-    Discourse.cache.delete("#{Multilingual::PLUGIN_NAME}_#{key}")
+  def read
+    synchronize { cache.read(@key) }
+  end
+  
+  def delete
+    synchronize { cache.delete(@key) }
+  end
+  
+  def synchronize
+    DistributedMutex.synchronize("#{Multilingual::PLUGIN_NAME}_cache") { yield }
+  end
+  
+  def cache
+    @cache ||= Discourse.cache
   end
   
   def self.wrap(key, &block)
-    if cached = read(key)
+    c = Multilingual::Cache.new(key)
+    
+    if cached = c.read
       cached
     else
       result = block.call()
-      write(key, result)
+      c.write(result)
       result
     end
   end
   
   def self.refresh(keys)
-    [*keys].each { |key| self.delete(key) }
+    [*keys].each { |key| Multilingual::Cache.new(key).delete }
   end
 end

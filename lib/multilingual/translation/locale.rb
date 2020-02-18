@@ -28,9 +28,7 @@ class ::Multilingual::TranslationLocale
     
     locale_chain = code.split('_')
     
-    if locale_chain.length === 2
-      opts[:fallbackLocale] = locale_chain.first
-    end
+    opts[:fallbackLocale] = locale_chain.first if locale_chain.length === 2
     
     current_locale = DiscoursePluginRegistry.locales[code] || {}
     new_locale = current_locale.merge(opts)
@@ -61,8 +59,12 @@ class ::Multilingual::TranslationLocale
   
   def self.refresh!
     LocaleSiteSetting.reset!
+    
     JsLocaleHelper.clear_cache!
     Discourse.cache.delete(SiteSettingExtension.client_settings_cache_key)
     Site.clear_anon_cache!
+    
+    ## Ensure new values are loaded
+    new_locales = LocaleSiteSetting.supported_locales
   end
 end
