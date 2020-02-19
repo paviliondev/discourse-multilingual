@@ -9,6 +9,6 @@ module I18nMultilingualExtension
   end
   
   def locale_available?(locale)
-    Multilingual::InterfaceLanguage.enabled?(locale) || super(locale)
+    Multilingual::InterfaceLanguage.supported?(locale) || super(locale)
   end
 end
