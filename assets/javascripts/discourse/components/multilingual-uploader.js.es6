@@ -36,5 +36,9 @@ export default Component.extend(UploadMixin, {
 
   uploadDone() {
     // wait for message that uploaded file is processed.
+  },
+  
+  validateUploadedFilesOptions() {
+    return { skipValidation: true };
   }
 });

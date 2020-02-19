@@ -13,9 +13,7 @@ export default {
     
     Composer.serializeOnCreate('content_language_tags', 'contentLanguageTags');
     Composer.serializeToTopic('content_language_tags', 'topic.contentLanguageTags');
-    
-    console.log(I18n.currentLocale())
-    
+        
     I18n.translate_tag = function(tag) {
       let locale = I18n.currentLocale().split('_')[0];
       return I18n.lookup(`_tag.${tag}`, { locale }) || tag;
@@ -23,6 +21,16 @@ export default {
             
     withPluginApi('0.8.36', api => {
       api.modifyClass('controller:preferences/interface', {
+        @discourseComputed()
+        availableLocales() {
+          return this.site.interface_languages.map(l => {
+            return {
+              value: l.code,
+              name: l.name
+            }
+          });
+        },
+        
         @discourseComputed("makeThemeDefault")
         saveAttrNames(makeDefault) {
           let attrs = this._super(makeDefault);

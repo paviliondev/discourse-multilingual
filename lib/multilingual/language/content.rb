@@ -1,31 +1,32 @@
-class ::Multilingual::Content
+class Multilingual::ContentLanguage
   include ActiveModel::Serialization
   
   attr_reader :code, :name
   
-  CONTENT_KEY ||= 'content'.freeze
-  EXCLUSION_KEY ||= 'content_exclusions'.freeze
+  KEY ||= 'content_language'.freeze
 
   def initialize(code, name)
     @code = code
     @name = name
   end
   
-  def self.all
-    Multilingual::Cache.wrap(CONTENT_KEY) do
-      Multilingual::Language.all.select do |k, v|
-        self.exclusions.exclude? k
-      end.map { |k, v| self.new(k, v['nativeName']) }.sort_by(&:code)
-    end
-  end
-  
-  def self.exclusions
-    Multilingual::Cache.wrap(EXCLUSION_KEY) do
-      [*(PluginStore.get(Multilingual::PLUGIN_NAME, EXCLUSION_KEY) || '').split(',')]
-    end
+  def self.excluded?(code)
+    Multilingual::LanguageExclusion.get(KEY, code)
   end
   
   def self.enabled?(code)
-    Multilingual::Language.exists?(code) && self.exclusions.exclude?(code)
+    Multilingual::Language.exists?(code) && !excluded?(code)
+  end
+  
+  def self.all
+    Multilingual::Cache.wrap(KEY) do
+      Multilingual::Language.all.select { |k, v| !excluded?(k) }
+    end
+  end
+  
+  def self.list
+    self.all.select { |k, v| self.enabled?(k) }
+      .map { |k, v| self.new(k, v['nativeName']) }
+      .sort_by(&:code)
   end
 end

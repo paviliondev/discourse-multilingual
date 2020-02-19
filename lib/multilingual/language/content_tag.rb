@@ -1,6 +1,6 @@
 class Multilingual::ContentTag
-  NAME_KEY = 'content_tag_names'.freeze
-  GROUP_NAME = 'languages'.freeze
+  KEY = 'content_tag'.freeze
+  GROUP = 'languages'.freeze
   
   def self.create(code, force: false)
     if force || !Tag.exists?(name: code)
@@ -21,22 +21,22 @@ class Multilingual::ContentTag
     end
   end
   
-  def self.names
-    Multilingual::Cache.wrap(NAME_KEY) do
+  def self.all
+    Multilingual::Cache.wrap(KEY) do
       Tag.where("id IN (
         #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND 
-        tg.name = '#{Multilingual::ContentTag::GROUP_NAME}'
+        tg.name = '#{Multilingual::ContentTag::GROUP}'
       )").pluck(:name)
     end
   end
   
   def self.exists?(name)
-    self.names.include?(name)
+    self.all.include?(name)
   end
   
   def self.filter(tags)
     if tags.any?
-      tags.select { |tag| names.include?(tag.name) }
+      tags.select { |tag| all.include?(tag.name) }
     else
       []
     end
@@ -44,11 +44,11 @@ class Multilingual::ContentTag
   
   def self.group
     @group ||= begin
-      group = TagGroup.find_by(name: Multilingual::ContentTag::GROUP_NAME)
+      group = TagGroup.find_by(name: Multilingual::ContentTag::GROUP)
 
       if group.blank?
         group = TagGroup.new(
-          name: Multilingual::ContentTag::GROUP_NAME,
+          name: Multilingual::ContentTag::GROUP,
           permissions: { everyone: 1 }
         )
 
@@ -62,15 +62,15 @@ class Multilingual::ContentTag
     end
   end
   
-  def self.bulk_update_all
+  def self.update_all
     create = []
     destroy = []
     
     Multilingual::Language.list.each do |l|
       if l.content_enabled
-        create.push(l.code) if names.exclude?(l.code)
+        create.push(l.code) if all.exclude?(l.code)
       else
-        destroy.push(l.code) if names.include?(l.code)
+        destroy.push(l.code) if all.include?(l.code)
       end
     end
 
@@ -79,9 +79,7 @@ class Multilingual::ContentTag
   end
   
   def self.bulk_update(codes, action)
-    [*codes].each do |c|
-      Multilingual::ContentTag.send(action, c)
-    end
+    [*codes].each { |c| Multilingual::ContentTag.send(action, c) }
   end
   
   def self.add_to_topic(topic, tags)

@@ -1,8 +1,8 @@
-class ::Multilingual::TranslationFile
+class Multilingual::TranslationFile
   include ActiveModel::Serialization
   
-  TRANSLATION_PATH ||= "#{Multilingual::PLUGIN_PATH}/config/translations".freeze
-  FILE_KEY ||= 'files'.freeze
+  PATH ||= "#{Multilingual::PLUGIN_PATH}/config/translations".freeze
+  KEY ||= 'file'.freeze
     
   attr_accessor :code, :type
     
@@ -28,11 +28,9 @@ class ::Multilingual::TranslationFile
     return result if result[:error]
     
     file = format(processed[:translations])
-    
     File.open(path, 'w') { |f| f.write file.to_yaml }
     
     after_save
-    
     result
   end
   
@@ -49,31 +47,21 @@ class ::Multilingual::TranslationFile
   
   def after_save
     Multilingual::TranslationLocale.register(self) if interface_file
-    after_all
+    after_all(reload_i18n: true, locale: @code, action: :save)
   end
   
   def after_remove
     Multilingual::TranslationLocale.deregister(self) if interface_file
-    after_all
+    after_all(reload_i18n: true, locale: @code, action: :remove)
   end
   
-  def after_all
-    Multilingual::Translation.refresh!
-    Multilingual::Language.refresh!
-    Multilingual.refresh_clients(@code)
-    
-    ## Ensure new values are loaded
-    LocaleSiteSetting.supported_locales
-    Multilingual::Interface.all
-    Multilingual::Language.all
-    Multilingual::Content.all
-    
-    ##
-    I18n.reload!
+  def after_all(opts = {})
+    Multilingual::Cache.refresh!(opts)
+    Multilingual::Cache.refresh_clients(@code)
   end
   
   def path
-    TRANSLATION_PATH + "/#{filename}"
+    PATH + "/#{filename}"
   end
   
   def filename
@@ -131,7 +119,7 @@ class ::Multilingual::TranslationFile
   end
   
   def self.all
-    Multilingual::Cache.wrap(FILE_KEY) do
+    Multilingual::Cache.wrap(KEY) do
       filenames.reduce([]) do |result, filename|
         opts = process_filename(filename)
         result.push(Multilingual::TranslationFile.new(opts)) if !opts[:error]
@@ -145,7 +133,7 @@ class ::Multilingual::TranslationFile
   end
   
   def self.filenames
-    Dir.entries(TRANSLATION_PATH)
+    Dir.entries(PATH)
   end
   
   def self.process_filename(filename)
@@ -168,11 +156,7 @@ class ::Multilingual::TranslationFile
     result
   end
   
-  def self.refresh!
-    Multilingual::Cache.refresh(FILE_KEY)
-  end
-  
   def self.load
-    Dir.mkdir(TRANSLATION_PATH) unless Dir.exist?(TRANSLATION_PATH)
+    Dir.mkdir(PATH) unless Dir.exist?(PATH)
   end
 end

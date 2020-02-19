@@ -1,6 +1,5 @@
-class ::Multilingual::Language
-  CUSTOM_KEY = 'custom_language'.freeze
-  LANGUAGE_KEY = 'language'.freeze
+class Multilingual::Language
+  KEY ||= 'language'.freeze
   
   include ActiveModel::Serialization
   
@@ -14,107 +13,35 @@ class ::Multilingual::Language
   
   def initialize(code, opts = {})
     @code = code.to_s
-    
-    opts = opts.is_a?(String) ? { name: opts } : opts.with_indifferent_access
+        
+    opts = opts.with_indifferent_access
     @name = opts[:name].to_s
     @nativeName = opts[:nativeName].to_s
     
-    @content_enabled = Multilingual::Content.enabled?(@code)
-    @interface_enabled = Multilingual::Interface.enabled?(@code)
-    @interface_supported = Multilingual::Interface.supported?(@code)
-    @custom = Multilingual::Language.is_custom?(@code)
-  end
-  
-  def self.create(code, opts = {}, run_hooks: false)
-    if PluginStore.set(Multilingual::PLUGIN_NAME, "#{CUSTOM_KEY}_#{code.to_s}", opts)
-      after_create([code]) if run_hooks
-    end
-  end
-  
-  def self.destroy(code, run_hooks: false)
-    set_exclusion(code, 'interface', true)
-    set_exclusion(code, 'content', true)
-    
-    if PluginStore.remove(Multilingual::PLUGIN_NAME, "#{CUSTOM_KEY}_#{code.to_s}")
-      after_destroy([code]) if run_hooks
-    end
-  end
-  
-  def self.update(language, run_hooks: false)
-    language = language.with_indifferent_access
-        
-    ['interface', 'content'].each do |type|
-      prop = "#{type}_enabled".to_sym
-    
-      if language[prop].in? ["true", "false", true, false]
-        set_exclusion(language[:code], type, language[prop])
-      end
-    end
-    
-    after_update([language.code]) if run_hooks
-  end
-  
-  def self.after_create(created)
-    Multilingual::ContentTag.bulk_update(created, "create")
-    after_all(created)
-  end
-  
-  def self.after_destroy(destroyed)
-    Multilingual::ContentTag.bulk_update(destroyed, "destroy")
-    after_all(destroyed)
-  end
-  
-  def self.after_update(updated)
-    Multilingual::ContentTag.bulk_update_all
-    after_all(updated)
-  end
-  
-  def self.after_all(codes)
-    Multilingual::Language.refresh!
-    Multilingual::Translation.setup
-    Multilingual.refresh_clients(codes)
+    @content_enabled = Multilingual::ContentLanguage.enabled?(@code)
+    @interface_enabled = Multilingual::InterfaceLanguage.enabled?(@code)
+    @interface_supported = Multilingual::InterfaceLanguage.supported?(@code)
+    @custom = Multilingual::CustomLanguage.is_custom?(@code)
   end
   
   def self.get(codes)
     [*codes].map { |code| self.new(code, self.all[code]) }
   end
   
-  def self.list
-    self.all.map { |k, v| self.new(k, v) }.sort_by(&:code)
+  def self.all
+    Multilingual::Cache.wrap(KEY) { base.merge(Multilingual::CustomLanguage.all) }
+  end
+  
+  def self.base
+    ::LocaleSiteSetting.language_names
   end
   
   def self.exists?(code)
     self.all[code.to_s].present?
   end
   
-  def self.all
-    Multilingual::Cache.wrap(LANGUAGE_KEY) do
-      base_languages.merge(custom_languages)
-    end
-  end
-  
-  def self.custom_languages
-    Multilingual::Cache.wrap(CUSTOM_KEY) do 
-      result = {}
-      
-      PluginStoreRow.where("
-        plugin_name = '#{Multilingual::PLUGIN_NAME}' AND
-        key LIKE '#{Multilingual::Language::CUSTOM_KEY}_%'
-      ").each do |record|
-        begin
-          code = record.key.split("#{Multilingual::Language::CUSTOM_KEY}_").last
-          result[code] = JSON.parse(record.value)
-        rescue JSON::ParserError => e
-          puts e.message
-        end
-      end
-      
-      result
-    end
-  end
-  
-  def self.base_languages
-    ::LocaleSiteSetting.language_names
+  def self.list
+    self.all.map { |k, v| self.new(k, v) }.sort_by(&:code)
   end
   
   def self.filter(params = {})
@@ -150,60 +77,35 @@ class ::Multilingual::Language
     languages
   end
   
-  def self.refresh!
-    Multilingual::Cache.refresh([
-      Multilingual::Interface::INTERFACE_KEY,
-      Multilingual::Interface::EXCLUSION_KEY,
-      Multilingual::Content::EXCLUSION_KEY,
-      Multilingual::Content::CONTENT_KEY,
-      Multilingual::Language::CUSTOM_KEY,
-      Multilingual::Language::LANGUAGE_KEY,
-      Multilingual::ContentTag::NAME_KEY
-    ])
+  def self.update(language, run_hooks: false)
+    language = language.with_indifferent_access
         
-    true
-  end
-  
-  def self.set_exclusion(code, type, enabled)
-    code = code.to_s
-    klass = "Multilingual::#{type.to_s.classify}".constantize
-    key = klass::EXCLUSION_KEY
-    enabled = ActiveModel::Type::Boolean.new.cast(enabled)
-    exclusions = PluginStore.get(Multilingual::PLUGIN_NAME, key) || []
+    ['interface', 'content'].each do |type|
+      exclusion_prop = "#{type}_enabled".to_sym
+      exclusion_key = "#{type}_language"
     
-    return if enabled && exclusions.empty?
-
-    exclusions = exclusions.split(',')
-  
-    if enabled
-      exclusions.delete(code)
-    else
-      exclusions.push(code) unless (exclusions.include?(code) || code == 'en')
-    end
-    
-    PluginStore.set(Multilingual::PLUGIN_NAME, key, exclusions.join(','))
-  end
-  
-  def self.is_custom?(code)
-    custom_languages.keys.include?(code.to_s)
-  end
-  
-  def self.bulk_create(languages = {})
-    created = []
-    
-    PluginStoreRow.transaction do
-      languages.each do |k, v|
-        self.create(k, v)
-        created.push(k)
+      if language[exclusion_prop].in? ["true", "false", true, false]
+        Multilingual::LanguageExclusion.set(
+          language[:code],
+          exclusion_key,
+          enabled: language[exclusion_prop]
+        )
       end
-      
-      after_create(created)
     end
-        
-    created
+    
+    after_update([language.code]) if run_hooks
   end
   
-  ## TODO make this more targeted
+  def self.after_update(updated)
+    Multilingual::ContentTag.update_all
+    after_change(updated)
+  end
+  
+  def self.after_change(codes = [])
+    Multilingual::Cache.refresh!
+    Multilingual::Cache.refresh_clients(codes)
+  end
+  
   def self.bulk_update(languages)
     updated = []
     
@@ -219,27 +121,7 @@ class ::Multilingual::Language
     updated  
   end
   
-  def self.bulk_destroy(codes)
-    destroyed = []
-    
-    PluginStoreRow.transaction do
-      [*codes].each do |c|
-        self.destroy(c)
-        destroyed.push(c)
-      end
-      
-      after_destroy(destroyed)
-    end
-        
-    destroyed
-  end
-  
-  def self.setup
-    extensions = SiteSetting.authorized_extensions_for_staff.split('|')
-    extensions.push('yml') unless extensions.include?('yml')
-    SiteSetting.authorized_extensions_for_staff = extensions.join('|')
-    
-    Multilingual::Language.refresh!
-    Multilingual::ContentTag.bulk_update_all
+  def self.setup    
+    Multilingual::ContentTag.update_all
   end
 end

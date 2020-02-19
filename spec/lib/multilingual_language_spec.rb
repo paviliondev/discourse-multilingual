@@ -9,7 +9,7 @@ describe Multilingual::Language do
   end
   
   before(:each) do
-    Multilingual::Language.refresh!
+    Multilingual::Cache.refresh!
   end
   
   context 'custom language' do
@@ -20,14 +20,14 @@ describe Multilingual::Language do
     context 'create' do
       it 'should create a new language record' do
         expect(
-          PluginStore.get(Multilingual::PLUGIN_NAME, "#{Multilingual::Language::CUSTOM_KEY}_abc")
+          PluginStore.get(Multilingual::PLUGIN_NAME, "#{Multilingual::CustomLanguage::KEY}_abc")
         ).to eq('Custom Language')
       end
       
       it 'should update language record if language does exist' do
         Multilingual::Language.create('abc', 'Custom Language 2.0')
         expect(
-          PluginStore.get(Multilingual::PLUGIN_NAME, "#{Multilingual::Language::CUSTOM_KEY}_abc")
+          PluginStore.get(Multilingual::PLUGIN_NAME, "#{Multilingual::CustomLanguage::KEY}_abc")
         ).to eq('Custom Language 2.0')
       end
     end
@@ -36,40 +36,40 @@ describe Multilingual::Language do
       it 'should destroy a language record' do
         Multilingual::Language.destroy('abc')
         expect(
-          PluginStore.get(Multilingual::PLUGIN_NAME, "#{Multilingual::Language::CUSTOM_KEY}_abc")
+          PluginStore.get(Multilingual::PLUGIN_NAME, "#{Multilingual::CustomLanguage::KEY}_abc")
         ).to eq(nil)
       end
       
       it "should remove a lanauge's exclusions" do
         Multilingual::Language.update(code: 'abc', interface_enabled: false)
         Multilingual::Language.destroy('abc')
-        expect(Multilingual::Interface.exclusions).not_to include('abc')
+        expect(Multilingual::InterfaceLanguage.exclusions).not_to include('abc')
       end
     end
     
     context 'update' do      
       it "should add to a language's exclusions" do
         Multilingual::Language.update(code: 'en', interface_enabled: false)
-        expect(Multilingual::Interface.exclusions).to include('en')
+        expect(Multilingual::InterfaceLanguage.exclusions).to include('en')
       end
       
       it "should add to a custom language's exclusions" do
         Multilingual::Language.update(code: 'abc', interface_enabled: false)
-        expect(Multilingual::Interface.exclusions).to include('abc')
+        expect(Multilingual::InterfaceLanguage.exclusions).to include('abc')
       end
       
       it 'should add to both interface and content exclusions' do
         Multilingual::Language.update(code: 'en', interface_enabled: false, content_enabled: false)
-        expect(Multilingual::Interface.exclusions).to include('en')
-        expect(Multilingual::Content.exclusions).to include('en')
+        expect(Multilingual::InterfaceLanguage.exclusions).to include('en')
+        expect(Multilingual::ContentLanguage.exclusions).to include('en')
       end
       
       it 'should remove exclusions' do
         Multilingual::Language.update(code: 'en', content_enabled: false)
-        expect(Multilingual::Content.exclusions).to include('en')
+        expect(Multilingual::ContentLanguage.exclusions).to include('en')
         
         Multilingual::Language.update(code: 'en', content_enabled: true)
-        expect(Multilingual::Content.exclusions).not_to include('en')
+        expect(Multilingual::ContentLanguage.exclusions).not_to include('en')
       end
     end
   end
@@ -90,7 +90,7 @@ describe Multilingual::Language do
   
   context 'all' do
     it 'should return all languages' do
-      Multilingual::Language.refresh!
+      Multilingual::Cache.refresh!
       languages = Multilingual::Language.list
       expect(languages.length).to eq(187)
       expect(languages.first.code).to eq('aa')
@@ -146,23 +146,23 @@ describe Multilingual::Language do
   
   context 'set_exclusion' do    
     it 'should add content exclusions' do
-      Multilingual::Language.set_exclusion('en', 'content', false)
-      Multilingual::Language.refresh!
-      expect(Multilingual::Content.exclusions).to include('en')
+      Multilingual::LanguageExclusion.set('en', 'content', enabled: false)
+      Multilingual::Cache.refresh!
+      expect(Multilingual::ContentLanguage.exclusions).to include('en')
     end
     
     it 'should add interface exclusions' do
-      Multilingual::Language.set_exclusion('sl', 'interface', false)
-      Multilingual::Language.refresh!
-      expect(Multilingual::Interface.exclusions).to include('sl')
+      Multilingual::LanguageExclusion.set('sl', 'interface', enabled: false)
+      Multilingual::Cache.refresh!
+      expect(Multilingual::InterfaceLanguage.exclusions).to include('sl')
     end
     
     it 'should remove exclusions' do
-      Multilingual::Language.set_exclusion('sv', 'interface', false)
-      Multilingual::Language.refresh!
-      Multilingual::Language.set_exclusion('sv', 'interface', true)
-      Multilingual::Language.refresh!
-      expect(Multilingual::Interface.exclusions).not_to include('sv')
+      Multilingual::LanguageExclusion.set('sv', 'interface', enabled: false)
+      Multilingual::Cache.refresh!
+      Multilingual::LanguageExclusion.set('sv', 'interface', enabled: true)
+      Multilingual::Cache.refresh!
+      expect(Multilingual::InterfaceLanguage.exclusions).not_to include('sv')
     end
   end
   
@@ -185,8 +185,8 @@ describe Multilingual::Language do
   context 'bulk_update' do
     it 'should update languages' do
       Multilingual::Language.bulk_update([{code: 'en', content_enabled: false},{code: 'fr', interface_enabled: false}])
-      expect(Multilingual::Content.exclusions).to include('en')
-      expect(Multilingual::Interface.exclusions).to include('fr')
+      expect(Multilingual::ContentLanguage.exclusions).to include('en')
+      expect(Multilingual::InterfaceLanguage.exclusions).to include('fr')
     end
   end
   

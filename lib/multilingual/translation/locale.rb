@@ -1,4 +1,4 @@
-class ::Multilingual::TranslationLocale
+class Multilingual::TranslationLocale
   def self.register(file)      
     code = file.code.to_s
     type = file.type.to_s
@@ -25,11 +25,5 @@ class ::Multilingual::TranslationLocale
   
   def self.files
     Multilingual::TranslationFile.by_type([:client, :server])
-  end
-  
-  def self.refresh!
-    LocaleSiteSetting.reset!
-    JsLocaleHelper.clear_cache!
-    SiteSetting.refresh!
   end
 end

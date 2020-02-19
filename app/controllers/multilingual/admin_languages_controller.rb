@@ -11,7 +11,7 @@ class Multilingual::AdminLanguagesController < Admin::AdminController
   end
   
   def remove
-    if Multilingual::Language.bulk_destroy(params[:codes])
+    if Multilingual::CustomLanguage.bulk_destroy(params[:codes])
       serialize_languages(Multilingual::Language.filter(filter_params.to_h))
     else
       render json: failed_json
@@ -38,7 +38,7 @@ class Multilingual::AdminLanguagesController < Admin::AdminController
       begin
         languages = YAML.safe_load(file.tempfile)
         
-        Multilingual::Language.bulk_create(languages)
+        Multilingual::CustomLanguage.bulk_create(languages)
         
         data = { uploaded: true }
       rescue => e

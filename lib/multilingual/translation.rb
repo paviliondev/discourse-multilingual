@@ -1,9 +1,9 @@
-class ::Multilingual::Translation
-  SERVER ||= %w{category_name server}
-  CLIENT ||= %w{tag client}
-  TYPES = SERVER + CLIENT
+class Multilingual::Translation
+  CORE ||= %w{client server}
+  EXTRA ||= %w{tag category_name}
+  TYPES = CORE + EXTRA
   
-  TYPES.each do |t|
+  EXTRA.each do |t|
     method_name = t.pluralize
     self.class.__send__(:attr_accessor, method_name)
     self.__send__("#{method_name}=", {})
@@ -17,25 +17,14 @@ class ::Multilingual::Translation
     TYPES.include?(type)
   end
   
-  def self.load_server(code)
-    Multilingual::TranslationFile.by_type(SERVER)
+  def self.load_extra(code)
+    Multilingual::TranslationFile.by_type(EXTRA)
       .select { |f| f.code == code }
       .each { |f| set(f.type, f.open) }
-  end
-  
-  def self.refresh_server!
-    SERVER.each { |t| set(t, {}) }
-  end
-  
-  def self.refresh!
-    Multilingual::Translation.refresh_server!
-    Multilingual::TranslationFile.refresh!
-    Multilingual::TranslationLocale.refresh!
   end
   
   def self.setup
     Multilingual::TranslationFile.load
     Multilingual::TranslationLocale.load
-    Multilingual::Translation.refresh!
   end
 end

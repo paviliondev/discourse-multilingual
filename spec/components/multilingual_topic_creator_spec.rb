@@ -9,7 +9,7 @@ describe TopicCreator do
   fab!(:topic) { Fabricate(:topic, title: 'Topic title test', custom_fields: {}) }
   
   let(:valid_attrs) { Fabricate.attributes_for(:topic) }
-  let(:language_tag_name) { Tag.where(name: Multilingual::ContentTag.names.first).first.name }
+  let(:language_tag_name) { Tag.where(name: Multilingual::ContentTag.all.first).first.name }
   
   let(:message) { 'hello' }
 

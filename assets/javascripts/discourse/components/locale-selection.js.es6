@@ -7,12 +7,12 @@ export default Ember.Component.extend({
   @on('init')
   setup() {
     const localeValues = this.siteSettings.multilingual_language_switcher_visible.split('|');
-    const availableLocales = JSON.parse(this.siteSettings.available_locales);
+    const availableLocales = this.site.interface_languages;
     let visibleLocales = [];
     let hiddenLocales = [];
 
     availableLocales.forEach((l) => {
-      if (localeValues.indexOf(l.value) > -1) {
+      if (localeValues.indexOf(l.code) > -1) {
         visibleLocales.push(l);
       } else {
         hiddenLocales.push(l);
@@ -43,7 +43,7 @@ export default Ember.Component.extend({
     changeLocale(locale) {
       this.set('showHidden', false);
       $.cookie('discourse_guest_locale', locale);
-      window.location.reload();
+      window.location.search += `&guest_locale=${locale}`;
     },
 
     showHidden() {

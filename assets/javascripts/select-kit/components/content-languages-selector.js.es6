@@ -12,9 +12,7 @@ export default MultiSelectComponent.extend({
   
   didInsertElement() {
     this._super(...arguments);
-    
-    console.log(this.currentUser.content_languages)
-        
+            
     if (!this.value
         && this.initializeContentLanguges
         && this.currentUser.content_languages.length) {
