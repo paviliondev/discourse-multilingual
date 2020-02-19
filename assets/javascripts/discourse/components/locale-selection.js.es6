@@ -1,4 +1,7 @@
 import { on } from 'ember-addons/ember-computed-decorators';
+import EmberObject from "@ember/object";
+
+const paramName = "locale";
 
 export default Ember.Component.extend({
   classNames: 'locale-selection',
@@ -6,13 +9,24 @@ export default Ember.Component.extend({
 
   @on('init')
   setup() {
-    const localeValues = this.siteSettings.multilingual_language_switcher_visible.split('|');
-    const availableLocales = this.site.interface_languages;
+    const availableLocales = this.availableLocales();    
+    const currentLocale = I18n.currentLocale();
+    
+    let visibleList = this.siteSettings.multilingual_language_switcher_visible.split('|');
     let visibleLocales = [];
     let hiddenLocales = [];
 
     availableLocales.forEach((l) => {
-      if (localeValues.indexOf(l.code) > -1) {
+      if (l.code === currentLocale) {
+        l.set('class', `${l.class} current`);
+        
+        if (visibleList.indexOf(l.code) === -1) {
+          visibleList.pop();
+          visibleList.push(l.code);
+        }
+      }
+      
+      if (visibleList.indexOf(l.code) > -1) {
         visibleLocales.push(l);
       } else {
         hiddenLocales.push(l);
@@ -21,14 +35,39 @@ export default Ember.Component.extend({
     
     this.setProperties({ visibleLocales, hiddenLocales });
   },
+  
+  removeParam() {
+    let params = new URLSearchParams(window.location.search);
+    console.log(params.toString())
+    params.delete(paramName)
+    let path = '/';
+    params = params.toString();
+    if (params.length) path += `?${params}`;
+    if (window.location.hash.length) path += location.hash;
+    window.history.replaceState(null, null, path);
+  },
+  
+  addParam(locale) {
+    $.cookie(`discourse_${paramName}`, locale);
+    let params = new URLSearchParams(window.location.search);
+    params.set(paramName, locale);
+    window.location.search = params;
+  },
+  
+  availableLocales() {
+    return this.site.interface_languages.map(l => {
+      return EmberObject.create(Object.assign({}, l, { class: "locale" }));
+    });
+  },
 
   didInsertElement() {
+    this.removeParam();
     this.set('clickOutsideHandler', Ember.run.bind(this, this.clickOutside));
-    Ember.$(document).on('click', this.get('clickOutsideHandler'));
+    $(document).on('click', this.clickOutsideHandler);
   },
 
   willDestroyElement() {
-    Ember.$(document).off('click', this.get('clickOutsideHandler'));
+    $(document).off('click', this.clickOutsideHandler);
   },
 
   clickOutside(e) {
@@ -42,8 +81,7 @@ export default Ember.Component.extend({
   actions: {
     changeLocale(locale) {
       this.set('showHidden', false);
-      $.cookie('discourse_guest_locale', locale);
-      window.location.search += `&guest_locale=${locale}`;
+      this.addParam(locale);
     },
 
     showHidden() {

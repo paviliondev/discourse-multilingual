@@ -39,11 +39,6 @@ after_initialize do
     load File.expand_path(path, __FILE__)
   end
   
-  I18n.load_path = Dir[
-    "#{Rails.root}/plugins/*/config/locales/*.yml",
-    "#{Multilingual::TranslationFile::PATH}/{client,server}.*.yml"
-  ]
-  
   if SiteSetting.multilingual_enabled
     Multilingual::Cache.setup
     Multilingual::Translation.setup
@@ -113,7 +108,7 @@ after_initialize do
   register_html_builder('server:before-script-load') { CustomLocaleLoader.new.preload_custom_locale }
   
   add_to_class(:application_controller, :guest_locale) do
-    cookies[:discourse_guest_locale] || params[:guest_locale]
+    cookies[:discourse_locale] || params[:locale]
   end
   
   add_to_class(:application_controller, :set_locale) do
