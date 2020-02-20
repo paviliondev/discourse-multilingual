@@ -58,7 +58,7 @@ export default Controller.extend({
       if (val) params[p] = val;
     });
             
-    MultilingualLanguage.filter(params).then(result => {
+    MultilingualLanguage.list(params).then(result => {
       this._updateLanguages(result);
     }).finally(() => {
       this.set("refreshing", false)

@@ -3,7 +3,7 @@ import MultilingualTranslation from '../models/multilingual-translation';
 
 export default Discourse.Route.extend({
   model(params) {
-    return MultilingualTranslation.all(params);
+    return MultilingualTranslation.list(params);
   },
   
   setupController(controller, model) {

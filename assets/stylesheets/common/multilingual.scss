@@ -1,5 +1,6 @@
 @import "content-language-tags";
 @import "content-language-select-kit";
+@import "locale";
 @import "admin";
 
 #reply-control .title-and-category {
@@ -34,100 +35,4 @@ ol.category-breadcrumb li.content-language-discovery {
   margin-bottom: 9px;
   background-color: #f1f1f1;
   color: rgba(#333, 0.7);
-}
-
-.locale-selection-container {
-  position: fixed;
-  right: 40px;
-  bottom: 40px;
-}
-
-.locale-selection {
-  position: relative;
-  background-color: $secondary;
-  border: 1px solid rgba($primary, 0.1);
-  border-radius: 2px;
-  box-shadow: shadow('dropdown');
-  padding: 5px 0 5px 15px;
-
-  a {
-    margin-right: 15px;
-    font-size: 1.1em;
-    background-image: linear-gradient(180deg, transparent 90%, $primary 0);
-    background-size: 0 100%;
-    background-repeat: no-repeat;
-    text-decoration: none;
-    color: $primary;
-    transition: background-size .4s ease;
-    
-    &:last-of-type {
-      margin-right: 0;
-    }
-
-    &:hover {
-      background-size: 100% 100%;
-      cursor: pointer;
-    }
-    
-    &.current {
-      background-image: linear-gradient(180deg, transparent 90%, $primary 0);
-      background-size: 100% 100%;
-    }
-  }
-    
-  button.btn {
-    background-color: $secondary;
-    
-    .d-icon {
-      color: $primary;
-    }
-    
-    &:hover, &.btn-hover:hover {
-      background-color: $secondary;
-      
-      .d-icon {
-        color: $primary;
-      }
-    }
-  }
-
-  .hidden-locales {
-    position: absolute;
-    overflow: scroll;
-    max-height: 400px;
-    width: 300px;
-    background-color: $secondary;
-    border: 1px solid $primary-low;
-    box-shadow: shadow('dropdown');
-    bottom: 50px;
-    padding: 10px 14px;
-    right: 0;
-
-    ul {
-      list-style: none;
-      margin: 0;
-      columns: 2;
-      -webkit-columns: 2;
-      -moz-columns: 2;
-      display: inline-block;
-
-      li {
-        margin: 5px 0;
-        display: inline-block;
-        width: 100%;
-      }
-    }
-  }
-}
-
-html.rtl {
-  .locale-selection {
-    padding: 5px 5px 5px 0;
-    
-    a {
-      &:last-of-type {
-        margin-right: 15px;
-      }
-    }
-  }
 }

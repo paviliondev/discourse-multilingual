@@ -13,7 +13,7 @@ Follow the directions at [Install a Plugin](https://meta.discourse.org/t/install
 
 ``multilingual_enabled`` disables both server-side and client-side code in the plugin if it's switched off. This is to make it easy to disable it if an issue occurs. It's off by default.
 
-``multilingual_require_language_tag`` determines whether a language tag is required on all topics. It has three potential values: ``no`` (not required of anyone), ``yes`` (required of everyone), ``non-staff`` (required of non-staff).
+``multilingual_require_content_language_tag`` determines whether a language tag is required on all topics. It has three potential values: ``no`` (not required of anyone), ``yes`` (required of everyone), ``non-staff`` (required of non-staff).
 
 ### Language Administration
 

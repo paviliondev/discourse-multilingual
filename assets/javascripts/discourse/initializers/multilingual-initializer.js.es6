@@ -1,6 +1,7 @@
 import { withPluginApi } from 'discourse/lib/plugin-api';
-import { default as discourseComputed } from "discourse-common/utils/decorators";
-import { multilingualTagRenderer } from '../lib/multilingual';
+import { default as discourseComputed, observes } from "discourse-common/utils/decorators";
+import { multilingualTagRenderer } from '../lib/multilingual-tags';
+import { discoveryParams } from '../lib/multilingual-route';
 import Composer from 'discourse/models/composer';
 import { iconHTML } from "discourse-common/lib/icon-library";
 import renderTag from "discourse/lib/render-tag";
@@ -8,11 +9,15 @@ import renderTag from "discourse/lib/render-tag";
 export default {
   name: 'multilingual',
   initialize(container) {
-    const siteSettings = container.lookup('site-settings:main');
+    const siteSettings = container.lookup("site-settings:main");
+    const currentUser = container.lookup("current-user:main");
+    
     if (!siteSettings.multilingual_enabled) return;
     
-    Composer.serializeOnCreate('content_language_tags', 'contentLanguageTags');
-    Composer.serializeToTopic('content_language_tags', 'topic.contentLanguageTags');
+    if (siteSettings.multilingual_content_languages_enabled) {
+      Composer.serializeOnCreate('content_language_tags', 'contentLanguageTags');
+      Composer.serializeToTopic('content_language_tags', 'topic.contentLanguageTags');
+    }
         
     I18n.translate_tag = function(tag) {
       let locale = I18n.currentLocale().split('_')[0];
@@ -20,6 +25,13 @@ export default {
     }
             
     withPluginApi('0.8.36', api => {
+      discoveryParams.forEach(param => {
+        api.addDiscoveryQueryParam(param, {
+          replace: true,
+          refreshModel: true 
+        });
+      });
+      
       api.modifyClass('controller:preferences/interface', {
         @discourseComputed()
         availableLocales() {
@@ -40,6 +52,10 @@ export default {
         
         actions: {
           save() {
+            if (!siteSettings.multilingual_content_languages_enabled) {
+              return this._super();
+            }
+            
             // jQuery ajax removes empty arrays. This is a workaround
             let contentLanguages = this.model.custom_fields.content_languages;
             if (!contentLanguages || !contentLanguages.length) {
@@ -64,20 +80,13 @@ export default {
               // See workaround above
               userLanguages = userLanguages.filter(l => l !== "" && l !== undefined);
                               
-              this.currentUser.set('content_languages', userLanguages);
+              currentUser.set('content_languages', userLanguages);
             })
           }
         }
       });
       
       api.replaceTagRenderer(multilingualTagRenderer);
-      
-      api.modifyClass('component:bread-crumbs', {
-        classNameBindings: ["category::no-category", ":category-breadcrumb"],
-        
-        @discourseComputed
-        hidden() {}
-      });
       
       api.modifyClass('component:tag-drop', {
         _prepareSearch(query) {
@@ -93,7 +102,9 @@ export default {
       
       api.addTagsHtmlCallback(function(topic, params) {
         const contentLanguageTags = topic.content_language_tags;
-        if (!contentLanguageTags || !contentLanguageTags[0]) return;
+        
+        if (!siteSettings.multilingual_content_languages_enabled ||
+          (!contentLanguageTags || !contentLanguageTags[0])) return;
         
         let html = '<div class="content-language-tags">';
         
@@ -110,6 +121,26 @@ export default {
         
         return html;
       }, { priority: 100 });
+      
+      if (!currentUser && siteSettings.multilingual_locale_switcher === "header") {
+        api.decorateWidget('header-icons:before', helper => {  
+          return helper.attach('header-dropdown', {
+            title: "user.locale.title",
+            icon: "translate",
+            iconId: "locale-menu-button",
+            action: "toggleLocaleMenu",
+            active: helper.state.localeSwitcherVisible
+          });
+        });
+        
+        api.reopenWidget('header', {
+          toggleLocaleMenu() {
+            this.state.localeMenuVisible = !this.state.localeMenuVisible;
+          }
+        });
+        
+        api.addHeaderPanel('locale-menu', 'localeMenuVisible', () => {});
+      }
     });
   }
 }

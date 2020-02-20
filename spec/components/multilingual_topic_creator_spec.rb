@@ -21,7 +21,7 @@ describe TopicCreator do
 
   context 'when a language tag is required' do
     before(:each) do
-      SiteSetting.multilingual_require_language_tag = 'yes'
+      SiteSetting.multilingual_require_content_language_tag = 'yes'
     end
     
     it "should rollback when no tags are present" do    
@@ -58,7 +58,7 @@ describe TopicCreator do
     
     context 'when staff are exempt' do
       before(:each) do
-        SiteSetting.multilingual_require_language_tag = 'non-staff'
+        SiteSetting.multilingual_require_content_language_tag = 'non-staff'
       end
       
       it "should work when user is staff and no language tag is present" do
@@ -76,7 +76,7 @@ describe TopicCreator do
   
   context 'when no language tag is required' do
     before(:each) do
-      SiteSetting.multilingual_require_language_tag = 'no'
+      SiteSetting.multilingual_require_content_language_tag = 'no'
     end
     
     it "should work when no tags are present" do

@@ -2,9 +2,8 @@ import DropdownSelectBoxHeaderComponent from "select-kit/components/dropdown-sel
 import computed from "ember-addons/ember-computed-decorators";
 
 export default DropdownSelectBoxHeaderComponent.extend({
-  @computed("currentUser.content_languages")
-  btnClassName(contentLanguages) {
-    let extraClass = contentLanguages && contentLanguages.length ? 'has-languages' : '';
-    return `btn no-text btn-icon ${extraClass}`;
+  @computed("selectKit.options.hasLanguages")
+  btnClassName(hasLanguages) {
+    return `btn no-text btn-icon ${hasLanguages ? 'has-languages' : ''}`;
   }
 });

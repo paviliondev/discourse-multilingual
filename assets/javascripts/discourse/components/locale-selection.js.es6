@@ -1,7 +1,6 @@
 import { on } from 'ember-addons/ember-computed-decorators';
 import EmberObject from "@ember/object";
-
-const paramName = "locale";
+import { addParam, removeParam, localeParam } from '../lib/multilingual-route';
 
 export default Ember.Component.extend({
   classNames: 'locale-selection',
@@ -12,7 +11,7 @@ export default Ember.Component.extend({
     const availableLocales = this.availableLocales();    
     const currentLocale = I18n.currentLocale();
     
-    let visibleList = this.siteSettings.multilingual_language_switcher_visible.split('|');
+    let visibleList = this.siteSettings.multilingual_locale_switcher_footer_visible.split('|');
     let visibleLocales = [];
     let hiddenLocales = [];
 
@@ -32,26 +31,8 @@ export default Ember.Component.extend({
         hiddenLocales.push(l);
       }
     });
-    
+        
     this.setProperties({ visibleLocales, hiddenLocales });
-  },
-  
-  removeParam() {
-    let params = new URLSearchParams(window.location.search);
-    console.log(params.toString())
-    params.delete(paramName)
-    let path = '/';
-    params = params.toString();
-    if (params.length) path += `?${params}`;
-    if (window.location.hash.length) path += location.hash;
-    window.history.replaceState(null, null, path);
-  },
-  
-  addParam(locale) {
-    $.cookie(`discourse_${paramName}`, locale);
-    let params = new URLSearchParams(window.location.search);
-    params.set(paramName, locale);
-    window.location.search = params;
   },
   
   availableLocales() {
@@ -61,7 +42,7 @@ export default Ember.Component.extend({
   },
 
   didInsertElement() {
-    this.removeParam();
+    removeParam(localeParam, { ctx: this });
     this.set('clickOutsideHandler', Ember.run.bind(this, this.clickOutside));
     $(document).on('click', this.clickOutsideHandler);
   },
@@ -73,6 +54,7 @@ export default Ember.Component.extend({
   clickOutside(e) {
     const $hidden = this.$('.hiddenLocales');
     const $target = $(e.target);
+    
     if (!$target.closest($hidden).length) {
       this.set("showHidden", false);
     }
@@ -81,7 +63,7 @@ export default Ember.Component.extend({
   actions: {
     changeLocale(locale) {
       this.set('showHidden', false);
-      this.addParam(locale);
+      addParam(localeParam, locale, { add_cookie: true, ctx: this });
     },
 
     showHidden() {

@@ -1,5 +1,5 @@
 class Multilingual::AdminTranslationsController < Admin::AdminController
-  def index
+  def list
     serializer = ActiveModel::ArraySerializer.new(
       Multilingual::TranslationFile.all, 
       each_serializer: Multilingual::TranslationFileSerializer

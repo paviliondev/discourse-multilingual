@@ -2,22 +2,26 @@ plugins:
   multilingual_enabled:
     default: true
     client: true
-  multilingual_require_language_tag:
+  multilingual_content_languages_enabled: 
+    default: true
+    client: true
+  multilingual_require_content_language_tag:
     type: enum
     default: "non-staff"
     choices:
       - "no"
       - "yes"
       - "non-staff"
-  multilingual_tag_translations_enforce_format: false
-  multilingual_language_switcher:
+  multilingual_locale_switcher:
     client: true
     type: enum
     default: "off"
     choices:
       - "off"
-      - "interface-only"
-  multilingual_language_switcher_visible:
+      - "footer"
+      - "header"
+  multilingual_locale_switcher_footer_visible:
     type: list
     default: ar|zh_CN|en|es|fr|ru
     client: true
+  multilingual_tag_translations_enforce_format: false

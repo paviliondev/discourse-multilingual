@@ -34,8 +34,16 @@
       font-weight: initial;
     }
     
-    &[data-value="set_content_language"] {
+    &[data-value="set_content_language"], &[data-value="clear_content_language"] {
       cursor: pointer;
+    }
+    
+    &.guest-content-language {
+      cursor: pointer;
+      
+      &.active {
+        background: $tertiary-low;
+      }
     }
   }
 }

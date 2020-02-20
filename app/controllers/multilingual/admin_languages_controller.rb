@@ -1,13 +1,6 @@
 class Multilingual::AdminLanguagesController < Admin::AdminController
-  def index
-    respond_to do |format|
-      format.html do
-        render :index
-      end
-      format.json do
-        serialize_languages(Multilingual::Language.filter(filter_params.to_h))
-      end
-    end
+  def list
+    serialize_languages(Multilingual::Language.filter(filter_params.to_h))
   end
   
   def remove

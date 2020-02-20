@@ -7,7 +7,7 @@ export default Controller.extend({
   _refresh() {
     this.set("refreshing", true);
     
-    MultilingualTranslation.all().then(result => {
+    MultilingualTranslation.list().then(result => {
       this.set('translations', result);
     }).finally(() => {
       this.set("refreshing", false);

@@ -1,15 +1,15 @@
 en:
-  js:
+  js:      
+    topic:
+      content_languages:
+        placeholder: "select language"
+        
     user:
       content_languages:
         title: "Content Languages"
         placeholder: "Select content languages"
         instructions: "User content languages."
         set: "Set content languages"
-    
-    topic:
-      content_languages:
-        placeholder: "select language"
   
   admin_js:
     multilingual:

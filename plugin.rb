@@ -62,6 +62,7 @@ after_initialize do
   end
   
   add_to_serializer(:site, :content_languages) { serialize_languages(object.content_languages) }
+  add_to_serializer(:site, :include_content_languages?) { SiteSetting.multilingual_content_languages_enabled }
   add_to_serializer(:site, :interface_languages) { serialize_languages(object.interface_languages) }
   
   add_class_method(:locale_site_setting, :valid_value?) do |val|
@@ -107,14 +108,14 @@ after_initialize do
   register_html_builder('server:before-script-load') { CustomLocaleLoader.new.preload_i18n }
   register_html_builder('server:before-script-load') { CustomLocaleLoader.new.preload_custom_locale }
   
-  add_to_class(:application_controller, :guest_locale) do
+  add_to_class(:application_controller, :client_locale) do
     cookies[:discourse_locale] || params[:locale]
   end
   
   add_to_class(:application_controller, :set_locale) do
     if !current_user
-      if SiteSetting.multilingual_language_switcher != "off" && guest_locale
-        locale = guest_locale
+      if SiteSetting.multilingual_locale_switcher != "off" && client_locale
+        locale = client_locale
       elsif SiteSetting.set_locale_from_accept_language_header
         locale = locale_from_header
       else
@@ -128,13 +129,15 @@ after_initialize do
     I18n.ensure_all_loaded!
   end
   
-  if defined? register_editable_user_custom_field
-    register_editable_user_custom_field :content_languages 
-    register_editable_user_custom_field content_languages: []
-  end
-  
-  if defined? whitelist_public_user_custom_field
-    whitelist_public_user_custom_field :content_languages
+  if SiteSetting.multilingual_content_languages_enabled
+    if defined? register_editable_user_custom_field
+      register_editable_user_custom_field :content_languages 
+      register_editable_user_custom_field content_languages: []
+    end
+    
+    if defined? whitelist_public_user_custom_field
+      whitelist_public_user_custom_field :content_languages
+    end
   end
     
   add_to_class(:user, :effective_locale) do
@@ -169,19 +172,16 @@ after_initialize do
   
   ## This is necessary due to the workaround for jquery ajax added in multilingual-initializer
   on(:user_updated) do |user|
-    if user.custom_fields['content_languages'].blank?
+    if SiteSetting.multilingual_content_languages_enabled && user.custom_fields['content_languages'].blank?
       user.custom_fields['content_languages'] = []
       user.save_custom_fields(true)
     end
   end
   
-  add_to_serializer(:topic_view, :content_language_tags) do
-    Multilingual::ContentTag.filter(topic.tags).map(&:name)
-  end
-  
-  add_to_serializer(:topic_list_item, :content_language_tags) do
-    Multilingual::ContentTag.filter(topic.tags).map(&:name)
-  end
+  add_to_serializer(:topic_view, :content_language_tags) { Multilingual::ContentTag.filter(topic.tags).map(&:name) }
+  add_to_serializer(:topic_view, :include_content_language_tags?) { SiteSetting.multilingual_content_languages_enabled }
+  add_to_serializer(:topic_list_item, :content_language_tags) { Multilingual::ContentTag.filter(topic.tags).map(&:name) }
+  add_to_serializer(:topic_list_item, :include_content_language_tags?) { SiteSetting.multilingual_content_languages_enabled }
   
   add_to_class(:topic, :content_languages) do
     if custom_fields['content_languages']
@@ -192,23 +192,26 @@ after_initialize do
   end
   
   on(:before_create_topic) do |topic, creator|
-    content_language_tags = [*creator.opts[:content_language_tags]]
-        
-    if !DiscourseTagging.validate_require_language_tag(
-        creator.guardian,
-        topic,
-        content_language_tags
-      )
-      creator.rollback_from_errors!(topic)
+    if SiteSetting.multilingual_content_languages_enabled
+      content_language_tags = [*creator.opts[:content_language_tags]]
+          
+      if !DiscourseTagging.validate_require_language_tag(
+          creator.guardian,
+          topic,
+          content_language_tags
+        )
+        creator.rollback_from_errors!(topic)
+      end
+          
+      Multilingual::ContentTag.add_to_topic(topic, content_language_tags)
     end
-        
-    Multilingual::ContentTag.add_to_topic(topic, content_language_tags)
   end
   
   add_to_class(:guardian, :topic_requires_language_tag) do
     SiteSetting.multilingual_enabled &&
-    (SiteSetting.multilingual_require_language_tag === 'yes' ||
-    (!is_staff? && SiteSetting.multilingual_require_language_tag === 'non-staff'))
+    SiteSetting.multilingual_content_languages_enabled &&
+    (SiteSetting.multilingual_require_content_language_tag === 'yes' ||
+    (!is_staff? && SiteSetting.multilingual_require_content_language_tag === 'non-staff'))
   end
   
   add_class_method(:discourse_tagging, :validate_require_language_tag) do |guardian, topic, tag_names|
@@ -296,9 +299,11 @@ after_initialize do
   ## Hooks
   
   if SiteSetting.multilingual_enabled
-    TopicQuery.add_custom_filter(:content_language) do |result, query|
-      if query.user && query.user.content_languages.any?
-        result.joins(:tags).where("lower(tags.name) in (?)", query.user.content_languages)
+    TopicQuery.add_custom_filter(:content_languages) do |result, query|
+      content_languages = query.user ? query.user.content_languages : [*query.options[:content_languages]]
+            
+      if content_languages.any?
+        result.joins(:tags).where("lower(tags.name) in (?)", content_languages)
       else
         result
       end
@@ -314,9 +319,11 @@ after_initialize do
     end
     
     ::PostRevisor.track_topic_field(:content_language_tags) do |tc, content_language_tags|
-      content_language_tags = [*content_language_tags]
-      tc.check_result(DiscourseTagging.validate_require_language_tag(tc.guardian, tc.topic, content_language_tags))
-      tc.check_result(Multilingual::ContentTag.add_to_topic(tc.topic, content_language_tags))
+      if SiteSetting.multilingual_content_languages_enabled
+        content_language_tags = [*content_language_tags]
+        tc.check_result(DiscourseTagging.validate_require_language_tag(tc.guardian, tc.topic, content_language_tags))
+        tc.check_result(Multilingual::ContentTag.add_to_topic(tc.topic, content_language_tags))
+      end
     end
   end
 end

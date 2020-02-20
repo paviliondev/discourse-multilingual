@@ -1,10 +1,11 @@
 en:
   site_settings:
     multilingual_enabled: Multilingual plugin enabled
-    multilingual_require_language_tag: Require a language tag on all topics
+    multilingual_content_languages_enabled: Content languages enabled
+    multilingual_require_content_language_tag: Require a language tag on all topics
+    multilingual_locale_switcher: Enable guest language switcher
+    multilingual_locale_switcher_footer_visible: Languages initially visible in the guest language switcher
     multilingual_tag_translations_enforce_format: Enforce Discourse tag formatting on tag translations
-    multilingual_language_switcher: Enable guest language switcher
-    multilingual_language_switcher_visible: Languages initially visible in the guest language switcher
   
   multilingual:
     languages:

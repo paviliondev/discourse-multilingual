@@ -6,7 +6,7 @@ const MultilingualTranslation = EmberObject.extend();
 const TranslationPath = '/admin/multilingual/translations';
 
 MultilingualTranslation.reopenClass({
-  all() {
+  list() {
     return ajax(TranslationPath).catch(popupAjaxError)
   },
   

@@ -1,6 +1,7 @@
 export default {
   showRender(_, ctx) {
-    return ctx.siteSettings.multilingual_enabled;
+    return ctx.siteSettings.multilingual_enabled &&
+      ctx.siteSettings.multilingual_content_languages_enabled;
   },
   
   setupComponent(attrs, component) {

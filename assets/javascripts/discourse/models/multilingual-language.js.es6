@@ -17,7 +17,7 @@ function getParams() {
 }
 
 MultilingualLanguage.reopenClass({
-  filter(params = {}) {
+  list(params = {}) {
     return ajax(LanguagesPath, {
       data: Object.assign(getParams(), params)
     }).then(result => {
