@@ -22,7 +22,7 @@ class Multilingual::CustomLanguage
   end
 
   def self.create(code, opts = {}, run_hooks: false)
-    if PluginStore.set(Multilingual::PLUGIN_NAME, "#{CUSTOM_KEY}_#{code.to_s}", opts)
+    if PluginStore.set(Multilingual::PLUGIN_NAME, "#{KEY}_#{code.to_s}", opts)
       after_create([code]) if run_hooks
     end
   end
@@ -31,7 +31,7 @@ class Multilingual::CustomLanguage
     Multilingual::LanguageExclusion.set(code, 'interface', enabled: true)
     Multilingual::LanguageExclusion.set(code, 'content', enabled: true)
     
-    if PluginStore.remove(Multilingual::PLUGIN_NAME, "#{CUSTOM_KEY}_#{code.to_s}")
+    if PluginStore.remove(Multilingual::PLUGIN_NAME, "#{KEY}_#{code.to_s}")
       after_destroy([code]) if run_hooks
     end
   end
