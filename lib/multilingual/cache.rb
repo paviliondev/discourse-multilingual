@@ -53,16 +53,23 @@ class Multilingual::Cache
     end
   end
   
+  def self.clear_i18n!
+    ExtraLocalesController.clear_cache!
+    I18n.config.clear_available_locales_set
+    Site.clear_anon_cache!
+  end
+  
+  def self.reload_i18n!
+    I18n.config.backend.reload!
+    I18n.reload!
+  end
+  
   def self.reset_core(opts)
     LocaleSiteSetting.reset!
     JsLocaleHelper.clear_cache!
     JsLocaleHelper.reset_context
-    
-    if opts[:reload_i18n]
-      ExtraLocalesController.clear_cache!
-      I18n.config.clear_available_locales_set
-      Site.clear_anon_cache!
-    end
+  
+    clear_i18n! if opts[:reload_i18n]
   end
   
   def self.instantiate_core(opts)
@@ -75,10 +82,7 @@ class Multilingual::Cache
       I18n.load_locale(opts[:locale])
     end
     
-    if opts[:reload_i18n]
-      I18n.config.backend.reload!
-      I18n.reload!
-    end
+    reload_i18n! if opts[:reload_i18n]
   end
   
   def self.reset

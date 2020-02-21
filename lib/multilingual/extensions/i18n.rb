@@ -1,7 +1,7 @@
 module I18nMultilingualExtension
   def ensure_all_loaded!
     super
-    Multilingual::Translation.load_extra(locale)
+    Multilingual::Translation.load_custom_types(locale)
   end
   
   def available_locales

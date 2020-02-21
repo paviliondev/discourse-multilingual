@@ -119,6 +119,8 @@ after_initialize do
       else
         locale = SiteSetting.default_locale
       end
+      
+      Multilingual::Cache.clear_i18n! if I18n.locale != client_locale
     else
       locale = current_user.effective_locale
     end
