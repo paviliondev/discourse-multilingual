@@ -64,10 +64,8 @@ after_initialize do
   add_to_serializer(:site, :content_languages) { serialize_languages(object.content_languages) }
   add_to_serializer(:site, :include_content_languages?) { SiteSetting.multilingual_content_languages_enabled }
   add_to_serializer(:site, :interface_languages) { serialize_languages(object.interface_languages) }
-  
-  add_class_method(:locale_site_setting, :valid_value?) do |val|
-    supported_locales.include?(val) && Multilingual::InterfaceLanguage.enabled?(val)
-  end
+
+  add_class_method(:locale_site_setting, :valid_value?) { |val| Multilingual::InterfaceLanguage.supported?(val) }
   
   add_class_method(:locale_site_setting, :values) do
     @values ||= supported_locales.reduce([]) do |result, locale|
