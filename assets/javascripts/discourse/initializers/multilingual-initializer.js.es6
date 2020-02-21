@@ -1,7 +1,8 @@
 import { withPluginApi } from 'discourse/lib/plugin-api';
 import { default as discourseComputed, observes } from "discourse-common/utils/decorators";
 import { multilingualTagRenderer } from '../lib/multilingual-tags';
-import { discoveryParams } from '../lib/multilingual-route';
+import { multilingualCategoryLinkRenderer } from '../lib/multilingual-category';
+import { discoveryParams, localeParam, removeParam } from '../lib/multilingual-route';
 import Composer from 'discourse/models/composer';
 import { iconHTML } from "discourse-common/lib/icon-library";
 import renderTag from "discourse/lib/render-tag";
@@ -25,12 +26,17 @@ export default {
     }
             
     withPluginApi('0.8.36', api => {
+      api.replaceTagRenderer(multilingualTagRenderer);
+      api.replaceCategoryLinkRenderer(multilingualCategoryLinkRenderer);
+      
       discoveryParams.forEach(param => {
         api.addDiscoveryQueryParam(param, {
           replace: true,
           refreshModel: true 
         });
       });
+      
+      api.onPageChange(() => removeParam(localeParam, { ctx: this }));
       
       api.modifyClass('controller:preferences/interface', {
         @discourseComputed()
@@ -85,8 +91,6 @@ export default {
           }
         }
       });
-      
-      api.replaceTagRenderer(multilingualTagRenderer);
       
       api.modifyClass('component:tag-drop', {
         _prepareSearch(query) {

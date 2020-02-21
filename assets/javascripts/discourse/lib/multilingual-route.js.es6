@@ -1,4 +1,6 @@
 import { getOwner } from 'discourse-common/lib/get-owner';
+import { next } from "@ember/runloop";
+import DiscourseURL from 'discourse/lib/url';
 
 const contentLanguageParam = 'content_languages';
 const localeParam = "locale";
@@ -45,6 +47,20 @@ function useDiscoveryController(ctx, paramName) {
     discoveryParams.indexOf(paramName) > -1
 }
 
+// same as DiscourseURL.replaceState besides allowing modification of current path
+function replaceState(path) {
+  if (window.history &&
+      window.history.pushState &&
+      window.history.replaceState) {
+    next(() => {
+      const location = DiscourseURL.get("router.location");
+      if (location && location.replaceURL) {
+        location.replaceURL(path);
+      }
+    });    
+  }
+}
+
 function addParam(paramName, value, opts = {}) {
   if (opts.add_cookie) {
     $.cookie(`discourse_${paramName}`, value);
@@ -57,7 +73,7 @@ function addParam(paramName, value, opts = {}) {
   const params = getParams(opts.ctx);
   params.delete(paramName);
   if (value) params.set(paramName, value);
-            
+              
   window.location.href = buildPath(opts.ctx, params);
   
   return value;
@@ -66,16 +82,19 @@ function addParam(paramName, value, opts = {}) {
 function removeParam(paramName, opts = {}) {
   const router = getRouter(opts.ctx);
   
+  const params = getParams(opts.ctx);
+  let value = params.get(paramName);
+  
+  if (!value) return null;
+  
   if (useDiscoveryController(opts.ctx, paramName)) {
     return setDiscoveryParam(opts.ctx, null);
   }
-    
-  const params = getParams(opts.ctx);
-  let value = params.get(paramName);
+  
   params.delete(paramName);
       
-  window.history.replaceState(null, null, buildPath(opts.ctx, params));
-  
+  replaceState(buildPath(opts.ctx, params));
+        
   return value;
 }
 

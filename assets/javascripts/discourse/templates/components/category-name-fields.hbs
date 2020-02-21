@@ -1,8 +1,8 @@
 <section class='field'>
   {{#unless category.isUncategorizedCategory}}
     <section class="field-item category-name">
-      <label>{{i18n 'category.name'}}</label>{{#if category.name_translated}}<span>{{d-icon 'translate'}}</span>{{/if}}
-      {{text-field value=category.name placeholderKey="category.name_placeholder" maxlength="50" disabled=category.name_translated}}
+      <label>{{i18n 'category.name'}}</label>{{#if category.name_translations}}<span>{{d-icon 'translate'}}</span>{{/if}}
+      {{text-field value=category.name placeholderKey="category.name_placeholder" maxlength="50"}}
     </section>
   {{/unless}}
   <section class="field-item">

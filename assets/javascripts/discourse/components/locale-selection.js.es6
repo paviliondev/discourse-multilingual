@@ -1,6 +1,6 @@
 import { on } from 'ember-addons/ember-computed-decorators';
 import EmberObject from "@ember/object";
-import { addParam, removeParam, localeParam } from '../lib/multilingual-route';
+import { addParam, localeParam } from '../lib/multilingual-route';
 
 export default Ember.Component.extend({
   classNames: 'locale-selection',
@@ -42,7 +42,6 @@ export default Ember.Component.extend({
   },
 
   didInsertElement() {
-    removeParam(localeParam, { ctx: this });
     this.set('clickOutsideHandler', Ember.run.bind(this, this.clickOutside));
     $(document).on('click', this.clickOutsideHandler);
   },

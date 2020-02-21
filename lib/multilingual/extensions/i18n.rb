@@ -1,9 +1,4 @@
-module I18nMultilingualExtension
-  def ensure_all_loaded!
-    super
-    Multilingual::Translation.load_custom_types(locale)
-  end
-  
+module I18nMultilingualExtension  
   def available_locales
     super.select { |l| Multilingual::InterfaceLanguage.enabled?(l) }
   end

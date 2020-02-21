@@ -107,7 +107,7 @@ after_initialize do
   register_html_builder('server:before-script-load') { CustomLocaleLoader.new.preload_custom_locale }
   
   add_to_class(:application_controller, :client_locale) do
-    cookies[:discourse_locale] || params[:locale]
+     params[:locale] || cookies[:discourse_locale]
   end
   
   add_to_class(:application_controller, :set_locale) do
@@ -119,8 +119,6 @@ after_initialize do
       else
         locale = SiteSetting.default_locale
       end
-      
-      Multilingual::Cache.clear_i18n! if I18n.locale != client_locale
     else
       locale = current_user.effective_locale
     end
@@ -234,18 +232,10 @@ after_initialize do
       true
     end
   end
-      
-  add_to_serializer(:basic_category, :name) do
-    Multilingual::Translation.category_names[slug] ||
-    (object.uncategorized? ? 
-    I18n.t('uncategorized_category_name', locale: SiteSetting.default_locale) :
-    object.name)
-  end
   
-  add_to_serializer(:basic_category, :name_translated) do
-    Multilingual::Translation.category_names[slug].present?
-  end
-  
+  add_to_serializer(:basic_category, :name_translations) { Multilingual::Translation.get("category_name", slug) }
+  add_to_serializer(:basic_category, :include_name_translations?) { name_translations.present? }
+    
   add_to_class(:extra_locales_controller, :valid_bundle?) do |bundle|
     bundle == ExtraLocalesController::OVERRIDES_BUNDLE ||
     (bundle =~ /^(admin|wizard)$/ && current_user&.staff?) ||

@@ -1,5 +1,5 @@
 class Multilingual::Cache
-  KLASSES ||= []
+  GENERAL ||= []
   
   def self.setup
     %w[
@@ -11,7 +11,7 @@ class Multilingual::Cache
       content_language
       interface_language
     ].each do |klass|
-      KLASSES.push("Multilingual::#{klass.classify}".constantize)
+      GENERAL.push("Multilingual::#{klass.classify}".constantize)
     end
     
     reset
@@ -86,11 +86,15 @@ class Multilingual::Cache
   end
   
   def self.reset
-    KLASSES.each { |klass| Multilingual::Cache.new(klass::KEY).delete }
+    GENERAL.each { |klass| Multilingual::Cache.new(klass::KEY).delete }
+    
+    Multilingual::Translation::CUSTOM_TYPES.each do |type|
+      Multilingual::Cache.new("#{Multilingual::Translation::KEY}_#{type}").delete
+    end
   end
   
   def self.instantiate
-    KLASSES.each { |klass| klass.send(:all) if klass.respond_to?(:all) }
+    GENERAL.each { |klass| klass.send(:all) if klass.respond_to?(:all) }
   end
   
   def self.refresh!(opts = {})
