@@ -30,7 +30,7 @@ class Multilingual::Cache
   end
   
   def delete
-    synchronize {cache.delete(@key) }
+    synchronize { cache.delete(@key) }
   end
   
   def synchronize

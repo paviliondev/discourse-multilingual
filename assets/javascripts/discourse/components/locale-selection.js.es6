@@ -36,7 +36,7 @@ export default Ember.Component.extend({
   },
   
   availableLocales() {
-    return this.site.interface_languages.map(l => {
+    return (this.site.interface_languages || []).map(l => {
       return EmberObject.create(Object.assign({}, l, { class: "locale" }));
     });
   },
