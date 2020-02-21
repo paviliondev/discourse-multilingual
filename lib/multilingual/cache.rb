@@ -89,7 +89,7 @@ class Multilingual::Cache
     KLASSES.each { |klass| klass.send(:all) if klass.respond_to?(:all) }
   end
   
-  def self.refresh!(opts)
+  def self.refresh!(opts = {})
     reset
     reset_core(opts)
     instantiate

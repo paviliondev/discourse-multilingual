@@ -1,5 +1,6 @@
 class Multilingual::CustomLanguage
   KEY ||= 'custom_language'.freeze
+  ATTRS ||= [:name, :nativeName]
   
   def self.all
     Multilingual::Cache.wrap(KEY) do 
@@ -21,18 +22,24 @@ class Multilingual::CustomLanguage
     end
   end
 
-  def self.create(code, opts = {}, run_hooks: false)
-    if PluginStore.set(Multilingual::PLUGIN_NAME, "#{KEY}_#{code.to_s}", opts)
-      after_create([code]) if run_hooks
+  def self.create(code, opts = {})
+    if PluginStore.set(
+      Multilingual::PLUGIN_NAME,
+      "#{KEY}_#{code.to_s}",
+      opts.with_indifferent_access.slice(*ATTRS)
+    )
+      after_create([code]) if opts[:run_hooks]
+      true
     end
   end
 
-  def self.destroy(code, run_hooks: false)
+  def self.destroy(code, opts = {})
     Multilingual::LanguageExclusion.set(code, 'interface', enabled: true)
     Multilingual::LanguageExclusion.set(code, 'content', enabled: true)
     
     if PluginStore.remove(Multilingual::PLUGIN_NAME, "#{KEY}_#{code.to_s}")
-      after_destroy([code]) if run_hooks
+      after_destroy([code]) if opts[:run_hooks]
+      true
     end
   end
 
@@ -55,8 +62,9 @@ class Multilingual::CustomLanguage
     
     PluginStoreRow.transaction do
       languages.each do |k, v|
-        self.create(k, v)
-        created.push(k)
+        if create(k, v)
+          created.push(k)
+        end
       end
       
       after_create(created)
@@ -70,8 +78,9 @@ class Multilingual::CustomLanguage
     
     PluginStoreRow.transaction do
       [*codes].each do |c|
-        self.destroy(c)
-        destroyed.push(c)
+        if destroy(c)
+          destroyed.push(c)
+        end
       end
       
       after_destroy(destroyed)
