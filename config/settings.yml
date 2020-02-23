@@ -12,7 +12,7 @@ plugins:
       - "no"
       - "yes"
       - "non-staff"
-  multilingual_locale_switcher:
+  multilingual_language_switcher:
     client: true
     type: enum
     default: "off"
@@ -20,8 +20,10 @@ plugins:
       - "off"
       - "footer"
       - "header"
-  multilingual_locale_switcher_footer_visible:
+  multilingual_language_switcher_footer_visible:
     type: list
     default: ar|zh_CN|en|es|fr|ru
     client: true
   multilingual_tag_translations_enforce_format: false
+  multilingual_translator_content_tag_sync: false
+  

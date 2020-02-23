@@ -126,7 +126,7 @@ export default {
         return html;
       }, { priority: 100 });
       
-      if (!currentUser && siteSettings.multilingual_locale_switcher === "header") {
+      if (!currentUser && siteSettings.multilingual_language_switcher === "header") {
         api.decorateWidget('header-icons:before', helper => {  
           return helper.attach('header-dropdown', {
             title: "user.locale.title",

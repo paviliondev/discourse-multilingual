@@ -82,22 +82,27 @@ class Multilingual::ContentTag
     [*codes].each { |c| Multilingual::ContentTag.send(action, c) }
   end
   
-  def self.add_to_topic(topic, tags)
-    topic_tags = topic.tags
-    
-    content_language_tags = tags.reduce([]) do |result, tag_name|
-      if self.exists?(tag_name) && topic_tags.map(&:name).exclude?(tag_name)
-        result.push(Tag.find_by(name: tag_name)) 
+  def self.load(ctag_names)
+    [*ctag_names].map { |t| t.underscore }
+      .reduce([]) do |result, name|
+        result.push(Tag.find_by(name: name)) if self.exists?(name)
+        result
       end
-      
-      result
-    end
-            
-    if content_language_tags.any?
-      topic.tags = topic_tags + content_language_tags 
-      topic.custom_fields['content_languages'] = content_language_tags.map(&:name)
-    end
-        
+  end
+  
+  def self.update_topic(topic, ctag_names = [])
+    ctags = ctag_names.any? ? load(ctag_names) : []
+    tags = topic.tags.select { |t| self.all.exclude?(t.name) }
+    topic.tags = tags + ctags 
+    topic.custom_fields['content_languages'] = ctags.any? ? ctags.map(&:name) : []
     topic
+  end
+  
+  def self.remove_from_topic(topic, ctag_name)
+    update_topic(topic, (topic.content_languages - [ctag_name]).uniq)
+  end
+  
+  def self.add_to_topic(topic, ctag_name)
+    update_topic(topic, (topic.content_languages + [ctag_name]).uniq)
   end
 end

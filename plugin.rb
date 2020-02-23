@@ -17,7 +17,7 @@ end
 
 after_initialize do
   %w[
-    ../lib/multilingual/engine.rb
+    ../lib/multilingual/multilingual.rb
     ../lib/multilingual/cache.rb
     ../lib/multilingual/language/content_tag.rb
     ../lib/multilingual/language/exclusion.rb
@@ -112,7 +112,7 @@ after_initialize do
   
   add_to_class(:application_controller, :set_locale) do
     if !current_user
-      if SiteSetting.multilingual_locale_switcher != "off" && client_locale
+      if SiteSetting.multilingual_language_switcher != "off" && client_locale
         locale = client_locale
       elsif SiteSetting.set_locale_from_accept_language_header
         locale = locale_from_header
@@ -201,7 +201,7 @@ after_initialize do
         creator.rollback_from_errors!(topic)
       end
           
-      Multilingual::ContentTag.add_to_topic(topic, content_language_tags)
+      Multilingual::ContentTag.update_topic(topic, content_language_tags)
     end
   end
   
@@ -249,6 +249,7 @@ after_initialize do
     ../lib/multilingual/extensions/discourse_tagging.rb
     ../lib/multilingual/extensions/extra_locales_controller.rb
     ../lib/multilingual/extensions/i18n.rb
+    ../lib/multilingual/extensions/post.rb
     ../lib/multilingual/extensions/topic_serializer.rb
   ].each do |path|
     load File.expand_path(path, __FILE__)
@@ -284,6 +285,10 @@ after_initialize do
     class ::CategoryList
       prepend CategoryListMultilingualExtension
     end
+    
+    class ::Post
+      prepend MultilingualTranslatorPostExtension
+    end
   end
   
   ## Hooks
@@ -312,7 +317,7 @@ after_initialize do
       if SiteSetting.multilingual_content_languages_enabled
         content_language_tags = [*content_language_tags]
         tc.check_result(DiscourseTagging.validate_require_language_tag(tc.guardian, tc.topic, content_language_tags))
-        tc.check_result(Multilingual::ContentTag.add_to_topic(tc.topic, content_language_tags))
+        tc.check_result(Multilingual::ContentTag.update_topic(tc.topic, content_language_tags))
       end
     end
   end

@@ -1,12 +1,16 @@
 en:
   site_settings:
-    multilingual_enabled: Multilingual plugin enabled
-    multilingual_content_languages_enabled: Content languages enabled
-    multilingual_require_content_language_tag: Require a language tag on all topics
-    multilingual_locale_switcher: Enable guest language switcher
-    multilingual_locale_switcher_footer_visible: Languages initially visible in the guest language switcher
-    multilingual_tag_translations_enforce_format: Enforce Discourse tag formatting on tag translations
+    multilingual_enabled: Multilingual plugin enabled.
+    multilingual_content_languages_enabled: Content languages enabled.
+    multilingual_require_content_language_tag: Require a content language tag on all topics.
+    multilingual_language_switcher: Enable guest language switcher.
+    multilingual_language_switcher_footer_visible: Languages always visible in the footer language switcher.
+    multilingual_tag_translations_enforce_format: Enforce Discourse tag formatting on tag translations.
+    multilingual_translator_content_tag_sync: >
+      Sync content language tags with post languages detected 
+      by <a href='https://github.com/discourse/discourse-translator'>Discourse Translator Plugin</a>.
+      Requires Discourse Translator Plugin, and content languages to be enabled.
   
   multilingual:
     languages:
-      upload_format_incorrect: "Incorrect format. One language per line: ISO 639-1 code, Native name"
+      upload_format_incorrect: "Incorrect format. Use format of [Discourse names.yml](https://github.com/discourse/discourse/blob/master/config/locales/names.yml)."

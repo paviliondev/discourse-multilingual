@@ -6,4 +6,8 @@ module Multilingual
     engine_name "multilingual"
     isolate_namespace Multilingual
   end
+  
+  def self.translator_installed?
+    defined?(DiscourseTranslator) == 'constant' && DiscourseTranslator.class == Module
+  end
 end

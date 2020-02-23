@@ -11,7 +11,7 @@ export default Ember.Component.extend({
     const availableLocales = this.availableLocales();    
     const currentLocale = I18n.currentLocale();
     
-    let visibleList = this.siteSettings.multilingual_locale_switcher_footer_visible.split('|');
+    let visibleList = this.siteSettings.multilingual_language_switcher_footer_visible.split('|');
     let visibleLocales = [];
     let hiddenLocales = [];
 
