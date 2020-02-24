@@ -18,7 +18,7 @@ en:
         
     user:
       content_languages:
-        title: "Content Languages"
+        title: "Content languages"
         placeholder: "Select content languages"
         instructions: "User content languages."
         set: "Set content languages"
