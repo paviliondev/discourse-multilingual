@@ -25,7 +25,43 @@ export default Ember.Component.extend({
   
   @computed('language.code')
   interfaceToggleDisabled(code) {
-    return code === 'en'
+    return code === 'en';
+  },
+  
+  @computed
+  contentDisabled() {
+    return !this.siteSettings.multilingual_content_languages_enabled;
+  },
+  
+  @computed
+  interfaceDisabled() {
+    return !this.siteSettings.allow_user_locale;
+  },
+  
+  @computed('language.custom')
+  actionsDisabled(custom) {
+    return !custom;
+  },
+  
+  @computed
+  contentClass() {
+    return this.generateControlColumnClass("content");
+  },
+  
+  @computed
+  interfaceClass() {
+    return this.generateControlColumnClass("interface");
+  },
+  
+  @computed
+  actionsClass() {
+    return this.generateControlColumnClass('actions');
+  },
+  
+  generateControlColumnClass(type) {
+    let columnClass = `language-control ${type}`;
+    if (this.get(`${type}Disabled`)) columnClass += " disabled";
+    return columnClass;
   },
   
   actions: {

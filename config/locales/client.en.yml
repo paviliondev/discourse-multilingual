@@ -42,6 +42,7 @@ en:
         interface_not_supported: "no translations"
         query_placeholder: "code or name"
         custom_only: "custom only"
+        disabled: "disabled"
       
       translations:
         type: "Type"

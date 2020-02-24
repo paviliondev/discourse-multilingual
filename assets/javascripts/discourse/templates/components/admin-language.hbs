@@ -10,20 +10,30 @@
   {{language.nativeName}}
 </td>
 
-<td class="content">
-  {{input type="checkbox" checked=language.content_enabled}}
-</td>
-
-<td class="interface">
-  {{#if language.interface_supported}}
-    {{input type="checkbox" checked=language.interface_enabled disabled=interfaceToggleDisabled}}
+<td class="{{contentClass}}">
+  {{#if contentDisabled}}
+    {{i18n 'multilingual.languages.disabled'}}
   {{else}}
-    <i>{{i18n 'multilingual.languages.interface_not_supported'}}</i>
+    {{input type="checkbox" checked=language.content_enabled}}
   {{/if}}
 </td>
 
-<td class="actions">
-  {{#if language.custom}}
+<td class="{{interfaceClass}}">
+  {{#if interfaceDisabled}}
+    {{i18n 'multilingual.languages.disabled'}}
+  {{else}}
+    {{#if language.interface_supported}}
+      {{input type="checkbox" checked=language.interface_enabled disabled=interfaceToggleDisabled}}
+    {{else}}
+      <i>{{i18n 'multilingual.languages.interface_not_supported'}}</i>
+    {{/if}}
+  {{/if}}
+</td>
+
+<td class={{actionsClass}}>
+  {{#if actionsDisabled}}
+    {{i18n 'multilingual.languages.disabled'}}
+  {{else}}
     {{#d-button action="remove" disabled=removing}}
       {{#if removing}}
         {{loading-spinner size="small"}}
