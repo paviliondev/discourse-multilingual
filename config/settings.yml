@@ -3,7 +3,7 @@ plugins:
     default: true
     client: true
   multilingual_content_languages_enabled: 
-    default: true
+    default: false
     client: true
     validator: ContentLanguagesValidator
   multilingual_require_content_language_tag:

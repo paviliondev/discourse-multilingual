@@ -159,6 +159,13 @@ after_initialize do
     Multilingual::InterfaceLanguage.enabled?(object.locale) ? object.locale : nil
   end
   
+  on(:site_setting_changed) do |setting, old_val, new_val|
+    if setting.to_sym == :multilingual_content_languages_enabled && 
+       ActiveModel::Type::Boolean.new.cast(new_val)
+      Multilingual::ContentTag.enqueue_update_all
+    end
+  end
+  
   add_to_class(:user, :content_languages) do
     content_languages = self.custom_fields['content_languages'] || []
     [*content_languages].select{ |l| Multilingual::ContentLanguage.enabled?(l) }
