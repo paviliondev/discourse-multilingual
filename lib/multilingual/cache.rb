@@ -15,6 +15,7 @@ class Multilingual::Cache
     end
     
     reset
+    instantiate
   end
   
   def initialize(key)
