@@ -14,13 +14,13 @@ en:
           
     topic:
       content_languages:
-        placeholder: "select language"
+        placeholder: "select topic language(s)"
         
     user:
       content_languages:
         title: "Content languages"
         placeholder: "Select content languages"
-        instructions: "User content languages."
+        instructions: "User content languages"
         set: "Set content languages"
   
   admin_js:
