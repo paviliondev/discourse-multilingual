@@ -21,27 +21,25 @@ export default {
     let contentLanguages = currentUser
       ? currentUser.get('content_languages')
       : site.get('content_languages');
-    
-    console.log(currentUser.get('content_languages'))
-    
+        
     if (currentUser) {
       hasLanguages = contentLanguages.filter(l => isContentLanguage(l.code)).length;
       
-      contentLanguages.push({
-        icon: 'plus',
-        code: 'set_content_language',
-        name: I18n.t('user.content_languages.set')
-      });
+      if (!contentLanguages.some(l => l.code === 'set_content_language')) {
+        contentLanguages.push({
+          icon: 'plus',
+          code: 'set_content_language',
+          name: I18n.t('user.content_languages.set')
+        });
+      }
     } else {
       hasLanguages = getDiscoveryParam(ctx, contentLanguageParam);
       
       contentLanguages.forEach(l => {
-        set(l, 'classNames', 'guest-content-language')
+        set(l, 'classNames', 'guest-content-language');
       });
     }
-    
-    console.log("hasLanguages", hasLanguages);
-    
+        
     ctx.setProperties({ contentLanguages, hasLanguages });
   }
 }
