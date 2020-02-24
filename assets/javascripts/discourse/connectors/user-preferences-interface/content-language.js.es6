@@ -1,5 +1,5 @@
 export default {
-  showRender(_, ctx) {
+  shoudlRender(_, ctx) {
     return ctx.siteSettings.multilingual_enabled &&
       ctx.siteSettings.multilingual_content_languages_enabled;
   },
