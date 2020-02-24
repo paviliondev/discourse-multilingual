@@ -8,6 +8,12 @@
 }
 
 .admin-multilingual {
+  .nav-pills {
+    .right {
+      margin-left: auto;
+    }
+  }
+  
   .query {
     display: flex;
     align-items: center;

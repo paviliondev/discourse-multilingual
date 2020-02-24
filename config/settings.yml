@@ -5,6 +5,7 @@ plugins:
   multilingual_content_languages_enabled: 
     default: true
     client: true
+    validator: ContentLanguagesValidator
   multilingual_require_content_language_tag:
     type: enum
     default: "non-staff"
@@ -25,5 +26,7 @@ plugins:
     default: ar|zh_CN|en|es|fr|ru
     client: true
   multilingual_tag_translations_enforce_format: false
-  multilingual_translator_content_tag_sync: false
+  multilingual_translator_content_tag_sync:
+    default: false
+    validator: TranslatorContentTagValidator
   

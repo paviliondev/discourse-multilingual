@@ -10,7 +10,14 @@ en:
       Sync content language tags with post languages detected 
       by <a href='https://github.com/discourse/discourse-translator'>Discourse Translator Plugin</a>.
       Requires Discourse Translator Plugin, and content languages to be enabled.
+    
+    errors:
+      multilingual_disabled: Multilingual plugin is disabled
+      multilingual_content_languages_disabled: Content languages are disabled
+      multilingual_translator_disabled: Translator plugin is not installed and enabled
   
   multilingual:
+    content_tag_group_name: "Multilingual content tags"
+    
     languages:
       upload_format_incorrect: "Incorrect format. Use format of [Discourse names.yml](https://github.com/discourse/discourse/blob/master/config/locales/names.yml)."

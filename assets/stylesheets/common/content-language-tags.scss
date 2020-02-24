@@ -33,3 +33,32 @@
     @extend .discourse-tag.simple;
   }
 }
+
+.tag-groups-container.content-tags {
+  
+  .tag-group-content {
+    margin-bottom: 40px;
+    
+    .group-tags-list {
+      ul {
+        display: flex;
+        flex-flow: wrap;
+        list-style: none;
+        margin: 0;
+        
+        li {
+          margin: 0 15px 10px 0;
+        }
+      }
+    }
+    
+    .content-tag-controls {
+      float: right;
+      
+      button.btn {
+        margin-right: 0;
+        margin-left: 10px;
+      }
+    }
+  }
+}

@@ -1,12 +1,21 @@
 class Multilingual::ContentTag
   KEY = 'content_tag'.freeze
-  GROUP = 'languages'.freeze
+  GROUP = 'content_languages'.freeze
   
-  def self.create(code, force: false)
-    if force || !Tag.exists?(name: code)
+  CONTENT_TAG_SQL = "id IN (
+    #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND 
+    tg.name = '#{GROUP}'
+  )"
+  
+  def self.create(code)
+    tag = Tag.find_by(name: code)
+    
+    if !tag
       tag = Tag.new(name: code)
       tag.save!
+    end
       
+    unless TagGroupMembership.exists?(tag_id: tag.id, tag_group_id: group.id)
       membership = TagGroupMembership.new(
         tag_id: tag.id,
         tag_group_id: group.id
@@ -16,17 +25,12 @@ class Multilingual::ContentTag
   end
   
   def self.destroy(code)
-    if exists?(code)
-      Tag.where(name: code).destroy_all
-    end
+    Tag.where(name: code).destroy_all if exists?(code)
   end
   
   def self.all
     Multilingual::Cache.wrap(KEY) do
-      Tag.where("id IN (
-        #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND 
-        tg.name = '#{Multilingual::ContentTag::GROUP}'
-      )").pluck(:name)
+      Tag.where(CONTENT_TAG_SQL).pluck(:name)
     end
   end
   
@@ -52,30 +56,43 @@ class Multilingual::ContentTag
           permissions: { everyone: 1 }
         )
 
-        group.save
+        group.save!
       else
         group.permissions = { everyone: 1 }
-        group.save
+        group.save!
       end
       
       group
     end
   end
   
+  def self.destroy_all
+    Tag.where(CONTENT_TAG_SQL).destroy_all
+    Multilingual::Cache.new(KEY).delete
+  end
+  
+  def self.enqueue_update_all
+    Jobs.enqueue(:update_content_language_tags)
+  end
+  
   def self.update_all
-    create = []
-    destroy = []
-    
-    Multilingual::Language.list.each do |l|
-      if l.content_enabled
-        create.push(l.code) if all.exclude?(l.code)
-      else
-        destroy.push(l.code) if all.include?(l.code)
+    if Multilingual::ContentLanguage.enabled
+      create = []
+      destroy = []
+      
+      Multilingual::Language.list.each do |l|
+        if l.content_enabled
+          create.push(l.code) if all.exclude?(l.code)
+        else
+          destroy.push(l.code) if all.include?(l.code)
+        end
       end
-    end
 
-    bulk_update(create, "create") if create.any?
-    bulk_update(destroy, "destroy") if destroy.any?
+      bulk_update(create, "create") if create.any?
+      bulk_update(destroy, "destroy") if destroy.any?
+      
+      Multilingual::Cache.new(KEY).delete
+    end
   end
   
   def self.bulk_update(codes, action)

@@ -1,6 +1,8 @@
+import { isContentLanguage } from './multilingual';
+
 function multilingualTagRenderer(tag, params) {
   params = params || {};
-  const clt = contentLanguageTag(tag);
+  const clt = isContentLanguage(tag);
     
   if (clt && !params.contentLanguageTag) return '';
   
@@ -50,15 +52,4 @@ function multilingualTagRenderer(tag, params) {
   return val;
 }
 
-function contentLanguageTag(tag) {
-  if (!tag || !Discourse.SiteSettings.multilingual_content_languages_enabled) {
-    return false;
-  }
-  const site = Discourse.Site.current();
-  return site.content_languages.find(cl => cl.code == tag);
-}
-
-export {
-  multilingualTagRenderer,
-  contentLanguageTag
-};
+export { multilingualTagRenderer };

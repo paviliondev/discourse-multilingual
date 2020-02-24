@@ -15,4 +15,7 @@ Discourse::Application.routes.append do
     
     get 'admin/multilingual/translations/download' => 'admin_translations#download'
   end
+  
+  delete 'tag_groups/:id/content-tags' => 'tag_groups#destroy_content_tags'
+  put 'tag_groups/:id/content-tags' => 'tag_groups#update_content_tags'
 end

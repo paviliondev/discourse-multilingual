@@ -1,5 +1,17 @@
 en:
-  js:      
+  js:  
+    tagging:
+      groups:
+        content_tags:
+          title: "Multilingual content tags"
+          delete: 
+            btn: "Delete all tags"
+            confirm: "Are you sure you want to delete all content languge tags?"
+            message: "Deleting all tags"
+          update: 
+            btn: "Update all tags"
+            message: "Updating all tags"
+          
     topic:
       content_languages:
         placeholder: "select language"
@@ -23,6 +35,7 @@ en:
         name: "Name"
         native_name: "Native Name"
         content: "Content"
+        content_tag: "Content Tag"
         interface: "Interface"
         type: "Type"
         actions: "Actions"

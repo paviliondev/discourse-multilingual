@@ -1,5 +1,5 @@
 import { withPluginApi } from 'discourse/lib/plugin-api';
-import { default as discourseComputed, observes } from "discourse-common/utils/decorators";
+import { default as discourseComputed, observes, on } from "discourse-common/utils/decorators";
 import { multilingualTagRenderer } from '../lib/multilingual-tags';
 import { multilingualCategoryLinkRenderer } from '../lib/multilingual-category';
 import { discoveryParams, localeParam, removeParam } from '../lib/multilingual-route';
@@ -84,7 +84,7 @@ export default {
               }
               
               // See workaround above
-              userLanguages = userLanguages.filter(l => l !== "" && l !== undefined);
+              userLanguages = userLanguages.filter(l => isContentLanguage(l.code));
                               
               currentUser.set('content_languages', userLanguages);
             })
@@ -145,6 +145,32 @@ export default {
         
         api.addHeaderPanel('locale-menu', 'localeMenuVisible', () => {});
       }
+      
+      api.modifyClass('route:tag-groups-edit', {        
+        setupController(controller, model) {
+          this._super(controller, model);
+          
+          if (model.content_language_group) {
+            controller.setupContentTagControls();
+          }
+        },
+        
+        actions: {
+          tagsChanged() {
+            this.refresh();
+          }
+        }
+      });
+      
+      api.modifyClass('controller:tag-groups-edit', {  
+        setupContentTagControls() {
+          Ember.run.scheduleOnce('afterRender', () => {
+            $(".tag-groups-container").addClass('content-tags');
+            $(".tag-group-content h1 input").prop('disabled', true);
+            $(".content-tag-controls").appendTo('.tag-group-content');
+          });
+        }
+      });
     });
   }
 }

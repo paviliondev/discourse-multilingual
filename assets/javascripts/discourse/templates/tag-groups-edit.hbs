@@ -1,0 +1,8 @@
+{{#if model.content_language_group}}
+  {{content-tag-groups-form
+    model=model
+    onDestroy=(action "onDestroy")
+    tagsChanged=(route-action "tagsChanged")}}
+{{else}}
+  {{tag-groups-form model=model onDestroy=(action "onDestroy")}}
+{{/if}}

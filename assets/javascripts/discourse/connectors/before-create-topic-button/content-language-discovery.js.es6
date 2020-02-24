@@ -1,4 +1,5 @@
 import { set } from "@ember/object";
+import { isContentLanguage } from '../../lib/multilingual';
 import {
   getDiscoveryParam,
   contentLanguageParam,
@@ -21,8 +22,10 @@ export default {
       ? currentUser.get('content_languages')
       : site.get('content_languages');
     
+    console.log(currentUser.get('content_languages'))
+    
     if (currentUser) {
-      hasLanguages = contentLanguages.length;
+      hasLanguages = contentLanguages.filter(l => isContentLanguage(l.code)).length;
       
       contentLanguages.push({
         icon: 'plus',
@@ -36,6 +39,8 @@ export default {
         set(l, 'classNames', 'guest-content-language')
       });
     }
+    
+    console.log("hasLanguages", hasLanguages);
     
     ctx.setProperties({ contentLanguages, hasLanguages });
   }

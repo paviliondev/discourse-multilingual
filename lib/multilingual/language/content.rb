@@ -4,6 +4,11 @@ class Multilingual::ContentLanguage
   attr_reader :code, :name
   
   KEY ||= 'content_language'.freeze
+  
+  def self.enabled
+    SiteSetting.multilingual_enabled &&
+    SiteSetting.multilingual_content_languages_enabled
+  end
 
   def initialize(code, name)
     @code = code
