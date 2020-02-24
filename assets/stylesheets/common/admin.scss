@@ -49,6 +49,19 @@
   .admin-language-list {
     margin: 20px 0;
     
+    th.language-control {
+      text-align: center;
+    }
+    
+    td.language-control {
+      text-align: center;
+      
+      &.disabled {
+        background-color: $primary-very-low;
+        color: $primary-low;
+      }
+    }
+    
     .actions {
       .btn {
         height: 36px;

@@ -3,9 +3,9 @@
     {{admin-directory-toggle field="code" i18nKey='multilingual.code' order=order ascending=ascending}}
     {{admin-directory-toggle field="name" i18nKey='multilingual.languages.name' order=order ascending=ascending}}
     {{admin-directory-toggle field="nativeName" i18nKey='multilingual.languages.native_name' order=order ascending=ascending}}
-    {{admin-directory-toggle field="content_enabled" i18nKey='multilingual.languages.content' order=order ascending=ascending}}
-    {{admin-directory-toggle field="interface_enabled" i18nKey='multilingual.languages.interface' order=order ascending=ascending}}
-    <th>Actions</th>
+    {{admin-directory-toggle field="content_enabled" i18nKey='multilingual.languages.content' order=order ascending=ascending classNames=controlColumnClassNames}}
+    {{admin-directory-toggle field="interface_enabled" i18nKey='multilingual.languages.interface' order=order ascending=ascending classNames=controlColumnClassNames}}
+    <th class="language-control">Actions</th>
   </thead>
   <tbody>
     {{#each languages as |language|}}
