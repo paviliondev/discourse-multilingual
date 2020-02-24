@@ -12,6 +12,10 @@
     .right {
       margin-left: auto;
     }
+    
+    &> li:last-of-type > a {
+      margin-right: 0;
+    }
   }
   
   .query {
