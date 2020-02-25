@@ -1,5 +1,7 @@
-{{content-languages-selector
-  content=site.content_languages
-  value=model.contentLanguageTags
-  filterPlaceholder="topic.content_languages.placeholder"
-  onChange=(action (mut model.contentLanguageTags))}}
+{{#if showSelector}}
+  {{content-languages-selector
+    content=site.content_languages
+    value=model.contentLanguageTags
+    filterPlaceholder="topic.content_languages.placeholder"
+    onChange=(action (mut model.contentLanguageTags))}}
+{{/if}}
