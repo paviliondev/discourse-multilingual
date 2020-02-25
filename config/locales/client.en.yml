@@ -14,7 +14,7 @@ en:
           
     topic:
       content_languages:
-        placeholder: "select topic language(s)"
+        placeholder: "topic language(s)"
         
     user:
       content_languages:
