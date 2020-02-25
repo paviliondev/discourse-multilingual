@@ -23,6 +23,8 @@ class Multilingual::CustomLanguage
   end
 
   def self.create(code, opts = {})
+    Multilingual::Language.before_change if opts[:run_hooks]
+    
     if PluginStore.set(
       Multilingual::PLUGIN_NAME,
       "#{KEY}_#{code.to_s}",
@@ -34,6 +36,8 @@ class Multilingual::CustomLanguage
   end
 
   def self.destroy(code, opts = {})
+    Multilingual::Language.before_change if opts[:run_hooks]
+    
     Multilingual::LanguageExclusion.set(code, 'interface', enabled: true)
     Multilingual::LanguageExclusion.set(code, 'content', enabled: true)
     
@@ -60,6 +64,8 @@ class Multilingual::CustomLanguage
   def self.bulk_create(languages = {})
     created = []
     
+    Multilingual::Language.before_change
+    
     PluginStoreRow.transaction do
       languages.each do |k, v|
         if create(k, v)
@@ -75,6 +81,8 @@ class Multilingual::CustomLanguage
   
   def self.bulk_destroy(codes)
     destroyed = []
+    
+    Multilingual::Language.before_change
     
     PluginStoreRow.transaction do
       [*codes].each do |c|

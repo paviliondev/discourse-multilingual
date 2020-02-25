@@ -117,6 +117,10 @@ class Multilingual::Language
     after_change(updated)
   end
   
+  def self.before_change
+    Multilingual::Cache.state = 'changing'
+  end
+  
   def self.after_change(codes = [])
     Multilingual::Cache.refresh!
     Multilingual::Cache.refresh_clients(codes)
@@ -124,6 +128,8 @@ class Multilingual::Language
   
   def self.bulk_update(languages)
     updated = []
+    
+    before_change
     
     PluginStoreRow.transaction do  
       [*languages].each do |l|

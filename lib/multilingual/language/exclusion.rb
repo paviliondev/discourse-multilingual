@@ -2,7 +2,11 @@ class Multilingual::LanguageExclusion
   KEY ||= "language_exclusion".freeze
   
   def self.all
-    Multilingual::Cache.wrap(KEY) { PluginStore.get(Multilingual::PLUGIN_NAME, KEY) || {} }
+    Multilingual::Cache.wrap(KEY) { all_uncached }
+  end
+  
+  def self.all_uncached
+    PluginStore.get(Multilingual::PLUGIN_NAME, KEY) || {}
   end
   
   def self.list(type)
@@ -13,10 +17,10 @@ class Multilingual::LanguageExclusion
     list(type).include?(code.to_s)
   end
     
-  def self.set(code, type, params)
+  def self.set(code, type, params = {})
     code = code.to_s
     enabled = ActiveModel::Type::Boolean.new.cast(params[:enabled])
-    exclusions = list(type)
+    exclusions = all_uncached[type]
     
     return if enabled && exclusions.blank?
   
@@ -26,9 +30,9 @@ class Multilingual::LanguageExclusion
       exclusions.push(code) unless (exclusions.include?(code) || code == 'en')
     end
     
-    data = all
+    data = all_uncached
     data[type] = exclusions
-    
+        
     PluginStore.set(Multilingual::PLUGIN_NAME, KEY, data)
   end
 end
