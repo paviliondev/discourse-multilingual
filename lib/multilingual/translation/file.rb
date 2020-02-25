@@ -133,7 +133,12 @@ class Multilingual::TranslationFile
   end
   
   def self.filenames
-    Dir.entries(PATH)
+    if Dir.exist?(PATH)
+      Dir.entries(PATH)
+    else
+      load
+      filenames
+    end
   end
   
   def self.process_filename(filename)
