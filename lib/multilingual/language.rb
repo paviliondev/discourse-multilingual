@@ -43,9 +43,8 @@ class Multilingual::Language
         primary_code = parts.first
         region = parts.second
         
-        if region && (primary = result[primary_code])
-          result.delete(primary_code)
-          result[code] = primary
+        if region && result[primary_code]
+          result[code] = result.delete(primary_code)
         end
       end
     end
