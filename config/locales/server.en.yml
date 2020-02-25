@@ -15,6 +15,7 @@ en:
       multilingual_disabled: Multilingual plugin is disabled
       multilingual_content_languages_disabled: Content languages are disabled
       multilingual_translator_disabled: Translator plugin is not installed and enabled
+      multilingual_allow_user_locale_disabled: allow user locale is disabled
   
   multilingual:
     content_tag_group_name: "Multilingual content tags"

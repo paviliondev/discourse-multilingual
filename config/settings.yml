@@ -21,6 +21,7 @@ plugins:
       - "off"
       - "footer"
       - "header"
+    validator: LanguageSwitcherValidator
   multilingual_language_switcher_footer_visible:
     type: list
     default: ar|zh_CN|en|es|fr|ru

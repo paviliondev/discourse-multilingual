@@ -17,6 +17,7 @@ end
 
 %w[
   ../lib/validators/content_languages_validator.rb
+  ../lib/validators/language_switcher_validator.rb
   ../lib/validators/translator_content_tag_validator.rb
 ].each do |path|
   load File.expand_path(path, __FILE__)
