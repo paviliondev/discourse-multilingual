@@ -285,6 +285,7 @@ after_initialize do
     ../lib/multilingual/extensions/extra_locales_controller.rb
     ../lib/multilingual/extensions/i18n.rb
     ../lib/multilingual/extensions/post.rb
+    ../lib/multilingual/extensions/tag_group.rb
     ../lib/multilingual/extensions/topic_serializer.rb
   ].each do |path|
     load File.expand_path(path, __FILE__)
@@ -309,6 +310,12 @@ after_initialize do
     
     class ::TopicListItemSerializer
       prepend TopicSerializerMultilingualExtension
+    end
+    
+    class ::TagGroup
+      class << self
+        prepend TagGroupMultilingualExtension
+      end
     end
     
     module ::DiscourseTagging
@@ -342,10 +349,12 @@ after_initialize do
     tags_cb = ::PostRevisor.tracked_topic_fields[:tags]
     
     ::PostRevisor.tracked_topic_fields[:tags] = lambda do |tc, tags|
-      content_languages = tc.topic.content_languages
-      combined = (tags + content_languages).uniq
-      tc.check_result(DiscourseTagging.validate_require_language_tag(tc.guardian, tc.topic, combined))
-      tags_cb.call(tc, combined)
+      if Multilingual::ContentLanguage.enabled
+        content_languages = tc.topic.content_languages
+        combined = (tags + content_languages).uniq
+        tc.check_result(DiscourseTagging.validate_require_language_tag(tc.guardian, tc.topic, combined))
+        tags_cb.call(tc, combined)
+      end
     end
     
     ::PostRevisor.track_topic_field(:content_language_tags) do |tc, content_language_tags|

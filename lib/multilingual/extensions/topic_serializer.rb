@@ -1,5 +1,7 @@
 module TopicSerializerMultilingualExtension
   def tags
-    super - content_language_tags
+    result = super
+    result = result - content_language_tags if Multilingual::ContentLanguage.enabled
+    result
   end
 end

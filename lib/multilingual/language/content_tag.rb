@@ -1,11 +1,7 @@
 class Multilingual::ContentTag
   KEY = 'content_tag'.freeze
   GROUP = 'content_languages'.freeze
-  
-  CONTENT_TAG_SQL = "id IN (
-    #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND 
-    tg.name = '#{GROUP}'
-  )"
+  QUERY = "#{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND tg.name = '#{GROUP}'"
   
   def self.create(code)
     tag = Tag.find_by(name: code)
@@ -30,7 +26,7 @@ class Multilingual::ContentTag
   
   def self.all
     Multilingual::Cache.wrap(KEY) do
-      Tag.where(CONTENT_TAG_SQL).pluck(:name)
+      Tag.where("id in (#{QUERY})").pluck(:name)
     end
   end
   
@@ -67,7 +63,7 @@ class Multilingual::ContentTag
   end
   
   def self.destroy_all
-    Tag.where(CONTENT_TAG_SQL).destroy_all
+    Tag.where("id in (#{QUERY})").destroy_all
     Multilingual::Cache.new(KEY).delete
   end
   
