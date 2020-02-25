@@ -13,9 +13,9 @@ class Multilingual::LanguageExclusion
     list(type).include?(code.to_s)
   end
     
-  def self.set(code, type, enabled: enabled)
+  def self.set(code, type, params)
     code = code.to_s
-    enabled = ActiveModel::Type::Boolean.new.cast(enabled)
+    enabled = ActiveModel::Type::Boolean.new.cast(params[:enabled])
     exclusions = list(type)
     
     return if enabled && exclusions.blank?

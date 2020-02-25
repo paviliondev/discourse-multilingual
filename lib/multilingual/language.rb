@@ -32,8 +32,25 @@ class Multilingual::Language
     Multilingual::Cache.wrap(KEY) { base.merge(Multilingual::CustomLanguage.all) }
   end
   
+  ## Some regional locales (e.g. bs_BA, fa_IR, nb_NO, pl_PL, tr_TR, zh_CN]) are 
+  ## not directly represented in the Discourse language names list.
   def self.base
-    ::LocaleSiteSetting.language_names
+    result = ::LocaleSiteSetting.language_names
+    
+    ::LocaleSiteSetting.supported_locales.each do |code|
+      if !::LocaleSiteSetting.language_names[code]
+        parts = code.split('_')
+        primary_code = parts.first
+        region = parts.second
+        
+        if region && (primary = result[primary_code])
+          result.delete(primary_code)
+          result[code] = primary
+        end
+      end
+    end
+    
+    result
   end
   
   def self.exists?(code)
