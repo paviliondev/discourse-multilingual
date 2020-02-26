@@ -6,4 +6,11 @@ module Multilingual
     engine_name "multilingual"
     isolate_namespace Multilingual
   end
+  
+  def self.setup
+    Multilingual::Cache.state = 'changing'
+    Multilingual::Translation.setup
+    Multilingual::Language.setup
+    Multilingual::Cache.setup
+  end
 end

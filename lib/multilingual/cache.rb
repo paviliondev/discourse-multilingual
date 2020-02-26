@@ -21,10 +21,9 @@ class Multilingual::Cache
   end
   
   def self.setup
-    @state = nil
+    @state = 'cached'
     load_classes
     reset
-    reset_core
     instantiate
   end
   
@@ -103,7 +102,7 @@ class Multilingual::Cache
   
   def self.instantiate
     LISTABLE_CLASSES.each { |klass| klass.send(:all) if klass.respond_to?(:all) }
-    @state = 'chached'
+    @state = 'cached'
   end
   
   def self.refresh!(opts = {})

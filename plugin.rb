@@ -48,12 +48,8 @@ after_initialize do
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
-  
-  if SiteSetting.multilingual_enabled
-    Multilingual::Cache.setup
-    Multilingual::Translation.setup
-    Multilingual::Language.setup
-  end
+
+  Multilingual.setup if SiteSetting.multilingual_enabled
   
   ## Core changes and additions
   # - Plugin api: changes via the server-side plugin api
