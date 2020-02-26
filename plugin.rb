@@ -122,7 +122,7 @@ after_initialize do
   
   add_to_class(:application_controller, :set_locale) do
     if !current_user
-      if SiteSetting.multilingual_language_switcher != "off" && client_locale
+      if SiteSetting.multilingual_guest_language_switcher != "off" && client_locale
         locale = client_locale
       elsif SiteSetting.set_locale_from_accept_language_header
         locale = locale_from_header

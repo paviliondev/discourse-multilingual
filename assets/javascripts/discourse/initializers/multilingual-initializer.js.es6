@@ -126,24 +126,28 @@ export default {
         return html;
       }, { priority: 100 });
       
-      if (!currentUser && siteSettings.multilingual_language_switcher === "header") {
-        api.decorateWidget('header-icons:before', helper => {  
-          return helper.attach('header-dropdown', {
-            title: "user.locale.title",
-            icon: "translate",
-            iconId: "locale-menu-button",
-            action: "toggleLocaleMenu",
-            active: helper.state.localeSwitcherVisible
-          });
-        });
-        
+      if (!currentUser && siteSettings.multilingual_guest_language_switcher === "header") {
         api.reopenWidget('header', {
-          toggleLocaleMenu() {
-            this.state.localeMenuVisible = !this.state.localeMenuVisible;
+          defaultState() {
+            return jQuery.extend(this._super(...arguments), { languageSwitcherMenuVisible: false });
+          },
+          
+          toggleLangugeSwitcherMenu() {
+            this.state.languageSwitcherMenuVisible = !this.state.languageSwitcherMenuVisible;
           }
         });
         
-        api.addHeaderPanel('locale-menu', 'localeMenuVisible', () => {});
+        api.decorateWidget('header-icons:before', helper => {
+          return helper.attach('header-dropdown', {
+            title: "user.locale.title",
+            icon: "translate",
+            iconId: "language-switcher-menu-button",
+            action: "toggleLangugeSwitcherMenu",
+            active: helper.widget.parentWidget.state.languageSwitcherMenuVisible
+          });
+        });
+        
+        api.addHeaderPanel('language-switcher-menu', 'languageSwitcherMenuVisible', (attrs, state) => ({ attrs, state }));
       }
       
       api.modifyClass('route:tag-groups-edit', {        

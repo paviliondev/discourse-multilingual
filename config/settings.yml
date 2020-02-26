@@ -6,14 +6,7 @@ plugins:
     default: false
     client: true
     validator: ContentLanguagesValidator
-  multilingual_require_content_language_tag:
-    type: enum
-    default: "non-staff"
-    choices:
-      - "no"
-      - "yes"
-      - "non-staff"
-  multilingual_language_switcher:
+  multilingual_guest_language_switcher:
     client: true
     type: enum
     default: "off"
@@ -22,10 +15,17 @@ plugins:
       - "footer"
       - "header"
     validator: LanguageSwitcherValidator
-  multilingual_language_switcher_footer_visible:
+  multilingual_guest_language_switcher_footer_visible:
     type: list
     default: ar|zh_CN|en|es|fr|ru
     client: true
+  multilingual_require_content_language_tag:
+    type: enum
+    default: "non-staff"
+    choices:
+      - "no"
+      - "yes"
+      - "non-staff"
   multilingual_tag_translations_enforce_format: false
   multilingual_translator_content_tag_sync:
     default: false

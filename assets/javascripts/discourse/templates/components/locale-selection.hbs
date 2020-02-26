@@ -1,9 +1,0 @@
-{{#each visibleLocales as |locale|}}<a class="{{locale.class}}" {{action 'changeLocale' locale.code}}>{{locale.name}}</a>{{/each}}
-{{d-button icon='plus' action='showHidden'}}
-{{#if showHidden}}
-  <div class="hidden-locales">
-    <ul>
-      {{#each hiddenLocales as |locale|}}<li><a class="locale" {{action 'changeLocale' locale.code}}>{{locale.name}}</a></li>{{/each}}
-    </ul>
-  </div>
-{{/if}}

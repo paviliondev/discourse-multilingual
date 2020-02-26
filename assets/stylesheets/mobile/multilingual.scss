@@ -19,7 +19,7 @@
   margin-left: 0;
 }
 
-.locale-selection {
+.language-switcher-bar {
   width: 100%;
   border-top: 1px solid $primary-low;
   box-sizing: border-box;
@@ -34,9 +34,11 @@
     font-size: 0.9em;
   }
 
-  .hidden-locales {
-    max-width: 90vw;
+  .hidden-languages {
+    max-width: 80vw;
     max-height: 70vh;
-    right: initial;
+    margin: 0 auto;
+    right: 0;
+    left: 0;
   }
 }

@@ -7,7 +7,7 @@ class LanguageSwitcherValidator
   end
 
   def valid_value?(val)
-    val == "f" || (val == "t" && SiteSetting.allow_user_locale)
+    val == "off" || (["footer", "header"].include?(val) && SiteSetting.allow_user_locale)
   end
 
   def error_message

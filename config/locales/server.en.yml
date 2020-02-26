@@ -3,8 +3,8 @@ en:
     multilingual_enabled: Multilingual plugin enabled.
     multilingual_content_languages_enabled: Content languages enabled.
     multilingual_require_content_language_tag: Require a content language tag on all topics.
-    multilingual_language_switcher: Enable guest language switcher.
-    multilingual_language_switcher_footer_visible: Languages always visible in the footer language switcher.
+    multilingual_guest_language_switcher: Enable guest language switcher.
+    multilingual_guest_language_switcher_footer_visible: Languages always visible in the footer language switcher.
     multilingual_tag_translations_enforce_format: Enforce Discourse tag formatting on tag translations.
     multilingual_translator_content_tag_sync: >
       Sync content language tags with post languages detected 

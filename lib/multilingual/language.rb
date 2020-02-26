@@ -122,7 +122,7 @@ class Multilingual::Language
   end
   
   def self.after_change(codes = [])
-    Multilingual::Cache.refresh!
+    Multilingual::Cache.refresh!(reload_i18n: true)
     Multilingual::Cache.refresh_clients(codes)
   end
   

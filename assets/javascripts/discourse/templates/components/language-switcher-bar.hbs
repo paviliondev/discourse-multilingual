@@ -1,0 +1,13 @@
+{{#each visibleLanguages as |l|}}<a class="{{l.class}}" {{action 'change' l.code}}>{{l.name}}</a>{{/each}}
+
+{{#if showHiddenToggle}}
+  {{d-button icon='plus' action='toggleHidden' class="toggle-hidden"}}
+  
+  {{#if showHidden}}
+    <div class="hidden-languages">
+      <ul>
+        {{#each hiddenLanguages as |l|}}<li><a {{action 'change' l.code}}>{{l.name}}</a></li>{{/each}}
+      </ul>
+    </div>
+  {{/if}}
+{{/if}}

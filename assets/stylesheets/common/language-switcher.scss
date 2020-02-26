@@ -1,4 +1,4 @@
-a.locale {
+a.ls-language {
   margin-right: 10px;
   padding: 5px 10px;
   font-size: 1.1em;
@@ -19,20 +19,24 @@ a.locale {
   }
 }
 
-.locale-selection-container {
+.language-switcher-footer {
   position: fixed;
   right: 40px;
   bottom: 40px;
   z-index: 999;
 }
 
-.locale-selection {
+.language-switcher-bar {
   position: relative;
   background-color: $secondary;
   border: 1px solid rgba($primary, 0.1);
   border-radius: 2px;
   box-shadow: shadow('dropdown');
-  padding: 5px 0 5px 15px;
+  padding: 10px;
+  
+  a {
+    @extend a.ls-language;
+  }
     
   button.btn {
     background-color: $secondary;
@@ -50,7 +54,7 @@ a.locale {
     }
   }
 
-  .hidden-locales {
+  .hidden-languages {
     position: absolute;
     overflow: scroll;
     max-height: 400px;
@@ -58,7 +62,7 @@ a.locale {
     background-color: $secondary;
     border: 1px solid $primary-low;
     box-shadow: shadow('dropdown');
-    bottom: 50px;
+    bottom: 60px;
     padding: 10px 14px;
     right: 0;
 
@@ -80,7 +84,7 @@ a.locale {
 }
 
 html.rtl {
-  .locale-selection {
+  .language-switcher-bar {
     padding: 5px 5px 5px 0;
     
     a {
@@ -91,7 +95,7 @@ html.rtl {
   }
 }
 
-.locale-menu {
+.language-switcher-menu {
   ul {
     list-style: none;
     margin: 0;
@@ -103,6 +107,10 @@ html.rtl {
       margin: 5px 0;
       display: inline-block;
       width: 100%;
+      
+      a {
+        @extend a.ls-language;
+      }
     }
   }
 }

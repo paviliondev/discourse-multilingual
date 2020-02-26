@@ -3,9 +3,9 @@ import { createWidget } from "discourse/widgets/widget";
 import { h } from "virtual-dom";
 import { addParam, localeParam } from '../lib/multilingual-route';
 
-export default createWidget("locale-menu", {
-  tagName: "div.locale-menu",
-  buildKey: () => "locale-menu",
+export default createWidget("language-switcher-menu", {
+  tagName: "div.language-switcher-menu",
+  buildKey: () => "language-switcher-menu",
 
   settings: {
     maxWidth: 320
@@ -13,17 +13,17 @@ export default createWidget("locale-menu", {
   
   defaultState() {
     return {
-      availableLocales: this.site.interface_languages
+      available: this.site.interface_languages
     }
   },
 
   panelContents() {
-    const { availableLocales } = this.state;
+    const { available } = this.state;
     const currentLocale = I18n.currentLocale();
     
-    return h('ul', availableLocales.map(
+    return h('ul', available.map(
       l => {
-        let className = 'locale';
+        let className = '';
         
         if (l.code === currentLocale) {
           className += ' current';
@@ -31,7 +31,7 @@ export default createWidget("locale-menu", {
         
         return h('li', this.attach("link", {
           className,
-          action: "changeLocale",
+          action: "change",
           actionParam: l.code,
           rawLabel: l.name
         }));
@@ -39,8 +39,8 @@ export default createWidget("locale-menu", {
     ));
   },
   
-  changeLocale(locale) {
-    addParam(localeParam, locale, { add_cookie: true, ctx: this });
+  change(code) {
+    addParam(localeParam, code, { add_cookie: true, ctx: this });
   },
 
   html() {
@@ -56,7 +56,7 @@ export default createWidget("locale-menu", {
       $centeredElement.parents(".panel").length &&
       !$centeredElement.hasClass("header-cloak")
     ) {
-      this.sendWidgetAction("toggleLocaleMenu");
+      this.sendWidgetAction("toggleLangugeSwitcherMenu");
     } else {
       const $window = $(window);
       const windowWidth = $window.width();
@@ -66,7 +66,7 @@ export default createWidget("locale-menu", {
       const $headerCloak = $(".header-cloak");
       $headerCloak.addClass("animate");
       $headerCloak.css("opacity", 0);
-      later(() => this.sendWidgetAction("toggleLocaleMenu"), 200);
+      later(() => this.sendWidgetAction("toggleLangugeSwitcherMenu"), 200);
     }
   },
 
@@ -74,7 +74,7 @@ export default createWidget("locale-menu", {
     if (this.site.mobileView) {
       this.clickOutsideMobile(e);
     } else {
-      this.sendWidgetAction("toggleLocaleMenu");
+      this.sendWidgetAction("toggleLangugeSwitcherMenu");
     }
   }
 });
