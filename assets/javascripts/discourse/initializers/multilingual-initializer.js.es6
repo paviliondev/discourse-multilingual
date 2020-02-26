@@ -8,6 +8,7 @@ import Composer from 'discourse/models/composer';
 import { iconHTML } from "discourse-common/lib/icon-library";
 import renderTag from "discourse/lib/render-tag";
 import { notEmpty } from "@ember/object/computed";
+import { set, get, computed } from "@ember/object";
 
 export default {
   name: 'multilingual',
@@ -106,6 +107,32 @@ export default {
         }
       });
       
+      function tagDropCallback(_, item) {
+        set(item, 'label', I18n.translate_tag(item.name));
+        return item;
+      }
+      
+      function tagDropArrayCallback(_, content) {
+        if (Array.isArray(content)) {
+          return content.map(item => (tagDropCallback(_, item)));
+        } else {
+          return tagDropCallback(content);
+        }
+      }
+      
+      api.modifySelectKit("tag-drop").modifyContent(tagDropArrayCallback);
+      
+      api.modifyClass('component:selected-name', {
+        label: computed("title", "name", function() {
+          if (this.selectKit.options.headerComponent === "tag-drop/tag-drop-header") {
+            let item = tagDropCallback(_, this.item);
+            return item.label || this.title || this.name;
+          } else {
+            return this._super(...arguments);
+          }
+        })
+      });
+      
       api.addTagsHtmlCallback(function(topic, params) {
         const contentLanguageTags = topic.content_language_tags;
         
@@ -178,17 +205,19 @@ export default {
         }
       });
       
-      api.modifyClass('component:admin-directory-toggle', {
-        showToggle: notEmpty('toggleAll'),
-        
-        click(e) {
-          if ($(e.target).parents('.toggle-all').length) {
-            return true;
-          } else {
-            return this._super(e);
-          }
-        },
-      });
+      if (currentUser && currentUser.admin) {
+        api.modifyClass('component:admin-directory-toggle', {
+          showToggle: notEmpty('toggleAll'),
+          
+          click(e) {
+            if ($(e.target).parents('.toggle-all').length) {
+              return true;
+            } else {
+              return this._super(e);
+            }
+          },
+        });
+      }
     });
   }
 }
