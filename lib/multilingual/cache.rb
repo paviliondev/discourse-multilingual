@@ -1,9 +1,8 @@
 class Multilingual::Cache
   class << self
     attr_accessor :state
+    attr_accessor :listable_classes
   end
-
-  LISTABLE_CLASSES ||= []
     
   def self.load_classes
     %w[
@@ -16,15 +15,13 @@ class Multilingual::Cache
       interface_language
     ].each do |klass|
       class_name = "Multilingual::#{klass.classify}".constantize
-      LISTABLE_CLASSES.push(class_name) if LISTABLE_CLASSES.exclude?(class_name)
+      @listable_classes ||= []
+      @listable_classes.push(class_name) if @listable_classes.exclude?(class_name)
     end
   end
   
   def self.setup
-    @state = 'cached'
     load_classes
-    reset
-    instantiate
   end
   
   def initialize(key)
@@ -32,7 +29,7 @@ class Multilingual::Cache
   end
   
   def read
-    synchronize { cache.read(@key) }
+    cache.read(@key)
   end
   
   def write(data)
@@ -93,7 +90,7 @@ class Multilingual::Cache
   end
   
   def self.reset
-    LISTABLE_CLASSES.each { |klass| Multilingual::Cache.new(klass::KEY).delete }
+    @listable_classes.each { |klass| Multilingual::Cache.new(klass::KEY).delete }
     
     Multilingual::Translation::CUSTOM_TYPES.each do |type|
       Multilingual::Cache.new("#{Multilingual::Translation::KEY}_#{type}").delete
@@ -101,12 +98,11 @@ class Multilingual::Cache
   end
   
   def self.instantiate
-    LISTABLE_CLASSES.each { |klass| klass.send(:all) if klass.respond_to?(:all) }
+    @listable_classes.each { |klass| klass.send(:all) if klass.respond_to?(:all) }
     @state = 'cached'
   end
   
   def self.refresh!(opts = {})
-    load_classes
     reset
     reset_core(opts)
     instantiate

@@ -101,6 +101,7 @@ class Multilingual::TranslationFile
     result
   end
   
+  ## Use this to apply any necessary formatting
   def format(content)
     file = Hash.new
     file = content  

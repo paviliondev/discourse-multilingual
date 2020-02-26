@@ -145,6 +145,6 @@ class Multilingual::Language
   end
   
   def self.setup    
-    Multilingual::ContentTag.enqueue_update_all
+    # no setup required
   end
 end
