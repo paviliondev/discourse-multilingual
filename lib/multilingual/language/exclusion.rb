@@ -20,7 +20,7 @@ class Multilingual::LanguageExclusion
   def self.set(code, type, params = {})
     code = code.to_s
     enabled = ActiveModel::Type::Boolean.new.cast(params[:enabled])
-    exclusions = all_uncached[type]
+    exclusions = all_uncached[type] || []
     
     return if enabled && exclusions.blank?
   

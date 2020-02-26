@@ -7,6 +7,7 @@ import { isContentLanguage } from '../lib/multilingual';
 import Composer from 'discourse/models/composer';
 import { iconHTML } from "discourse-common/lib/icon-library";
 import renderTag from "discourse/lib/render-tag";
+import { notEmpty } from "@ember/object/computed";
 
 export default {
   name: 'multilingual',
@@ -167,7 +168,7 @@ export default {
         }
       });
       
-      api.modifyClass('controller:tag-groups-edit', {  
+      api.modifyClass('controller:tag-groups-edit', {
         setupContentTagControls() {
           Ember.run.scheduleOnce('afterRender', () => {
             $(".tag-groups-container").addClass('content-tags');
@@ -175,6 +176,18 @@ export default {
             $(".content-tag-controls").appendTo('.tag-group-content');
           });
         }
+      });
+      
+      api.modifyClass('component:admin-directory-toggle', {
+        showToggle: notEmpty('toggleAll'),
+        
+        click(e) {
+          if ($(e.target).parents('.toggle-all').length) {
+            return true;
+          } else {
+            return this._super(e);
+          }
+        },
       });
     });
   }

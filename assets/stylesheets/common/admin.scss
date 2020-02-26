@@ -55,6 +55,10 @@
     
     th.language-control {
       text-align: center;
+      
+      input[type="checkbox"] {
+        margin-right: 0;
+      }
     }
     
     td.language-control {

@@ -43,6 +43,7 @@ en:
         query_placeholder: "code or name"
         custom_only: "custom only"
         disabled: "disabled"
+        toggle_all: "all"
       
       translations:
         type: "Type"
