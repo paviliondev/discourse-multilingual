@@ -1,6 +1,6 @@
 import { withPluginApi } from 'discourse/lib/plugin-api';
 import { default as discourseComputed, observes, on } from "discourse-common/utils/decorators";
-import { multilingualTagRenderer } from '../lib/multilingual-tags';
+import { multilingualTagRenderer } from '../lib/multilingual-tag';
 import { multilingualCategoryLinkRenderer } from '../lib/multilingual-category';
 import { discoveryParams, localeParam, removeParam } from '../lib/multilingual-route';
 import { isContentLanguage } from '../lib/multilingual';
@@ -20,10 +20,10 @@ export default {
       Composer.serializeOnCreate('content_language_tags', 'contentLanguageTags');
       Composer.serializeToTopic('contentLanguageTags', 'topic.content_language_tags');
     }
-        
+            
     I18n.translate_tag = function(tag) {
-      let locale = I18n.currentLocale().split('_')[0];
-      return I18n.lookup(`_tag.${tag}`, { locale }) || tag;
+      const translations = I18n.tag_translations || {};
+      return translations[tag] || tag;
     }
             
     withPluginApi('0.8.36', api => {
@@ -85,7 +85,7 @@ export default {
               }
               
               // See workaround above
-              userLanguages = userLanguages.filter(l => isContentLanguage(l.code));
+              userLanguages = userLanguages.filter(l => l && isContentLanguage(l.code));
                               
               currentUser.set('content_languages', userLanguages);
             })

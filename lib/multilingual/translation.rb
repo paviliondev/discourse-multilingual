@@ -12,11 +12,7 @@ class Multilingual::Translation
     Multilingual::Cache.wrap("#{KEY}_#{type.to_s}") do
       result = {}
       Multilingual::TranslationFile.by_type(type).each do |f|
-        data = f.open
-        data.keys.each do |key|
-          result[key] ||= {}
-          result[key][f.code] = data[key]
-        end
+        result[f.code.to_s] = f.open
       end
       result
     end
@@ -26,9 +22,24 @@ class Multilingual::Translation
     CUSTOM_TYPES.include?(type)
   end
   
-  def self.get(type, key)
+  def self.get(type, val, by_key: false)
     if is_custom(type)
-      get_custom(type)[key]
+      result = get_custom(type)
+      
+      if by_key
+        key_result = {}
+      
+        result.each do |code, data|
+          data.keys.each do |key|
+            key_result[key.to_s] ||= {}
+            key_result[key][code.to_s] = data[key]
+          end
+        end
+        
+        result = key_result
+      end
+      
+      result[val.to_s]
     end
   end
   

@@ -93,8 +93,14 @@ after_initialize do
   add_class_method(:js_locale_helper, :plugin_client_files) do |locale_str|
     Dir[
       "#{Rails.root}/plugins/*/config/locales/client.#{locale_str}.yml",
-      "#{Multilingual::TranslationFile::PATH}/{client,tag}.#{locale_str}.yml"
+      "#{Multilingual::TranslationFile::PATH}/client.#{locale_str}.yml"
     ]
+  end
+  
+  add_class_method(:js_locale_helper, :output_locale_tags) do |locale_str|
+    <<~JS
+      I18n.tag_translations = #{Multilingual::Translation.get("tag", locale_str).to_json};
+    JS
   end
   
   add_to_class(:application_helper, :preload_script) do |script|
@@ -105,9 +111,10 @@ after_initialize do
   
   add_to_class(:application_helper, :current_locale) { I18n.locale.to_s }
   add_to_class(:application_helper, :custom_locale?) { Multilingual::CustomLanguage.is_custom?(current_locale) }
-  add_to_class(:application_helper, :preload_i18n) { preload_script("locales/i18n") if custom_locale? }
-  add_to_class(:application_helper, :preload_custom_locale) { preload_script_url(ExtraLocalesController.url('custom-language')) if custom_locale? }
   add_to_class(:application_helper, :asset_path) { |url| ActionController::Base.helpers.asset_path(url) }
+  add_to_class(:application_helper, :preload_i18n) { preload_script("locales/i18n") }
+  add_to_class(:application_helper, :preload_custom_locale) { preload_script_url(ExtraLocalesController.url('custom-language')) if custom_locale? }
+  add_to_class(:application_helper, :preload_tag_translations) { preload_script_url(ExtraLocalesController.url('tags')) }
   
   class ::CustomLocaleLoader
     include ::ApplicationHelper
@@ -115,6 +122,14 @@ after_initialize do
   
   register_html_builder('server:before-script-load') { CustomLocaleLoader.new.preload_i18n }
   register_html_builder('server:before-script-load') { CustomLocaleLoader.new.preload_custom_locale }
+  register_html_builder('server:before-script-load') { CustomLocaleLoader.new.preload_tag_translations }
+  
+  add_to_class(:extra_locales_controller, :valid_bundle?) do |bundle|
+    bundle == ExtraLocalesController::OVERRIDES_BUNDLE ||
+    (bundle =~ /^(admin|wizard)$/ && current_user&.staff?) ||
+    (bundle === 'custom-language' && Multilingual::CustomLanguage.is_custom?(I18n.locale.to_s)) ||
+    bundle === 'tags'
+  end
   
   add_to_class(:application_controller, :client_locale) do
      params[:locale] || cookies[:discourse_locale]
@@ -132,7 +147,7 @@ after_initialize do
     else
       locale = current_user.effective_locale
     end
-
+    
     I18n.locale = locale ? locale : SiteSettings::DefaultsProvider::DEFAULT_LOCALE
     I18n.ensure_all_loaded!
   end
@@ -247,14 +262,8 @@ after_initialize do
     end
   end
   
-  add_to_serializer(:basic_category, :name_translations) { Multilingual::Translation.get("category_name", slug) }
+  add_to_serializer(:basic_category, :name_translations) { Multilingual::Translation.get("category_name", slug, by_key: true) }
   add_to_serializer(:basic_category, :include_name_translations?) { name_translations.present? }
-    
-  add_to_class(:extra_locales_controller, :valid_bundle?) do |bundle|
-    bundle == ExtraLocalesController::OVERRIDES_BUNDLE ||
-    (bundle =~ /^(admin|wizard)$/ && current_user&.staff?) ||
-    (bundle === 'custom-language' && Multilingual::CustomLanguage.is_custom?(I18n.locale.to_s))
-  end
   
   add_to_class(:tag_groups_controller, :destroy_content_tags) do
     guardian.is_admin?

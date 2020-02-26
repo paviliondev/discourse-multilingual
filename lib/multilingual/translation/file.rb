@@ -103,18 +103,7 @@ class Multilingual::TranslationFile
   
   def format(content)
     file = Hash.new
-    
-    if @type == :tag
-      ## Format to make it easier to integrate with JsLocaleHelper
-      file[@code.to_s] = {
-        "js" => {
-          "_#{@type.to_s}" => content
-        }
-      }
-    else
-      file = content
-    end
-        
+    file = content  
     file
   end
   

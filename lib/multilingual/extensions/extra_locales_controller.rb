@@ -10,6 +10,8 @@ module ExtraLocalesControllerMultilingualClassExtension
   def bundle_js(bundle)
     if bundle === "custom-language" && custom_language?
       JsLocaleHelper.output_locale(current_locale)
+    elsif bundle === 'tags'
+      JsLocaleHelper.output_locale_tags(current_locale)
     else
       super(bundle)
     end
