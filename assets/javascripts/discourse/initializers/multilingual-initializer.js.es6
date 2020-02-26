@@ -3,6 +3,7 @@ import { default as discourseComputed, observes, on } from "discourse-common/uti
 import { multilingualTagRenderer } from '../lib/multilingual-tags';
 import { multilingualCategoryLinkRenderer } from '../lib/multilingual-category';
 import { discoveryParams, localeParam, removeParam } from '../lib/multilingual-route';
+import { isContentLanguage } from '../../lib/multilingual';
 import Composer from 'discourse/models/composer';
 import { iconHTML } from "discourse-common/lib/icon-library";
 import renderTag from "discourse/lib/render-tag";
