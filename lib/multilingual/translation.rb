@@ -39,11 +39,13 @@ class Multilingual::Translation
   def self.recurse(obj, keys)
     return nil if !obj
     k = keys.shift
-    keys.empty? ? string_only(obj[k]) : recurse(obj[k], keys)
+    keys.empty? ? cast_value(obj[k]) : recurse(obj[k], keys)
   end
   
-  def self.string_only(val)
-    val.is_a?(String) ? val : nil
+  def self.cast_value(val)
+    return val if val.is_a?(String)
+    return val["_"] if val.is_a?(Hash)
+    nil
   end
   
   def self.setup
