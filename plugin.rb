@@ -258,7 +258,10 @@ after_initialize do
     end
   end
   
-  add_to_serializer(:basic_category, :name_translations) { Multilingual::Translation.get("category_name", slug, by_key: true) }
+  add_to_serializer(:basic_category, :name_translations) do
+    Multilingual::Translation.get("category_name", object.slug_path)
+  end
+  
   add_to_serializer(:basic_category, :include_name_translations?) { name_translations.present? }
   
   add_to_class(:tag_groups_controller, :destroy_content_tags) do

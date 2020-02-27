@@ -22,25 +22,28 @@ class Multilingual::Translation
     CUSTOM_TYPES.include?(type)
   end
   
-  def self.get(type, val, by_key: false)
+  def self.get(type, keys)
     if is_custom(type)
-      result = get_custom(type)
+      data = get_custom(type)
       
-      if by_key
-        key_result = {}
-      
-        result.each do |code, data|
-          data.keys.each do |key|
-            key_result[key.to_s] ||= {}
-            key_result[key][code.to_s] = data[key]
-          end
-        end
-        
-        result = key_result
+      if type == 'category_name'
+        result = {}
+        data.each { |c, d| result[c] = recurse(d, keys.dup) }
+        result
+      else
+        data[keys]
       end
-      
-      result[val.to_s]
     end
+  end
+  
+  def self.recurse(obj, keys)
+    return nil if !obj
+    k = keys.shift
+    keys.empty? ? string_only(obj[k]) : recurse(obj[k], keys)
+  end
+  
+  def self.string_only(val)
+    val.is_a?(String) ? val : nil
   end
   
   def self.setup
