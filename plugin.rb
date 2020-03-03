@@ -348,7 +348,7 @@ after_initialize do
     TopicQuery.add_custom_filter(:content_languages) do |result, query|
       content_languages = query.user ? query.user.content_languages : [*query.options[:content_languages]]
             
-      if content_languages.any?
+      if content_languages.present? && content_languages.any?
         result.joins(:tags).where("lower(tags.name) in (?)", content_languages)
       else
         result
