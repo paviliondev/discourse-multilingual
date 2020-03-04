@@ -5,6 +5,10 @@
   .choices .selected-name {
     background: initial;
   }
+  
+  .select-kit-header .name, .select-kit-row .name {
+    color: $primary;
+  }
 }
 
 .content-languages-dropdown.select-kit {
