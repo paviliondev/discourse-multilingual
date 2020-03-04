@@ -17,3 +17,14 @@ module ExtraLocalesControllerMultilingualClassExtension
     end
   end
 end
+
+module ExtraLocalesControllerMultilingualExtension
+  private def valid_bundle?(bundle)
+    super || (
+      SiteSetting.multilingual_enabled &&
+      ((bundle === 'custom-language' &&
+        Multilingual::CustomLanguage.is_custom?(I18n.locale.to_s)) ||
+       bundle === 'tags')
+    )    
+  end
+end

@@ -37,6 +37,7 @@ after_initialize do
     ../lib/multilingual/translation/locale.rb
     ../lib/multilingual/translation.rb
     ../lib/multilingual/translator.rb
+    ../lib/multilingual/locale_loader.rb
     ../jobs/update_content_language_tags.rb
     ../config/routes.rb
     ../app/serializers/multilingual/basic_language_serializer.rb
@@ -86,45 +87,21 @@ after_initialize do
     end
   end
   
-  add_class_method(:js_locale_helper, :plugin_client_files) do |locale_str|
-    Dir[
-      "#{Rails.root}/plugins/*/config/locales/client.#{locale_str}.yml",
-      "#{Multilingual::TranslationFile::PATH}/client.#{locale_str}.yml"
-    ]
-  end
-  
   add_class_method(:js_locale_helper, :output_locale_tags) do |locale_str|
     <<~JS
       I18n.tag_translations = #{Multilingual::Translation.get("tag", locale_str).to_json};
     JS
   end
   
-  add_to_class(:application_helper, :preload_script) do |script|
-    return if custom_locale? && script === "locales/#{I18n.locale}"
-    path = script_asset_path(script)
-    preload_script_url(path)
-  end
-  
-  add_to_class(:application_helper, :current_locale) { I18n.locale.to_s }
-  add_to_class(:application_helper, :custom_locale?) { Multilingual::CustomLanguage.is_custom?(current_locale) }
-  add_to_class(:application_helper, :asset_path) { |url| ActionController::Base.helpers.asset_path(url) }
-  add_to_class(:application_helper, :preload_i18n) { preload_script("locales/i18n") }
-  add_to_class(:application_helper, :preload_custom_locale) { preload_script_url(ExtraLocalesController.url('custom-language')) if custom_locale? }
-  add_to_class(:application_helper, :preload_tag_translations) { preload_script_url(ExtraLocalesController.url('tags')) }
-  
-  class ::CustomLocaleLoader
-    include ::ApplicationHelper
-  end
-  
-  register_html_builder('server:before-script-load') { CustomLocaleLoader.new.preload_i18n }
-  register_html_builder('server:before-script-load') { CustomLocaleLoader.new.preload_custom_locale }
-  register_html_builder('server:before-script-load') { CustomLocaleLoader.new.preload_tag_translations }
-  
-  add_to_class(:extra_locales_controller, :valid_bundle?) do |bundle|
-    bundle == ExtraLocalesController::OVERRIDES_BUNDLE ||
-    (bundle =~ /^(admin|wizard)$/ && current_user&.staff?) ||
-    (bundle === 'custom-language' && Multilingual::CustomLanguage.is_custom?(I18n.locale.to_s)) ||
-    bundle === 'tags'
+  register_html_builder('server:before-script-load') do
+    loader = Multilingual::LocaleLoader.new
+    result = ""
+    
+    result << loader.preload_i18n
+    result << loader.preload_custom_locale if loader.custom_locale?
+    result << loader.preload_tag_translations
+    
+    result
   end
   
   add_to_class(:application_controller, :client_locale) do
@@ -293,6 +270,7 @@ after_initialize do
     ../lib/multilingual/extensions/discourse_tagging.rb
     ../lib/multilingual/extensions/extra_locales_controller.rb
     ../lib/multilingual/extensions/i18n.rb
+    ../lib/multilingual/extensions/js_locale_helper.rb
     ../lib/multilingual/extensions/post.rb
     ../lib/multilingual/extensions/tag_group.rb
     ../lib/multilingual/extensions/topic_serializer.rb
@@ -307,10 +285,18 @@ after_initialize do
       end
     end
     
+    module ::JsLocaleHelper
+      class << self
+        prepend JsLocaleHelperMultilingualExtension
+      end
+    end
+    
     class ::ExtraLocalesController      
       class << self
         prepend ExtraLocalesControllerMultilingualClassExtension
       end
+      
+      prepend ExtraLocalesControllerMultilingualExtension
     end
     
     class ::TopicViewSerializer
@@ -346,13 +332,17 @@ after_initialize do
   
   if SiteSetting.multilingual_enabled
     TopicQuery.add_custom_filter(:content_languages) do |result, query|
-      content_languages = query.user ? query.user.content_languages : [*query.options[:content_languages]]
+      if Multilingual::ContentLanguage.enabled
+        content_languages = query.user ?
+                            query.user.content_languages :
+                            [*query.options[:content_languages]]
             
-      if content_languages.present? && content_languages.any?
-        result.joins(:tags).where("lower(tags.name) in (?)", content_languages)
-      else
-        result
+        if content_languages.present? && content_languages.any?
+          return result.joins(:tags).where("lower(tags.name) in (?)", content_languages)
+        end
       end
+      
+      result
     end
     
     tags_cb = ::PostRevisor.tracked_topic_fields[:tags]
