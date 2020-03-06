@@ -19,8 +19,8 @@ export default {
     if (!siteSettings.multilingual_enabled) return;
     
     if (siteSettings.multilingual_content_languages_enabled) {
-      Composer.serializeOnCreate('content_language_tags', 'contentLanguageTags');
-      Composer.serializeToTopic('contentLanguageTags', 'topic.content_language_tags');
+      Composer.serializeOnCreate('content_language_tags', 'content_language_tags');
+      Composer.serializeToTopic('content_language_tags', 'topic.content_language_tags');
     }
             
     I18n.translate_tag = function(tag) {
