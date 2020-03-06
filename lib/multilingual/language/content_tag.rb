@@ -122,7 +122,7 @@ class Multilingual::ContentTag
         end
       end
       
-      Rails.logger.info "Update all tags: creating #{enable.join(',')}; disabling #{disable.join(',')}"
+      Rails.logger.warn "Update all tags: creating #{enable.join(',')}; disabling #{disable.join(',')}"
       
       bulk_update(enable, "enable") if enable.any?
       bulk_update(disable, "disable") if disable.any?
