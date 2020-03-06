@@ -3,7 +3,6 @@ en:
     tagging:
       groups:
         content_tags:
-          title: "Multilingual content tags"
           delete: 
             btn: "Delete all tags"
             confirm: "Are you sure you want to delete all content languge tags?"

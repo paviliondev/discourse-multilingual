@@ -13,7 +13,7 @@ module DiscourseTaggingMultilingualExtension
     result = super(query, guardian)
     
     if Multilingual::ContentLanguage.enabled
-      result = result.where("tags.id NOT IN (#{Multilingual::ContentTag::QUERY})")
+      result = result.where("tags.id NOT IN (#{Multilingual::ContentTag::QUERY_ALL})")
     end
     
     result

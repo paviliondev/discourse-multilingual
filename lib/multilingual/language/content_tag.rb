@@ -1,6 +1,7 @@
 class Multilingual::ContentTag
   KEY = 'content_tag'.freeze
   GROUP = 'content_languages'.freeze
+  GROUP_DISABLED = 'content_languages_disabled'.freeze
   QUERY = "#{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND tg.name = '#{GROUP}'"
   
   def self.create(code)
@@ -10,18 +11,16 @@ class Multilingual::ContentTag
       tag = Tag.new(name: code)
       tag.save!
     end
-      
-    unless TagGroupMembership.exists?(tag_id: tag.id, tag_group_id: group.id)
-      membership = TagGroupMembership.new(
-        tag_id: tag.id,
-        tag_group_id: group.id
-      )
-      membership.save!
-    end
+    
+    move_to_group(tag, group)
   end
   
   def self.destroy(code)
     Tag.where(name: code).destroy_all if exists?(code)
+  end
+  
+  def self.disable(code)
+    move_to_group(Tag.find_by(name: code), disabled_group) if exists?(code)
   end
   
   def self.all
@@ -39,6 +38,16 @@ class Multilingual::ContentTag
       tags.select { |tag| all.include?(tag.name) }
     else
       []
+    end
+  end
+  
+  def self.move_to_group(tag, group, remove_from_other_groups: true)
+    group.tags << tag unless group.tags.include?(tag)
+    group.save!
+    
+    if remove_from_other_groups
+      tag.tag_groups = [group]
+      tag.save!
     end
   end
   
@@ -61,6 +70,35 @@ class Multilingual::ContentTag
       group
     end
   end
+  
+  def self.disabled_group
+    @disabled_group ||= begin
+      group = TagGroup.find_by(name: Multilingual::ContentTag::GROUP_DISABLED)
+
+      if group.blank?
+        group = TagGroup.new(
+          name: Multilingual::ContentTag::GROUP_DISABLED,
+          permissions: { staff: 3 }
+        )
+
+        group.save!
+      else
+        group.permissions = { staff: 3 }
+        group.save!
+      end
+      
+      group
+    end
+  end
+  
+  def self.groups
+    [GROUP,GROUP_DISABLED]
+  end
+  
+  QUERY_ALL = "
+    #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL}
+    AND tg.name IN (#{groups.map{|g|"'#{g}'"}.join(',')})
+  "
   
   def self.destroy_all
     Tag.where("id in (#{QUERY})").destroy_all
@@ -85,7 +123,7 @@ class Multilingual::ContentTag
       end
 
       bulk_update(create, "create") if create.any?
-      bulk_update(destroy, "destroy") if destroy.any?
+      bulk_update(destroy, "disable") if destroy.any?
       
       Multilingual::Cache.new(KEY).delete
     end

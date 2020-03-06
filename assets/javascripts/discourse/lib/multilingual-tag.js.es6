@@ -1,4 +1,5 @@
 import { isContentLanguage } from './multilingual';
+import User from 'discourse/models/user';
 
 function multilingualTagRenderer(tag, params) {
   params = params || {};

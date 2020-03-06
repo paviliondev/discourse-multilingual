@@ -254,12 +254,20 @@ after_initialize do
   end
   
   add_to_serializer(:tag_group, :content_language_group) do
+    content_language_group_enabled || content_language_group_disabled
+  end
+  
+  add_to_serializer(:tag_group, :content_language_group_enabled) do
     object.id == Multilingual::ContentTag.group.id
+  end
+  
+  add_to_serializer(:tag_group, :content_language_group_disabled) do
+    object.id == Multilingual::ContentTag.disabled_group.id
   end
   
   add_to_serializer(:tag_group, :name) do
     content_language_group ?
-    I18n.t('multilingual.content_tag_group_name') :
+    I18n.t("multilingual.content_tag_group_name#{content_language_group_disabled ? "_disabled" : ""}") :
     object.name
   end
   
