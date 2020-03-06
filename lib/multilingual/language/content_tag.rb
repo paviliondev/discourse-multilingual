@@ -5,18 +5,18 @@ class Multilingual::ContentTag
   QUERY = "#{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND tg.name = '#{GROUP}'"
   
   def self.create(code)
-    tag = Tag.find_by(name: code)
-    
-    if !tag
-      tag = Tag.new(name: code)
-      tag.save!
-    end
-    
-    move_to_group(tag, group)
+    tag = Tag.new(name: code)
+    tag.save!  
   end
   
   def self.destroy(code)
     Tag.where(name: code).destroy_all if exists?(code)
+  end
+  
+  def self.enable(code)
+    tag = Tag.find_by(name: code)
+    create(code) if !tag
+    move_to_group(tag, group)
   end
   
   def self.disable(code)
@@ -111,19 +111,21 @@ class Multilingual::ContentTag
   
   def self.update_all
     if Multilingual::ContentLanguage.enabled
-      create = []
-      destroy = []
+      enable = []
+      disable = []
       
       Multilingual::Language.list.each do |l|
         if l.content_enabled
-          create.push(l.code) if all.exclude?(l.code)
+          enable.push(l.code) if all.exclude?(l.code)
         else
-          destroy.push(l.code) if all.include?(l.code)
+          disable.push(l.code) if all.include?(l.code)
         end
       end
-
-      bulk_update(create, "create") if create.any?
-      bulk_update(destroy, "disable") if destroy.any?
+      
+      Rails.logger.info "Update all tags: creating #{enable.join(',')}; disabling #{disable.join(',')}"
+      
+      bulk_update(enable, "enable") if enable.any?
+      bulk_update(disable, "disable") if disable.any?
       
       Multilingual::Cache.new(KEY).delete
     end

@@ -48,12 +48,12 @@ class Multilingual::CustomLanguage
   end
 
   def self.after_create(created)
-    Multilingual::ContentTag.bulk_update(created, "create")
+    Multilingual::ContentTag.bulk_update(created, "enable")
     Multilingual::Language.after_change(created)
   end
 
   def self.after_destroy(destroyed)
-    Multilingual::ContentTag.bulk_update(destroyed, "destroy")
+    Multilingual::ContentTag.bulk_update(destroyed, "disable")
     Multilingual::Language.after_change(destroyed)
   end
   
