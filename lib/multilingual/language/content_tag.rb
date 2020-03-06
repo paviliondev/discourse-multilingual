@@ -146,7 +146,7 @@ class Multilingual::ContentTag
   def self.update_topic(topic, ctag_names = [])
     ctags = ctag_names.any? ? load(ctag_names) : []
     tags = topic.tags.select { |t| self.all.exclude?(t.name) }
-    topic.tags = (tags + ctags).uniq {|t| t.id } 
+    topic.tags = (tags + ctags.select { |t| tags.map(&:id).exclude?(t.id) }).uniq {|t| t.id }
     topic.custom_fields['content_languages'] = ctags.any? ? ctags.map(&:name) : []
     topic
   end
