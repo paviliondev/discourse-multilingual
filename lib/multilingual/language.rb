@@ -113,8 +113,8 @@ class Multilingual::Language
   end
   
   def self.after_update(updated)
-    Multilingual::ContentTag.enqueue_update_all
     after_change(updated)
+    Multilingual::ContentTag.enqueue_update_all
   end
   
   def self.before_change
