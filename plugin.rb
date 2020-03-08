@@ -258,7 +258,7 @@ after_initialize do
   end
   
   add_to_serializer(:tag_group, :content_language_group_enabled) do
-    object.id == Multilingual::ContentTag.group.id
+    object.id == Multilingual::ContentTag.enabled_group.id
   end
   
   add_to_serializer(:tag_group, :content_language_group_disabled) do

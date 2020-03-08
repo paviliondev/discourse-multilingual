@@ -4,25 +4,6 @@ class Multilingual::ContentTag
   GROUP_DISABLED = 'content_languages_disabled'.freeze
   QUERY = "#{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND tg.name = '#{GROUP}'"
   
-  def self.create(code)
-    tag = Tag.new(name: code)
-    tag.save!  
-  end
-  
-  def self.destroy(code)
-    Tag.where(name: code).destroy_all if exists?(code)
-  end
-  
-  def self.enable(code)
-    tag = Tag.find_by(name: code)
-    create(code) if !tag
-    move_to_group(tag, group)
-  end
-  
-  def self.disable(code)
-    move_to_group(Tag.find_by(name: code), disabled_group) if exists?(code)
-  end
-  
   def self.all
     Multilingual::Cache.wrap(KEY) do
       Tag.where("id in (#{QUERY})").pluck(:name)
@@ -41,18 +22,8 @@ class Multilingual::ContentTag
     end
   end
   
-  def self.move_to_group(tag, group, remove_from_other_groups: true)
-    group.tags << tag unless group.tags.include?(tag)
-    group.save!
-    
-    if remove_from_other_groups
-      tag.tag_groups = [group]
-      tag.save!
-    end
-  end
-  
-  def self.group
-    @group ||= begin
+  def self.enabled_group
+    @enabled_group ||= begin
       group = TagGroup.find_by(name: Multilingual::ContentTag::GROUP)
 
       if group.blank?
@@ -122,17 +93,43 @@ class Multilingual::ContentTag
         end
       end
       
-      Rails.logger.warn "Update all tags: creating #{enable.join(',')}; disabling #{disable.join(',')}"
-      
       bulk_update(enable, "enable") if enable.any?
-      bulk_update(disable, "disable") if disable.any?
+      bulk_update(disable, "destroy") if disable.any?
       
       Multilingual::Cache.new(KEY).delete
     end
   end
   
   def self.bulk_update(codes, action)
-    [*codes].each { |c| Multilingual::ContentTag.send(action, c) }
+    groups = []
+    tags = []
+    
+    [*codes].each do |code|
+      is_new = false
+      tag = Tag.find_by(name: code)
+      
+      if !tag
+        tag = Tag.new(name: code)
+        is_new = true
+      end
+      
+      if !is_new && enabled_group.tags.exclude?(tag) && disabled_group.tags.exclude?(tag)
+        ## tag already exists, so we don't interfere with it
+        Multilingual::LanguageExclusion.set(tag.name, 'content_language', enabled: false)  
+      else  
+        group = self.send("#{action}d_group")
+        group.tags << tag unless group.tags.include?(tag)
+        tag.tag_groups = [group]
+        
+        tags.push(tag) unless tags.include?(tag)
+        groups.push(group) unless groups.include?(group)
+      end
+    end
+    
+    Tag.transaction do
+      tags.each { |tag| tag.save! }      
+      groups.each { |group| group.save! }
+    end
   end
   
   def self.load(ctag_names)
