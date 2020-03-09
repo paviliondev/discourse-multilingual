@@ -35,6 +35,7 @@ en:
         native_name: "Native Name"
         content: "Content"
         content_tag: "Content Tag"
+        content_tag_conflict: "tag conflict"
         interface: "Interface"
         type: "Type"
         actions: "Actions"

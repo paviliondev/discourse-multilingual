@@ -8,6 +8,7 @@ class Multilingual::Cache
     %w[
       translation_file
       content_tag
+      content_tag/conflict
       language_exclusion
       custom_language
       language
