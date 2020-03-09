@@ -7,6 +7,7 @@ class Multilingual::Language
                 :name,
                 :nativeName,
                 :content_enabled,
+                :content_tag_conflict,
                 :interface_enabled,
                 :interface_supported,
                 :custom
@@ -19,6 +20,7 @@ class Multilingual::Language
     @nativeName = opts[:nativeName].to_s
     
     @content_enabled = Multilingual::ContentLanguage.enabled?(@code)
+    @content_tag_conflict = Multilingual::ContentTag::Conflict.exists?(@code)
     @interface_enabled = Multilingual::InterfaceLanguage.enabled?(@code)
     @interface_supported = Multilingual::InterfaceLanguage.supported?(@code)
     @custom = Multilingual::CustomLanguage.is_custom?(@code)
@@ -114,7 +116,7 @@ class Multilingual::Language
   
   def self.after_update(updated)
     after_change(updated)
-    Multilingual::ContentTag.enqueue_update_all
+    Multilingual::ContentTag.update_all
   end
   
   def self.before_change

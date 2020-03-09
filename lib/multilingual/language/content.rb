@@ -20,7 +20,9 @@ class Multilingual::ContentLanguage
   end
   
   def self.enabled?(code)
-    Multilingual::Language.exists?(code) && !excluded?(code)
+    Multilingual::Language.exists?(code) &&
+    !excluded?(code) &&
+    !Multilingual::ContentTag::Conflict.exists?(code)
   end
   
   def self.all

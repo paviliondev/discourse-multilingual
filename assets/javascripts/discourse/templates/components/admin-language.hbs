@@ -12,7 +12,14 @@
 
 <td class="{{contentClass}}">
   {{#if contentDisabled}}
-    {{i18n 'multilingual.languages.disabled'}}
+    {{#if language.content_tag_conflict}}
+      {{#link-to 'tags.show' language.code}}
+        {{d-icon 'warning'}}
+        <span>{{i18n 'multilingual.languages.content_tag_conflict' tagName=language.code}}</span>
+      {{/link-to}}
+    {{else}}
+      {{i18n 'multilingual.languages.disabled'}}
+    {{/if}}
   {{else}}
     {{input type="checkbox" checked=language.content_enabled}}
   {{/if}}

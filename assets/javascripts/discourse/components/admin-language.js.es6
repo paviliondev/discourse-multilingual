@@ -28,9 +28,9 @@ export default Ember.Component.extend({
     return code === 'en';
   },
   
-  @computed
-  contentDisabled() {
-    return !this.siteSettings.multilingual_content_languages_enabled;
+  @computed('language.content_tag_conflict')
+  contentDisabled(tagConflict) {
+    return !this.siteSettings.multilingual_content_languages_enabled || tagConflict;
   },
   
   @computed

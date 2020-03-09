@@ -94,7 +94,7 @@ class Multilingual::ContentTag
       end
       
       bulk_update(enable, "enable") if enable.any?
-      bulk_update(disable, "destroy") if disable.any?
+      bulk_update(disable, "disable") if disable.any?
       
       Multilingual::Cache.new(KEY).delete
     end
@@ -114,8 +114,7 @@ class Multilingual::ContentTag
       end
       
       if !is_new && enabled_group.tags.exclude?(tag) && disabled_group.tags.exclude?(tag)
-        ## tag already exists, so we don't interfere with it
-        Multilingual::LanguageExclusion.set(tag.name, 'content_language', enabled: false)  
+        Multilingual::Cache.new(Conflict::KEY).delete
       else  
         group = self.send("#{action}d_group")
         group.tags << tag unless group.tags.include?(tag)
@@ -154,5 +153,19 @@ class Multilingual::ContentTag
   
   def self.add_to_topic(topic, ctag_name)
     update_topic(topic, (topic.content_languages + [ctag_name]).uniq)
+  end
+  
+  class Conflict
+    KEY = 'content_tag_conflict'
+    
+    def self.all
+      Multilingual::Cache.wrap(Conflict::KEY) do
+        Tag.where("id not in (#{QUERY}) and name in (?)", Multilingual::Language.all.keys).pluck(:name)
+      end
+    end
+    
+    def self.exists?(code)
+      all.include?(code)
+    end
   end
 end
