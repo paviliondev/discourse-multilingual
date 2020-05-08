@@ -120,7 +120,11 @@ export default {
         }
       }
       
-      api.modifySelectKit("tag-drop").modifyContent(tagDropArrayCallback);
+      api.modifyClass("component:tag-drop", {
+        modifyContent(content) {
+          return tagDropArrayCallback(_, content);
+        }
+      });
       
       api.modifyClass('component:selected-name', {
         label: computed("title", "name", function() {
