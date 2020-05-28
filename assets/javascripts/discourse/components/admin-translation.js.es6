@@ -1,7 +1,7 @@
-import { default as computed, observes } from "discourse-common/utils/decorators";
 import MultilingualTranslation from '../models/multilingual-translation';
+import Component from '@ember/component';
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: 'tr',
   classNames: 'language',
   

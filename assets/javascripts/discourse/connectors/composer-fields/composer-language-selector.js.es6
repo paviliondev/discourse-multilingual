@@ -1,11 +1,12 @@
 import { CREATE_TOPIC, EDIT } from 'discourse/models/composer';
 import { getOwner } from 'discourse-common/lib/get-owner';
+import { scheduleOnce } from "@ember/runloop";
 
 function setupSelector(isFirstPost, ctx) {
   ctx.set('showSelector', isFirstPost);
   
   if (isFirstPost) {
-    Ember.run.scheduleOnce('afterRender', () => {
+    scheduleOnce('afterRender', () => {
       $('.content-languages-selector').appendTo('.title-and-category');
     });
   }

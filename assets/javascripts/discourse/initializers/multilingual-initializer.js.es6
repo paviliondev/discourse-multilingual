@@ -9,6 +9,7 @@ import { iconHTML } from "discourse-common/lib/icon-library";
 import renderTag from "discourse/lib/render-tag";
 import { notEmpty } from "@ember/object/computed";
 import { set, get, computed } from "@ember/object";
+import { scheduleOnce } from "@ember/runloop";
 
 export default {
   name: 'multilingual',
@@ -201,7 +202,7 @@ export default {
       
       api.modifyClass('controller:tag-groups-edit', {
         setupContentTagControls() {
-          Ember.run.scheduleOnce('afterRender', () => {
+          scheduleOnce('afterRender', () => {
             $(".tag-groups-container").addClass('content-tags');
             $(".tag-group-content h1 input").prop('disabled', true);
             $(".content-tag-controls").appendTo('.tag-group-content');

@@ -1,3 +1,5 @@
+import { scheduleOnce } from "@ember/runloop";
+
 export default {
   shouldRender(_, ctx) {
     return ctx.siteSettings.multilingual_enabled &&
@@ -5,7 +7,7 @@ export default {
   },
   
   setupComponent(attrs, component) {
-    Ember.run.scheduleOnce('afterRender', () => {
+    scheduleOnce('afterRender', () => {
       const content = '.control-group.content-languages';
       const int = '.control-group.pref-locale';
       const text = '.control-group.text-size';

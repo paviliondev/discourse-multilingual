@@ -7,13 +7,14 @@ import { ajax } from 'discourse/lib/ajax';
 import { popupAjaxError } from 'discourse/lib/ajax-error';
 import MultilingualLanguage from '../models/multilingual-language';
 import { notEmpty } from "@ember/object/computed";
+import { A } from "@ember/array";
 
 export default Controller.extend({
   refreshing: false,
   queryPlaceholder: i18n("multilingual.languages.query_placeholder"),
   updateState: 'save',
   languages: [],
-  updatedLanguages: Ember.A(),
+  updatedLanguages: A(),
   anyLanguages: notEmpty('filteredLanguages'),
 
   @discourseComputed
@@ -44,7 +45,7 @@ export default Controller.extend({
   
   _updateLanguages(languages) {
     this.setProperties({
-      updatedLanguages: Ember.A(),
+      updatedLanguages: A(),
       languages
     });
   },

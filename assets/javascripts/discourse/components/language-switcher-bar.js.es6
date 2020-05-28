@@ -1,9 +1,11 @@
-import { on } from 'ember-addons/ember-computed-decorators';
+import { on } from "discourse-common/utils/decorators";
 import EmberObject from "@ember/object";
 import { addParam, localeParam } from '../lib/multilingual-route';
 import { notEmpty } from "@ember/object/computed";
+import Component from '@ember/component';
+import { bind } from "@ember/runloop";
 
-export default Ember.Component.extend({
+export default Component.extend({
   classNames: 'language-switcher-bar',
   showHidden: false,
   showHiddenToggle: notEmpty('hiddenLanguages'),
@@ -46,7 +48,7 @@ export default Ember.Component.extend({
   },
 
   didInsertElement() {
-    this.set('clickOutsideHandler', Ember.run.bind(this, this.clickOutside));
+    this.set('clickOutsideHandler', bind(this, this.clickOutside));
     $(document).on('click', this.clickOutsideHandler);
   },
 

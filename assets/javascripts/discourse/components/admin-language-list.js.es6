@@ -1,7 +1,8 @@
 import { set } from "@ember/object";
 import { observes } from "discourse-common/utils/decorators";
+import Component from '@ember/component';
 
-export default Ember.Component.extend({
+export default Component.extend({
   classNames: 'admin-language-list',
   controlColumnClassNames: ["language-control"],
   allContentEnabled: false,

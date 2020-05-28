@@ -1,7 +1,8 @@
-import { default as computed, observes } from "discourse-common/utils/decorators";
+import { default as discourseComputed, observes } from "discourse-common/utils/decorators";
 import MultilingualLanguage from '../models/multilingual-language';
+import Component from '@ember/component';
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: 'tr',
   classNames: 'language',
   
@@ -18,42 +19,42 @@ export default Ember.Component.extend({
     }
   },
   
-  @computed('language.custom')
+  @discourseComputed('language.custom')
   typeKey(custom) {
     return `multilingual.languages.${custom ? 'custom': 'base'}`;
   },
   
-  @computed('language.code')
+  @discourseComputed('language.code')
   interfaceToggleDisabled(code) {
     return code === 'en';
   },
   
-  @computed('language.content_tag_conflict')
+  @discourseComputed('language.content_tag_conflict')
   contentDisabled(tagConflict) {
     return !this.siteSettings.multilingual_content_languages_enabled || tagConflict;
   },
   
-  @computed
+  @discourseComputed
   interfaceDisabled() {
     return !this.siteSettings.allow_user_locale;
   },
   
-  @computed('language.custom')
+  @discourseComputed('language.custom')
   actionsDisabled(custom) {
     return !custom;
   },
   
-  @computed
+  @discourseComputed
   contentClass() {
     return this.generateControlColumnClass("content");
   },
   
-  @computed
+  @discourseComputed
   interfaceClass() {
     return this.generateControlColumnClass("interface");
   },
   
-  @computed
+  @discourseComputed
   actionsClass() {
     return this.generateControlColumnClass('actions');
   },
