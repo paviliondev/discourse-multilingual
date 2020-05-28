@@ -10,6 +10,7 @@ import renderTag from "discourse/lib/render-tag";
 import { notEmpty } from "@ember/object/computed";
 import { set, get, computed } from "@ember/object";
 import { scheduleOnce } from "@ember/runloop";
+import I18n from "I18n";
 
 export default {
   name: 'multilingual',

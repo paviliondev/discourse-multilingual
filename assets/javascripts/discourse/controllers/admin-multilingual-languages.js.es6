@@ -8,6 +8,7 @@ import { popupAjaxError } from 'discourse/lib/ajax-error';
 import MultilingualLanguage from '../models/multilingual-language';
 import { notEmpty } from "@ember/object/computed";
 import { A } from "@ember/array";
+import I18n from "I18n";
 
 export default Controller.extend({
   refreshing: false,

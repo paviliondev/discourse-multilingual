@@ -4,6 +4,7 @@ import { addParam, localeParam } from '../lib/multilingual-route';
 import { notEmpty } from "@ember/object/computed";
 import Component from '@ember/component';
 import { bind } from "@ember/runloop";
+import I18n from "I18n";
 
 export default Component.extend({
   classNames: 'language-switcher-bar',

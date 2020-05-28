@@ -2,6 +2,7 @@ import { get } from "@ember/object";
 import { isRTL } from "discourse/lib/text-direction";
 import { iconHTML } from "discourse-common/lib/icon-library";
 import Category from "discourse/models/category";
+import I18n from "I18n";
 
 let escapeExpression = Handlebars.Utils.escapeExpression;
 

@@ -5,6 +5,7 @@ import {
   contentLanguageParam,
   getRouter,
 } from '../../lib/multilingual-route';
+import I18n from "I18n";
 
 export default {
   shouldRender(attrs, ctx) {

@@ -2,6 +2,7 @@ import { later } from "@ember/runloop";
 import { createWidget } from "discourse/widgets/widget";
 import { h } from "virtual-dom";
 import { addParam, localeParam } from '../lib/multilingual-route';
+import I18n from "I18n";
 
 export default createWidget("language-switcher-menu", {
   tagName: "div.language-switcher-menu",
