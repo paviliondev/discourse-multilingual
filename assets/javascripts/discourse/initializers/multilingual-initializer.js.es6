@@ -212,7 +212,7 @@ export default {
       });
       
       if (currentUser && currentUser.admin) {
-        api.modifyClass('component:admin-directory-toggle', {
+        api.modifyClass('component:table-header-toggle', {
           showToggle: notEmpty('toggleAll'),
           
           click(e) {

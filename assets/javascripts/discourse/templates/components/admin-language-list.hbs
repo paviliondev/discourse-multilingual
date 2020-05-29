@@ -1,34 +1,10 @@
 <table class='table languages-list grid'>
   <thead>
-    {{admin-directory-toggle
-      field="code"
-      i18nKey='multilingual.code'
-      order=order
-      ascending=ascending}}
-    {{admin-directory-toggle
-      field="name"
-      i18nKey='multilingual.languages.name'
-      order=order
-      ascending=ascending}}
-    {{admin-directory-toggle
-      field="nativeName"
-      i18nKey='multilingual.languages.native_name'
-      order=order
-      ascending=ascending}}
-    {{admin-directory-toggle
-      field="content_enabled"
-      i18nKey='multilingual.languages.content'
-      order=order
-      ascending=ascending
-      classNames=controlColumnClassNames
-      toggleAll=allContentEnabled}}
-    {{admin-directory-toggle
-      field="interface_enabled"
-      i18nKey='multilingual.languages.interface'
-      order=order
-      ascending=ascending
-      classNames=controlColumnClassNames
-      toggleAll=allInterfaceEnabled}}
+    {{table-header-toggle field="code" labelKey='multilingual.code' order=order asc=ascending}}
+    {{table-header-toggle field="name" labelKey='multilingual.languages.name' order=order asc=ascending}}
+    {{table-header-toggle field="nativeName" labelKey='multilingual.languages.native_name' order=order asc=ascending}}
+    {{table-header-toggle field="content_enabled" labelKey='multilingual.languages.content' order=order asc=ascending classNames=controlColumnClassNames toggleAll=allContentEnabled}}
+    {{table-header-toggle field="interface_enabled" labelKey='multilingual.languages.interface' order=order asc=ascending classNames=controlColumnClassNames toggleAll=allInterfaceEnabled}}
     <th class="language-control">Actions</th>
   </thead>
   <tbody>
