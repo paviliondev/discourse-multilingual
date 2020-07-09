@@ -1,4 +1,5 @@
 import { isContentLanguage } from './multilingual';
+import getURL from "discourse-common/lib/get-url";
 import User from 'discourse/models/user';
 import I18n from "I18n";
 
@@ -27,7 +28,7 @@ function multilingualTagRenderer(tag, params) {
     }
   }
   
-  const href = path ? ` href='${Discourse.getURL(path)}' ` : "";
+  const href = path ? ` href='${getURL(path)}' ` : "";
 
   if (Discourse.SiteSettings.tag_style || params.style) {
     classes.push(params.style || Discourse.SiteSettings.tag_style);

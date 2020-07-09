@@ -2,6 +2,7 @@ import { get } from "@ember/object";
 import { isRTL } from "discourse/lib/text-direction";
 import { iconHTML } from "discourse-common/lib/icon-library";
 import Category from "discourse/models/category";
+import getURL from "discourse-common/lib/get-url"; 
 import I18n from "I18n";
 
 let escapeExpression = Handlebars.Utils.escapeExpression;
@@ -23,7 +24,7 @@ function multilingualCategoryLinkRenderer(category, opts) {
   let restricted = get(category, "read_restricted");
   let url = opts.url
     ? opts.url
-    : Discourse.getURL(
+    : getURL(
         `/c/${Category.slugFor(category)}/${get(category, "id")}`
       );
   let href = opts.link === false ? "" : url;
