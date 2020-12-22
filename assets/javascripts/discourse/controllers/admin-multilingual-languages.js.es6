@@ -1,6 +1,7 @@
 import { default as discourseComputed, observes } from "discourse-common/utils/decorators";
 import Controller from "@ember/controller";
-import discourseDebounce from "discourse/lib/debounce";
+import discourseDebounce from "discourse-common/lib/debounce";
+import { debounce } from "@ember/runloop";
 import { i18n } from "discourse/lib/computed";
 import AdminUser from "admin/models/admin-user";
 import { ajax } from 'discourse/lib/ajax';
@@ -29,9 +30,12 @@ export default Controller.extend({
     this.addObserver('order', this._filterLanguages);
   },
   
-  _filterLanguages: discourseDebounce(function() {
-    this._refreshLanguages();
-  }, 250),
+  _filterLanguages() {
+    // TODO: Use discouseDebounce when discourse 2.7 gets released.
+    let debounceFunc = discourseDebounce || debounce;
+
+    debounceFunc(this, this._refreshLanguages, 250);
+  },
   
   @discourseComputed('updatedLanguages.[]', 'updateState')
   updateLanguagesDisabled(updatedLanguages, updateState) {
