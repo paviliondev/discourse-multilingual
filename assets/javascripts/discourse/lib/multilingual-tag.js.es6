@@ -24,7 +24,7 @@ function multilingualTagRenderer(tag, params) {
         : User.current().username;
       path = `/u/${username}/messages/tags/${tag}`;
     } else {
-      path = `/tags/${tag}`;
+      path = `/tag/${tag}`;
     }
   }
   
