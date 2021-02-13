@@ -208,14 +208,15 @@ after_initialize do
     end
   end
   
-  add_to_class(:guardian, :topic_requires_language_tag) do
+  add_to_class(:guardian, :topic_requires_language_tag?) do |topic|
+    !topic.private_message? &&
     Multilingual::ContentLanguage.enabled &&
     (SiteSetting.multilingual_require_content_language_tag === 'yes' ||
     (!is_staff? && SiteSetting.multilingual_require_content_language_tag === 'non-staff'))
   end
   
   add_class_method(:discourse_tagging, :validate_require_language_tag) do |guardian, topic, tag_names|
-    if guardian.topic_requires_language_tag && (tag_names.blank? || 
+    if guardian.topic_requires_language_tag?(topic) && (tag_names.blank? || 
        !Tag.where(name: tag_names).where("id IN (
           #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL}
           AND tg.name = '#{Multilingual::ContentTag::GROUP}'
