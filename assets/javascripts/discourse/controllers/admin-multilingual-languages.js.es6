@@ -26,14 +26,14 @@ export default Controller.extend({
     this.addObserver("ascending", this._filterLanguages);
     this.addObserver("order", this._filterLanguages);
   },
-  
+
   _filterLanguages() {
     // TODO: Use discouseDebounce when discourse 2.7 gets released.
     let debounceFunc = discourseDebounce || debounce;
 
     debounceFunc(this, this._refreshLanguages, 250);
   },
-  
+
   @discourseComputed('updatedLanguages.[]', 'updateState')
   updateLanguagesDisabled(updatedLanguages, updateState) {
     return updatedLanguages.length === 0 || updateState !== "save";
