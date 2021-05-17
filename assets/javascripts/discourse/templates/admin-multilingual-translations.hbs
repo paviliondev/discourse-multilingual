@@ -1,4 +1,4 @@
-<div class='controls'>
+<div class="controls">
   <div class="buttons">    
     {{multilingual-uploader
       uploading=uploading
@@ -11,10 +11,10 @@
   {{loading-spinner}}
 {{else}}
   {{#if translations}}
-    <table class='table translations-list grid'>
+    <table class="table translations-list grid">
       <thead>
-        {{table-header-toggle field="code" labelKey='multilingual.code'}}
-        {{table-header-toggle field="type" labelKey='multilingual.translations.type'}}
+        {{table-header-toggle field="code" labelKey="multilingual.code"}}
+        {{table-header-toggle field="type" labelKey="multilingual.translations.type"}}
         <th>Actions</th>
       </thead>
       <tbody>
@@ -24,6 +24,6 @@
       </tbody>
     </table>
   {{else}}
-    <p>{{i18n 'search.no_results'}}</p>
+    <p>{{i18n "search.no_results"}}</p>
   {{/if}}
 {{/if}}

@@ -4,11 +4,11 @@
 
 {{#if uploading}}
   {{loading-spinner size="small"}}
-  <span>{{i18n 'uploading'}}</span>
+  <span>{{i18n "uploading"}}</span>
 {{/if}}
 
-<label class="btn btn-default {{if addDisabled 'disabled'}}">
+<label class="btn btn-default {{if addDisabled "disabled"}}">
   {{d-icon "upload"}}
-  {{i18n 'upload'}}
+  {{i18n "upload"}}
   <input class="hidden-upload-field" disabled={{addDisabled}} type="file" accept="text/x-yaml" />
 </label>
