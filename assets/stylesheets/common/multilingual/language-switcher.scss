@@ -33,6 +33,7 @@
   border-radius: 2px;
   box-shadow: shadow("dropdown");
   padding: 10px;
+  display: flex;
 
   button.btn {
     background-color: $secondary;
