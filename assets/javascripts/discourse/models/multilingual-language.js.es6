@@ -1,15 +1,15 @@
-import { ajax } from 'discourse/lib/ajax';
-import { popupAjaxError } from 'discourse/lib/ajax-error';
+import { ajax } from "discourse/lib/ajax";
+import { popupAjaxError } from "discourse/lib/ajax-error";
 import EmberObject from "@ember/object";
 
 const MultilingualLanguage = EmberObject.extend();
-const LanguagesPath = '/admin/multilingual/languages';
+const LanguagesPath = "/admin/multilingual/languages";
 
 function getParams() {
   const searchParams = new URLSearchParams(window.location.search);
   let params = {};
-  for (var pair of searchParams.entries()) {
-    if (['query', 'order', 'ascending'].indexOf(pair[0]) > -1) {
+  for (let pair of searchParams.entries()) {
+    if (["query", "order", "ascending"].indexOf(pair[0]) > -1) {
       params[pair[0]] = pair[1];
     }
   }
@@ -19,10 +19,12 @@ function getParams() {
 MultilingualLanguage.reopenClass({
   list(params = {}) {
     return ajax(LanguagesPath, {
-      data: Object.assign(getParams(), params)
-    }).then(result => {
-      return result.map(l => MultilingualLanguage.create(l));
-    }).catch(popupAjaxError)
+      data: Object.assign(getParams(), params),
+    })
+      .then((result) => {
+        return result.map((l) => MultilingualLanguage.create(l));
+      })
+      .catch(popupAjaxError);
   },
 
   save(languages, params = {}) {
@@ -31,18 +33,17 @@ MultilingualLanguage.reopenClass({
     return ajax(LanguagesPath, {
       method: "PUT",
       data: JSON.stringify(data),
-      dataType: 'json',
-      contentType: 'application/json'
-    }).catch(popupAjaxError)
+      dataType: "json",
+      contentType: "application/json",
+    }).catch(popupAjaxError);
   },
-  
+
   remove(codes) {
     return ajax(LanguagesPath, {
       method: "DELETE",
-      data: Object.assign(getParams(), { codes })
-    }).catch(popupAjaxError)
-  }
+      data: Object.assign(getParams(), { codes }),
+    }).catch(popupAjaxError);
+  },
 });
 
 export default MultilingualLanguage;
-

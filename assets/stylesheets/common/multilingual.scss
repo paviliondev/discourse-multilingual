@@ -1,7 +1,7 @@
-@import "content-language-tags";
-@import "content-language-select-kit";
-@import "language-switcher";
-@import "admin";
+@import "multilingual/content-language-tags";
+@import "multilingual/content-language-select-kit";
+@import "multilingual/language-switcher";
+@import "multilingual/admin";
 
 #reply-control .title-and-category {
   align-items: initial;
@@ -12,19 +12,20 @@ ol.category-breadcrumb li.content-language-discovery {
 }
 
 .edit-category-modal .field-item.category-name {
-  > span, > label {
+  > span,
+  > label {
     display: inline-block;
   }
-  
+
   > span {
     margin-left: 7px;
   }
-  
+
   .d-icon {
     width: 0.9em;
-    height: 0.9em; 
+    height: 0.9em;
   }
-  
+
   input:disabled {
     background-color: $primary-very-low;
     color: rgba($primary, 0.7);

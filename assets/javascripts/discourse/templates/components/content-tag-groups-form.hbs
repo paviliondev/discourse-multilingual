@@ -19,19 +19,19 @@
     disabled=changingContentTags
     icon="far-trash-alt"
     label="tagging.groups.delete"}}
-    
+
   <div class="content-tag-controls">
     {{#if changingContentTags}}
       {{loading-spinner size="small"}}
       <span>{{changingContentTags}}</span>
     {{/if}}
-    
+
     {{d-button
       class="btn-default"
       action=(action "updateContentTags")
       disabled=changingContentTags
       label="tagging.groups.content_tags.update.btn"}}
-    
+
     {{d-button
       class="btn-danger"
       action=(action "destroyContentTags")
@@ -40,3 +40,4 @@
       label="tagging.groups.content_tags.delete.btn"}}
   </div>
 </div>
+

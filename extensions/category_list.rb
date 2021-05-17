@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 ## Note ##
 # The featured topic list in CategoryList is used in the /categories route:
 #   * when desktop_category_page_style includes 'featured'; and / or
@@ -10,17 +11,17 @@
 
 module CategoryListMultilingualExtension
   def trim_results
-    
+
     if Multilingual::ContentLanguage.enabled
       @categories.each do |c|
         next if c.displayable_topics.blank?
-        
+
         c.displayable_topics = c.displayable_topics.select do |topic|
           Multilingual::ContentTag.filter(topic.tags).any?
         end
       end
     end
-    
+
     super
   end
 end

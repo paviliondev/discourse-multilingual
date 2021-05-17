@@ -1,11 +1,11 @@
-a.ls-language {
+.ls-language {
   margin-right: 10px;
   padding: 5px 10px;
   font-size: 1.1em;
   text-decoration: none;
   color: $primary;
   cursor: pointer;
-  
+
   &:last-of-type {
     margin-right: 0;
   }
@@ -13,7 +13,7 @@ a.ls-language {
   &:hover {
     background-color: $tertiary-low !important;
   }
-  
+
   &.current {
     background-color: $tertiary-low;
   }
@@ -31,23 +31,21 @@ a.ls-language {
   background-color: $secondary;
   border: 1px solid rgba($primary, 0.1);
   border-radius: 2px;
-  box-shadow: shadow('dropdown');
+  box-shadow: shadow("dropdown");
   padding: 10px;
-  
-  a {
-    @extend a.ls-language;
-  }
-    
+  display: flex;
+
   button.btn {
     background-color: $secondary;
-    
+
     .d-icon {
       color: $primary;
     }
-    
-    &:hover, &.btn-hover:hover {
+
+    &:hover,
+    &.btn-hover:hover {
       background-color: $secondary;
-      
+
       .d-icon {
         color: $primary;
       }
@@ -61,7 +59,7 @@ a.ls-language {
     width: 400px;
     background-color: $secondary;
     border: 1px solid $primary-low;
-    box-shadow: shadow('dropdown');
+    box-shadow: shadow("dropdown");
     bottom: 60px;
     padding: 10px 14px;
     right: 0;
@@ -86,7 +84,7 @@ a.ls-language {
 html.rtl {
   .language-switcher-bar {
     padding: 5px 5px 5px 0;
-    
+
     a {
       &:last-of-type {
         margin-right: 15px;
@@ -96,6 +94,10 @@ html.rtl {
 }
 
 .language-switcher-menu {
+  .panel-body-contents {
+    overflow-y: scroll;
+  }
+
   ul {
     list-style: none;
     margin: 0;
@@ -107,10 +109,6 @@ html.rtl {
       margin: 5px 0;
       display: inline-block;
       width: 100%;
-      
-      a {
-        @extend a.ls-language;
-      }
     }
   }
 }

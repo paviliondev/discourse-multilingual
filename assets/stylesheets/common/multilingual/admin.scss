@@ -1,7 +1,7 @@
 .admin-multilingual .admin-actions {
   display: flex;
   align-items: center;
-  
+
   > span {
     margin-right: 10px;
   }
@@ -12,64 +12,64 @@
     .right {
       margin-left: auto;
     }
-    
-    &> li:last-of-type > a {
+
+    & > li:last-of-type > a {
       margin-right: 0;
     }
   }
-  
+
   .query {
     display: flex;
     align-items: center;
-    
+
     .custom-only {
       margin-left: 10px;
     }
   }
-  
+
   .controls {
     display: flex;
     margin-top: 20px;
     justify-content: space-between;
-    
+
     input {
       margin-bottom: 0;
     }
-    
+
     .buttons {
       display: flex;
       margin-left: auto;
-            
+
       button {
         margin-left: 10px;
       }
-      
+
       > span {
         margin-left: 10px;
       }
     }
   }
-  
+
   .admin-language-list {
     margin: 20px 0;
-    
+
     th.language-control {
       text-align: center;
-      
+
       input[type="checkbox"] {
         margin-right: 0;
       }
     }
-    
+
     td.language-control {
       text-align: center;
-      
+
       &.disabled {
         background-color: $primary-very-low;
         color: $primary-low;
       }
     }
-    
+
     .actions {
       .btn {
         height: 36px;
@@ -81,7 +81,7 @@
       }
     }
   }
-  
+
   .language-list-title {
     margin: 10px 8px;
     text-decoration: underline;

@@ -1,23 +1,23 @@
-<div class='admin-controls'>
+<div class="admin-controls">
   <nav>
     <ul class="nav nav-pills">
       {{nav-item
-        route='adminMultilingualLanguages'
-        label='multilingual.languages.title'}}
+        route="adminMultilingualLanguages"
+        label="multilingual.languages.title"}}
       {{nav-item
-        route='adminMultilingualTranslations'
-        label='multilingual.translations.title'}}
+        route="adminMultilingualTranslations"
+        label="multilingual.translations.title"}}
       {{nav-item
-        route='tagGroups.edit'
+        route="tagGroups.edit"
         routeParam=tagGroupId
-        label='tagging.tags'
+        label="tagging.tags"
         icon="tag"
         class="right"}}
       <li>
-        <a {{action 'showSettings'}}>
-          {{d-icon 'cog'}}
-          {{i18n 'admin.plugins.change_settings_short'}}
-        </a>
+        {{d-button
+          action="showSettings"
+          label="admin.plugins.change_settings_short"
+          icon="cog"}}
       </li>
     </ul>
   </nav>

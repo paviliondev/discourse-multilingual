@@ -3,7 +3,7 @@ function isContentLanguage(code) {
     return false;
   }
   const site = Discourse.Site.current();
-  return site.content_languages.find(cl => cl.code == code);
+  return site.content_languages.find((cl) => cl.code === code);
 }
 
-export { isContentLanguage }
+export { isContentLanguage };

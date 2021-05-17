@@ -2,44 +2,44 @@
   {{language.code}}
 </td>
 
-<td class='name'>
+<td class="name">
   {{language.name}}
 </td>
 
-<td class='native-name'>
+<td class="native-name">
   {{language.nativeName}}
 </td>
 
-<td class="{{contentClass}}">
+<td class={{contentClass}}>
   {{#if contentDisabled}}
     {{#if language.content_tag_conflict}}
-      {{#link-to 'tags.show' language.code}}
-        {{d-icon 'warning'}}
-        <span>{{i18n 'multilingual.languages.content_tag_conflict' tagName=language.code}}</span>
+      {{#link-to "tags.show" language.code}}
+        {{d-icon "warning"}}
+        <span>{{i18n "multilingual.languages.content_tag_conflict" tagName=language.code}}</span>
       {{/link-to}}
     {{else}}
-      {{i18n 'multilingual.languages.disabled'}}
+      {{i18n "multilingual.languages.disabled"}}
     {{/if}}
   {{else}}
     {{input type="checkbox" checked=language.content_enabled}}
   {{/if}}
 </td>
 
-<td class="{{interfaceClass}}">
+<td class={{interfaceClass}}>
   {{#if interfaceDisabled}}
-    {{i18n 'multilingual.languages.disabled'}}
+    {{i18n "multilingual.languages.disabled"}}
   {{else}}
     {{#if language.interface_supported}}
       {{input type="checkbox" checked=language.interface_enabled disabled=interfaceToggleDisabled}}
     {{else}}
-      <i>{{i18n 'multilingual.languages.interface_not_supported'}}</i>
+      <i>{{i18n "multilingual.languages.interface_not_supported"}}</i>
     {{/if}}
   {{/if}}
 </td>
 
 <td class={{actionsClass}}>
   {{#if actionsDisabled}}
-    {{i18n 'multilingual.languages.disabled'}}
+    {{i18n "multilingual.languages.disabled"}}
   {{else}}
     {{#d-button action="remove" disabled=removing}}
       {{#if removing}}

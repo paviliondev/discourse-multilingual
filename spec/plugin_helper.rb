@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 ## The plugin store is not wiped between each test
 
 require 'webmock/rspec'

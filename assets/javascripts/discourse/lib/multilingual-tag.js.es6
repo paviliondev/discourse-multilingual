@@ -1,22 +1,25 @@
-import { isContentLanguage } from './multilingual';
+import { isContentLanguage } from "./multilingual";
+import { escapeExpression } from "discourse/lib/utilities";
 import getURL from "discourse-common/lib/get-url";
-import User from 'discourse/models/user';
+import User from "discourse/models/user";
 import I18n from "I18n";
 
 function multilingualTagRenderer(tag, params) {
   params = params || {};
   const clt = isContentLanguage(tag);
-    
-  if (clt && !params.contentLanguageTag) return '';
-  
-  tag = Handlebars.Utils.escapeExpression(tag).toLowerCase();
+
+  if (clt && !params.contentLanguageTag) {
+    return "";
+  }
+
+  tag = escapeExpression(tag).toLowerCase();
   const translatedTag = I18n.translate_tag(tag);
   const visibleName = clt ? clt.name : translatedTag;
-  
+
   const classes = ["discourse-tag"];
   const tagName = params.tagName || "a";
   let path;
-  
+
   if (tagName === "a" && !params.noHref) {
     if ((params.isPrivateMessage || params.pmOnly) && User.current()) {
       const username = params.tagsForUser
@@ -24,16 +27,16 @@ function multilingualTagRenderer(tag, params) {
         : User.current().username;
       path = `/u/${username}/messages/tags/${tag}`;
     } else {
-      path = `/tags/${tag}`;
+      path = `/tag/${tag}`;
     }
   }
-  
+
   const href = path ? ` href='${getURL(path)}' ` : "";
 
   if (Discourse.SiteSettings.tag_style || params.style) {
     classes.push(params.style || Discourse.SiteSettings.tag_style);
   }
-  
+
   let val =
     "<" +
     tagName +

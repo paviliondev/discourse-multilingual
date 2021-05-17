@@ -1,17 +1,20 @@
-import { default as discourseComputed, observes } from "discourse-common/utils/decorators";
-import MultilingualLanguage from '../models/multilingual-language';
-import Component from '@ember/component';
+import {
+  default as discourseComputed,
+  observes,
+} from "discourse-common/utils/decorators";
+import MultilingualLanguage from "../models/multilingual-language";
+import Component from "@ember/component";
 import { deepEqual } from "discourse-common/lib/object";
 
 export default Component.extend({
-  tagName: 'tr',
-  classNames: 'language',
+  tagName: "tr",
+  classNames: "language",
 
   didInsertElement() {
     this.currentLanguage = JSON.parse(JSON.stringify(this.language));
   },
 
-  @observes('language.content_enabled', 'language.interface_enabled')
+  @observes("language.content_enabled", "language.interface_enabled")
   trackUpdates() {
     if (deepEqual(this.currentLanguage, this.language)) {
       this.updatedLanguages.removeObject(this.language);
@@ -20,19 +23,21 @@ export default Component.extend({
     }
   },
 
-  @discourseComputed('language.custom')
+  @discourseComputed("language.custom")
   typeKey(custom) {
-    return `multilingual.languages.${custom ? 'custom': 'base'}`;
+    return `multilingual.languages.${custom ? "custom" : "base"}`;
   },
 
-  @discourseComputed('language.code')
+  @discourseComputed("language.code")
   interfaceToggleDisabled(code) {
-    return code === 'en';
+    return code === "en";
   },
 
-  @discourseComputed('language.content_tag_conflict')
+  @discourseComputed("language.content_tag_conflict")
   contentDisabled(tagConflict) {
-    return !this.siteSettings.multilingual_content_languages_enabled || tagConflict;
+    return (
+      !this.siteSettings.multilingual_content_languages_enabled || tagConflict
+    );
   },
 
   @discourseComputed
@@ -40,7 +45,7 @@ export default Component.extend({
     return !this.siteSettings.allow_user_locale;
   },
 
-  @discourseComputed('language.custom')
+  @discourseComputed("language.custom")
   actionsDisabled(custom) {
     return !custom;
   },
@@ -57,24 +62,25 @@ export default Component.extend({
 
   @discourseComputed
   actionsClass() {
-    return this.generateControlColumnClass('actions');
+    return this.generateControlColumnClass("actions");
   },
 
   generateControlColumnClass(type) {
     let columnClass = `language-control ${type}`;
-    if (this.get(`${type}Disabled`)) columnClass += " disabled";
+    if (this.get(`${type}Disabled`)) {
+      columnClass += " disabled";
+    }
     return columnClass;
   },
 
   actions: {
     remove() {
-      this.set('removing', true);
-      let codes = [this.get('language.code')];
-      MultilingualLanguage.remove(codes)
-        .then((result) => {
-          this.set('removing', false);
-          this.removed(result);
-        })
-    }
-  }
+      this.set("removing", true);
+      let codes = [this.get("language.code")];
+      MultilingualLanguage.remove(codes).then((result) => {
+        this.set("removing", false);
+        this.removed(result);
+      });
+    },
+  },
 });

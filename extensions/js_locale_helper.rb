@@ -1,4 +1,5 @@
-module JsLocaleHelperMultilingualExtension  
+# frozen_string_literal: true
+module JsLocaleHelperMultilingualExtension
   def plugin_client_files(locale_str)
     files = super(locale_str)
     if SiteSetting.multilingual_enabled

@@ -1,26 +1,26 @@
 import { set } from "@ember/object";
 import { observes } from "discourse-common/utils/decorators";
-import Component from '@ember/component';
+import Component from "@ember/component";
 
 export default Component.extend({
-  classNames: 'admin-language-list',
+  classNames: "admin-language-list",
   controlColumnClassNames: ["language-control"],
   allContentEnabled: false,
   allInterfaceEnabled: false,
-  
-  @observes('allContentEnabled')
+
+  @observes("allContentEnabled")
   updateAllContent() {
-    this.languages.forEach(l => {
-      set(l, 'content_enabled', this.allContentEnabled);
+    this.languages.forEach((l) => {
+      set(l, "content_enabled", this.allContentEnabled);
     });
   },
-  
-  @observes('allInterfaceEnabled')
+
+  @observes("allInterfaceEnabled")
   updateAllInterface() {
-    this.languages.forEach(l => {
-      if (l.code !== 'en') {
-        set(l, 'interface_enabled', this.allInterfaceEnabled);
+    this.languages.forEach((l) => {
+      if (l.code !== "en") {
+        set(l, "interface_enabled", this.allInterfaceEnabled);
       }
     });
-  }
-})
+  },
+});
