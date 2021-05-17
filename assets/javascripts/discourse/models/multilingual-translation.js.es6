@@ -1,9 +1,9 @@
-import { ajax } from 'discourse/lib/ajax';
-import { popupAjaxError } from 'discourse/lib/ajax-error';
+import { ajax } from "discourse/lib/ajax";
+import { popupAjaxError } from "discourse/lib/ajax-error";
 import EmberObject from "@ember/object";
 
 const MultilingualTranslation = EmberObject.extend();
-const TranslationPath = '/admin/multilingual/translations';
+const TranslationPath = "/admin/multilingual/translations";
 
 MultilingualTranslation.reopenClass({
   list() {
@@ -15,23 +15,22 @@ MultilingualTranslation.reopenClass({
       method: "DELETE",
       data: {
         code,
-        type
-      }
+        type,
+      },
     }).catch(popupAjaxError);
   },
 
   download(code, type) {
-    return ajax(TranslationPath + '/download', {
+    return ajax(TranslationPath + "/download", {
       data: {
         code,
-        type
+        type,
       },
       xhrFields: {
-        responseType: 'blob'
-      }
+        responseType: "blob",
+      },
     });
-  }
+  },
 });
 
 export default MultilingualTranslation;
-

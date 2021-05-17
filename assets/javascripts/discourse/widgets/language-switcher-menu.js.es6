@@ -1,7 +1,7 @@
 import { later } from "@ember/runloop";
 import { createWidget } from "discourse/widgets/widget";
 import { h } from "virtual-dom";
-import { addParam, localeParam } from '../lib/multilingual-route';
+import { addParam, localeParam } from "../lib/multilingual-route";
 import I18n from "I18n";
 
 export default createWidget("language-switcher-menu", {
@@ -9,12 +9,12 @@ export default createWidget("language-switcher-menu", {
   buildKey: () => "language-switcher-menu",
 
   settings: {
-    maxWidth: 320
+    maxWidth: 320,
   },
 
   defaultState() {
     return {
-      available: this.site.interface_languages
+      available: this.site.interface_languages,
     };
   },
 
@@ -22,22 +22,26 @@ export default createWidget("language-switcher-menu", {
     const { available } = this.state;
     const currentLocale = I18n.currentLocale();
 
-    return h('ul', available.map(
-      l => {
-        let className = '';
+    return h(
+      "ul",
+      available.map((l) => {
+        let className = "";
 
         if (l.code === currentLocale) {
-          className += ' current';
+          className += " current";
         }
 
-        return h('li', this.attach("link", {
-          className,
-          action: "change",
-          actionParam: l.code,
-          rawLabel: l.name
-        }));
-      }
-    ));
+        return h(
+          "li",
+          this.attach("link", {
+            className,
+            action: "change",
+            actionParam: l.code,
+            rawLabel: l.name,
+          })
+        );
+      })
+    );
   },
 
   change(code) {
@@ -47,7 +51,7 @@ export default createWidget("language-switcher-menu", {
   html() {
     return this.attach("menu-panel", {
       maxWidth: this.settings.maxWidth,
-      contents: () => this.panelContents()
+      contents: () => this.panelContents(),
     });
   },
 
@@ -77,5 +81,5 @@ export default createWidget("language-switcher-menu", {
     } else {
       this.sendWidgetAction("toggleLangugeSwitcherMenu");
     }
-  }
+  },
 });

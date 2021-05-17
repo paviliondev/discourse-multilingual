@@ -1,4 +1,4 @@
-import MultilingualLanguage from '../models/multilingual-language';
+import MultilingualLanguage from "../models/multilingual-language";
 import DiscourseRoute from "discourse/routes/discourse";
 
 export default DiscourseRoute.extend({
@@ -7,7 +7,7 @@ export default DiscourseRoute.extend({
   },
 
   setupController(controller, model) {
-    controller.set('languages', model);
+    controller.set("languages", model);
     controller.setupObservers();
-  }
+  },
 });

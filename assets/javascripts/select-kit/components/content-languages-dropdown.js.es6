@@ -1,5 +1,8 @@
 import DropdownSelectBox from "select-kit/components/dropdown-select-box";
-import { contentLanguageParam, getDiscoveryParam } from '../../discourse/lib/multilingual-route';
+import {
+  contentLanguageParam,
+  getDiscoveryParam,
+} from "../../discourse/lib/multilingual-route";
 import { set } from "@ember/object";
 
 export default DropdownSelectBox.extend({
@@ -11,12 +14,12 @@ export default DropdownSelectBox.extend({
     icon: "translate",
     showFullTitle: false,
     autoFilterable: false,
-    headerComponent: "content-languages-header"
+    headerComponent: "content-languages-header",
   },
 
   didInsertElement() {
     if (!this.currentUser) {
-      this.selectKit.options.set('filterable', true);
+      this.selectKit.options.set("filterable", true);
     }
   },
 
@@ -31,12 +34,12 @@ export default DropdownSelectBox.extend({
 
       content.forEach((l, i) => {
         if (l.code === param) {
-          set(l, 'classNames', `${l.classNames} active`);
-          set(l, 'icon', 'times');
+          set(l, "classNames", `${l.classNames} active`);
+          set(l, "icon", "times");
           activeIndex = i;
-        } else if (l.icon === 'times') {
-          set(l, 'classNames', 'guest-content-language');
-          set(l, 'icon', null);
+        } else if (l.icon === "times") {
+          set(l, "classNames", "guest-content-language");
+          set(l, "icon", null);
         }
       });
 
@@ -45,5 +48,5 @@ export default DropdownSelectBox.extend({
     }
 
     return content;
-  }
+  },
 });

@@ -1,22 +1,24 @@
 import MultiSelectComponent from "select-kit/components/multi-select";
 
 export default MultiSelectComponent.extend({
-  classNames: ['content-languages-selector', 'classNames'],
+  classNames: ["content-languages-selector", "classNames"],
   allowAny: false,
   valueProperty: "code",
   nameProperty: "name",
   options: {
-    filterable: true
+    filterable: true,
   },
   initializeContentLanguges: true,
 
   didInsertElement() {
     this._super(...arguments);
 
-    if (!this.value
-        && this.initializeContentLanguges
-        && this.currentUser.content_languages.length) {
-      this.set('value', this.currentUser.content_languages[0].code);
+    if (
+      !this.value &&
+      this.initializeContentLanguges &&
+      this.currentUser.content_languages.length
+    ) {
+      this.set("value", this.currentUser.content_languages[0].code);
     }
-  }
+  },
 });

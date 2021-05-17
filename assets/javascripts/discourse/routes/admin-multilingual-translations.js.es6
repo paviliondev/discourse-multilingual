@@ -1,4 +1,4 @@
-import MultilingualTranslation from '../models/multilingual-translation';
+import MultilingualTranslation from "../models/multilingual-translation";
 import DiscourseRoute from "discourse/routes/discourse";
 
 export default DiscourseRoute.extend({
@@ -7,6 +7,6 @@ export default DiscourseRoute.extend({
   },
 
   setupController(controller, model) {
-    controller.set('translations', model);
-  }
+    controller.set("translations", model);
+  },
 });

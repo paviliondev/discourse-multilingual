@@ -6,11 +6,12 @@ import Category from "discourse/models/category";
 import getURL from "discourse-common/lib/get-url";
 import I18n from "I18n";
 
-
 function translatedCategoryName(category) {
   let translatedName;
   let nameTranslations = get(category, "name_translations");
-  if (nameTranslations) {translatedName = nameTranslations[I18n.currentLocale()];}
+  if (nameTranslations) {
+    translatedName = nameTranslations[I18n.currentLocale()];
+  }
   return translatedName || get(category, "name");
 }
 
@@ -24,9 +25,7 @@ function multilingualCategoryLinkRenderer(category, opts) {
   let restricted = get(category, "read_restricted");
   let url = opts.url
     ? opts.url
-    : getURL(
-        `/c/${Category.slugFor(category)}/${get(category, "id")}`
-      );
+    : getURL(`/c/${Category.slugFor(category)}/${get(category, "id")}`);
   let href = opts.link === false ? "" : url;
   let tagName = opts.link === false || opts.link === "false" ? "span" : "a";
   let extraClasses = opts.extraClasses ? " " + opts.extraClasses : "";
@@ -99,7 +98,4 @@ function multilingualCategoryLinkRenderer(category, opts) {
   return `<${tagName} class="badge-wrapper ${extraClasses}" ${href}>${html}</${tagName}>`;
 }
 
-export {
-  multilingualCategoryLinkRenderer,
-  translatedCategoryName
-};
+export { multilingualCategoryLinkRenderer, translatedCategoryName };

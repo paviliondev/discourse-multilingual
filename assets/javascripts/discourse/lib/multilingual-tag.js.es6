@@ -1,14 +1,16 @@
-import { isContentLanguage } from './multilingual';
+import { isContentLanguage } from "./multilingual";
 import { escapeExpression } from "discourse/lib/utilities";
 import getURL from "discourse-common/lib/get-url";
-import User from 'discourse/models/user';
+import User from "discourse/models/user";
 import I18n from "I18n";
 
 function multilingualTagRenderer(tag, params) {
   params = params || {};
   const clt = isContentLanguage(tag);
 
-  if (clt && !params.contentLanguageTag) {return '';}
+  if (clt && !params.contentLanguageTag) {
+    return "";
+  }
 
   tag = escapeExpression(tag).toLowerCase();
   const translatedTag = I18n.translate_tag(tag);

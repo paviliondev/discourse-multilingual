@@ -8,29 +8,29 @@ import I18n from "I18n";
 export default Component.extend(UploadMixin, {
   type: "yml",
   addDisabled: alias("uploading"),
-  classNameBindings: [':multilingual-uploader', 'uploadType'],
+  classNameBindings: [":multilingual-uploader", "uploadType"],
   code: null,
   message: null,
 
-  _init: on("didInsertElement", function() {
-    this.messageBus.subscribe("/uploads/" + this.type, msg => {
+  _init: on("didInsertElement", function () {
+    this.messageBus.subscribe("/uploads/" + this.type, (msg) => {
       if (msg.uploaded) {
         this.setProperties({
           uploading: false,
-          message: I18n.t('uploaded')
+          message: I18n.t("uploaded"),
         });
         this.done();
       } else if (msg.errors) {
-        this.set('message', msg.errors[0]);
+        this.set("message", msg.errors[0]);
       }
 
       setTimeout(() => {
-        this.set('message', null);
+        this.set("message", null);
       }, 10000);
     });
   }),
 
-  @discourseComputed('uploadType')
+  @discourseComputed("uploadType")
   uploadUrl(uploadType) {
     return `/admin/multilingual/${uploadType}s`;
   },
@@ -41,5 +41,5 @@ export default Component.extend(UploadMixin, {
 
   validateUploadedFilesOptions() {
     return { skipValidation: true };
-  }
+  },
 });
