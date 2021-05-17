@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ApplicationControllerMultilingualExtension
   def with_resolved_locale(check_current_user: true)
     if guest_locale_switcher_enabled && client_locale
@@ -13,7 +14,7 @@ module ApplicationControllerMultilingualExtension
   end
 
   def guest_locale_switcher_enabled
-    SiteSetting.multilingual_enabled && 
+    SiteSetting.multilingual_enabled &&
     SiteSetting.multilingual_guest_language_switcher != "off"
   end
 end

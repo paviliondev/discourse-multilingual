@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ContentLanguagesValidator
-  
+
   def initialize(opts = {})
     @opts = opts
   end

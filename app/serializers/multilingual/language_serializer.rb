@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Multilingual::LanguageSerializer < Multilingual::BasicLanguageSerializer
   attributes :custom,
              :nativeName,

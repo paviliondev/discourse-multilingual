@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class LanguageSwitcherValidator
-  
+
   def initialize(opts = {})
     @opts = opts
   end
