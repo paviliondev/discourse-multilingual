@@ -34,7 +34,7 @@ export default Controller.extend({
     debounceFunc(this, this._refreshLanguages, 250);
   },
 
-  @discourseComputed('updatedLanguages.[]', 'updateState')
+  @discourseComputed("updatedLanguages.[]", "updateState")
   updateLanguagesDisabled(updatedLanguages, updateState) {
     return updatedLanguages.length === 0 || updateState !== "save";
   },
