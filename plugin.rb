@@ -73,7 +73,7 @@ after_initialize do
   ::CategoryList.prepend CategoryListMultilingualExtension
   ::Post.prepend MultilingualTranslatorPostExtension
   ::ApplicationController.prepend ApplicationControllerMultilingualExtension
-  
+
   register_html_builder('server:before-script-load') do
     loader = Multilingual::LocaleLoader.new
     result = ""
