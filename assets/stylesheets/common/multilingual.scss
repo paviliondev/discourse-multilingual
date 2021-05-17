@@ -12,19 +12,20 @@ ol.category-breadcrumb li.content-language-discovery {
 }
 
 .edit-category-modal .field-item.category-name {
-  > span, > label {
+  > span,
+  > label {
     display: inline-block;
   }
-  
+
   > span {
     margin-left: 7px;
   }
-  
+
   .d-icon {
     width: 0.9em;
-    height: 0.9em; 
+    height: 0.9em;
   }
-  
+
   input:disabled {
     background-color: $primary-very-low;
     color: rgba($primary, 0.7);

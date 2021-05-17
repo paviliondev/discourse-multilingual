@@ -1,12 +1,13 @@
 .content-languages-selector.select-kit {
   width: initial;
   min-width: 300px;
-  
+
   .choices .selected-name {
     background: initial;
   }
-  
-  .select-kit-header .name, .select-kit-row .name {
+
+  .select-kit-header .name,
+  .select-kit-row .name {
     color: $primary;
   }
 }
@@ -15,36 +16,37 @@
   .select-kit-header {
     outline-style: none !important;
     margin-left: 5px;
-    
+
     &.has-languages {
       background-color: $tertiary;
-      
+
       .d-icon {
         color: $secondary;
       }
     }
   }
-  
+
   .select-kit-collection {
     font-size: 1em;
   }
-  
+
   li.select-kit-row {
     width: 100%;
     cursor: initial;
     padding: 10px;
-    
+
     .texts .name {
       font-weight: initial;
     }
-    
-    &[data-value="set_content_language"], &[data-value="clear_content_language"] {
+
+    &[data-value="set_content_language"],
+    &[data-value="clear_content_language"] {
       cursor: pointer;
     }
-    
+
     &.guest-content-language {
       cursor: pointer;
-      
+
       &.active {
         background: $tertiary-low;
       }

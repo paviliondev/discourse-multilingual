@@ -13,8 +13,8 @@
 
 .discourse-tags a {
   display: inline-block;
-  
-  &+ .content-language-tags {
+
+  & + .content-language-tags {
     margin-left: 8px;
   }
 }
@@ -22,39 +22,38 @@
 .content-language-tags {
   display: inline-block;
   vertical-align: middle;
-  
+
   > .d-icon {
     margin-right: 3px;
-    height: .8706em;
-    width: .8706em;
+    height: 0.8706em;
+    width: 0.8706em;
   }
-  
+
   .content-language-tag {
     @extend .discourse-tag.simple;
   }
 }
 
 .tag-groups-container.content-tags {
-  
   .tag-group-content {
     margin-bottom: 40px;
-    
+
     .group-tags-list {
       ul {
         display: flex;
         flex-flow: wrap;
         list-style: none;
         margin: 0;
-        
+
         li {
           margin: 0 15px 10px 0;
         }
       }
     }
-    
+
     .content-tag-controls {
       float: right;
-      
+
       button.btn {
         margin-right: 0;
         margin-left: 10px;

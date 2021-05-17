@@ -4,11 +4,11 @@
 
 .list-controls .category-breadcrumb.no-category {
   flex: initial;
-  
-  &> li:not(.content-language-discovery) {
+
+  & > li:not(.content-language-discovery) {
     display: none;
   }
-  
+
   .content-languages-dropdown {
     height: 35px;
     margin-bottom: 0;
@@ -23,14 +23,15 @@
   width: 100%;
   border-top: 1px solid $primary-low;
   box-sizing: border-box;
-  box-shadow: 0px 1px 10px rgba(0,0,0,0.15);
+  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.15);
   background-color: $secondary;
   position: fixed;
   bottom: 0;
   left: 0;
   z-index: 100;
 
-  a, .btn {
+  a,
+  .btn {
     font-size: 0.9em;
   }
 
