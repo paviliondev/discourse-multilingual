@@ -21,7 +21,7 @@ class Multilingual::LanguageExclusion
     code = code.to_s
     enabled = ActiveModel::Type::Boolean.new.cast(params[:enabled])
     exclusions = all_uncached[type] || []
-    
+
     return if enabled && exclusions.blank?
   
     if enabled
@@ -32,7 +32,7 @@ class Multilingual::LanguageExclusion
     
     data = all_uncached
     data[type] = exclusions
-        
+
     PluginStore.set(Multilingual::PLUGIN_NAME, KEY, data)
   end
 end

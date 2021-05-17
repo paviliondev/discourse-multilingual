@@ -195,7 +195,7 @@ after_initialize do
   on(:before_create_topic) do |topic, creator|
     if Multilingual::ContentLanguage.enabled
       content_language_tags = [*creator.opts[:content_language_tags]]
-          
+
       if !DiscourseTagging.validate_require_language_tag(
           creator.guardian,
           topic,
@@ -275,14 +275,14 @@ after_initialize do
   ## Extensions
   
   %w[
-    ../lib/multilingual/extensions/category_list.rb
-    ../lib/multilingual/extensions/discourse_tagging.rb
-    ../lib/multilingual/extensions/extra_locales_controller.rb
-    ../lib/multilingual/extensions/i18n.rb
-    ../lib/multilingual/extensions/js_locale_helper.rb
-    ../lib/multilingual/extensions/post.rb
-    ../lib/multilingual/extensions/tag_group.rb
-    ../lib/multilingual/extensions/topic_serializer.rb
+    ../extensions/category_list.rb
+    ../extensions/discourse_tagging.rb
+    ../extensions/extra_locales_controller.rb
+    ../extensions/i18n.rb
+    ../extensions/js_locale_helper.rb
+    ../extensions/post.rb
+    ../extensions/tag_group.rb
+    ../extensions/topic_serializer.rb
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end

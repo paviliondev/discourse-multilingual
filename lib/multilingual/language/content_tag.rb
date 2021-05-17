@@ -101,36 +101,43 @@ class Multilingual::ContentTag
   end
   
   def self.bulk_update(codes, action)
-    groups = []
+    tag_groups = []
     tags = []
-    
+
     [*codes].each do |code|
       is_new = false
       tag = Tag.find_by(name: code)
-      
+
       if !tag
         tag = Tag.new(name: code)
         is_new = true
       end
-      
+
       if !is_new && enabled_group.tags.exclude?(tag) && disabled_group.tags.exclude?(tag)
         Multilingual::Cache.new(Conflict::KEY).delete
       else  
-        group = self.send("#{action}d_group")
-        group.tags << tag unless group.tags.include?(tag)
-        tag.tag_groups = [group]
-        
+        tag_group = self.send("#{action}d_group")
+        tag_group.tags << tag unless tag_group.tags.include?(tag)
+
+        other_tag_group = self.send("#{action === 'enable' ? 'disable' : 'enable' }d_group")
+        other_tag_group.tags.delete(tag) if other_tag_group.tags.include?(tag)
+
         tags.push(tag) unless tags.include?(tag)
-        groups.push(group) unless groups.include?(group)
+        tag_groups.push(tag_group) unless tag_groups.include?(tag_group)
+        tag_groups.push(other_tag_group) unless tag_groups.include?(other_tag_group)
       end
     end
     
     Tag.transaction do
       tags.each { |tag| tag.save! }      
-      groups.each { |group| group.save! }
+      tag_groups.each { |tag_group| tag_group.save! }
     end
   end
-  
+
+  def self.bulk_destroy(codes)
+    
+  end
+
   def self.load(ctag_names)
     [*ctag_names].map { |t| t.underscore }
       .reduce([]) do |result, name|

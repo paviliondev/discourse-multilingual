@@ -1,7 +1,7 @@
-@import "content-language-tags";
-@import "content-language-select-kit";
-@import "language-switcher";
-@import "admin";
+@import "multilingual/content-language-tags";
+@import "multilingual/content-language-select-kit";
+@import "multilingual/language-switcher";
+@import "multilingual/admin";
 
 #reply-control .title-and-category {
   align-items: initial;

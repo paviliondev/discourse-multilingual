@@ -111,7 +111,7 @@ class Multilingual::Language
       end
     end
     
-    after_update([language.code]) if opts[:run_hooks]
+    after_update([language[:code]]) if opts[:run_hooks]
   end
   
   def self.after_update(updated)
