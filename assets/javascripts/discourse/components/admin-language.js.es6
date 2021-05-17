@@ -62,7 +62,7 @@ export default Component.extend({
 
   generateControlColumnClass(type) {
     let columnClass = `language-control ${type}`;
-    if (this.get(`${type}Disabled`)) columnClass += " disabled";
+    if (this.get(`${type}Disabled`)) {columnClass += " disabled";}
     return columnClass;
   },
 
@@ -74,7 +74,7 @@ export default Component.extend({
         .then((result) => {
           this.set('removing', false);
           this.removed(result);
-        })
+        });
     }
   }
 });

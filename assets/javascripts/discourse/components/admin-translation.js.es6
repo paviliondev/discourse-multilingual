@@ -4,11 +4,11 @@ import Component from '@ember/component';
 export default Component.extend({
   tagName: 'tr',
   classNames: 'language',
-  
+
   actions: {
     remove() {
       this.set('removing', true);
-      
+
       MultilingualTranslation.remove(
         this.get('translation.code'),
         this.get('translation.type')
@@ -17,7 +17,7 @@ export default Component.extend({
         this.removed(result);
       });
     },
-    
+
     download() {
       MultilingualTranslation.download(
         this.get('translation.code'),

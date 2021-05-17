@@ -8,17 +8,17 @@ export default DiscourseRoute.extend({
       this.transitionTo("adminMultilingualLanguages");
     }
   },
-  
+
   model() {
     return ajax('/admin/multilingual');
   },
-  
+
   setupController(controller, model) {
     controller.set('tagGroupId', model.content_language_tag_group_id);
   },
-  
+
   actions: {
-    showSettings(plugin) {
+    showSettings() {
       const controller = this.controllerFor("adminSiteSettings");
       this.transitionTo("adminSiteSettingsCategory", "plugins").then(() => {
         controller.set("filter", "multilingual");

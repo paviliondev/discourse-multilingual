@@ -1,21 +1,21 @@
 import { get } from "@ember/object";
 import { isRTL } from "discourse/lib/text-direction";
 import { iconHTML } from "discourse-common/lib/icon-library";
+import { escapeExpression } from "discourse/lib/utilities";
 import Category from "discourse/models/category";
-import getURL from "discourse-common/lib/get-url"; 
+import getURL from "discourse-common/lib/get-url";
 import I18n from "I18n";
 
-let escapeExpression = Handlebars.Utils.escapeExpression;
 
 function translatedCategoryName(category) {
   let translatedName;
   let nameTranslations = get(category, "name_translations");
-  if (nameTranslations) translatedName = nameTranslations[I18n.currentLocale()]
+  if (nameTranslations) {translatedName = nameTranslations[I18n.currentLocale()];}
   return translatedName || get(category, "name");
 }
 
 function categoryStripe(color, classes) {
-  var style = color ? "style='background-color: #" + color + ";'" : "";
+  let style = color ? "style='background-color: #" + color + ";'" : "";
   return "<span class='" + classes + "' " + style + "></span>";
 }
 
@@ -69,8 +69,8 @@ function multilingualCategoryLinkRenderer(category, opts) {
     (descriptionText ? 'title="' + descriptionText + '" ' : "") +
     ">";
 
-  let categoryName = escapeExpression(translatedCategoryName(category)) 
-  
+  let categoryName = escapeExpression(translatedCategoryName(category));
+
   if (Discourse.SiteSettings.support_mixed_text_direction) {
     categoryDir = isRTL(categoryName) ? 'dir="rtl"' : 'dir="ltr"';
   }
@@ -102,4 +102,4 @@ function multilingualCategoryLinkRenderer(category, opts) {
 export {
   multilingualCategoryLinkRenderer,
   translatedCategoryName
-}
+};

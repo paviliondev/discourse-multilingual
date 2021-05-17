@@ -8,7 +8,7 @@ const LanguagesPath = '/admin/multilingual/languages';
 function getParams() {
   const searchParams = new URLSearchParams(window.location.search);
   let params = {};
-  for (var pair of searchParams.entries()) {
+  for (let pair of searchParams.entries()) {
     if (['query', 'order', 'ascending'].indexOf(pair[0]) > -1) {
       params[pair[0]] = pair[1];
     }
@@ -22,7 +22,7 @@ MultilingualLanguage.reopenClass({
       data: Object.assign(getParams(), params)
     }).then(result => {
       return result.map(l => MultilingualLanguage.create(l));
-    }).catch(popupAjaxError)
+    }).catch(popupAjaxError);
   },
 
   save(languages, params = {}) {
@@ -33,14 +33,14 @@ MultilingualLanguage.reopenClass({
       data: JSON.stringify(data),
       dataType: 'json',
       contentType: 'application/json'
-    }).catch(popupAjaxError)
+    }).catch(popupAjaxError);
   },
-  
+
   remove(codes) {
     return ajax(LanguagesPath, {
       method: "DELETE",
       data: Object.assign(getParams(), { codes })
-    }).catch(popupAjaxError)
+    }).catch(popupAjaxError);
   }
 });
 

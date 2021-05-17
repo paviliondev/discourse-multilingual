@@ -7,14 +7,14 @@ export default Component.extend({
   controlColumnClassNames: ["language-control"],
   allContentEnabled: false,
   allInterfaceEnabled: false,
-  
+
   @observes('allContentEnabled')
   updateAllContent() {
     this.languages.forEach(l => {
       set(l, 'content_enabled', this.allContentEnabled);
     });
   },
-  
+
   @observes('allInterfaceEnabled')
   updateAllInterface() {
     this.languages.forEach(l => {
@@ -23,4 +23,4 @@ export default Component.extend({
       }
     });
   }
-})
+});

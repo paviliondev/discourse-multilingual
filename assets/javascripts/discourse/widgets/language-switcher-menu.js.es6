@@ -11,25 +11,25 @@ export default createWidget("language-switcher-menu", {
   settings: {
     maxWidth: 320
   },
-  
+
   defaultState() {
     return {
       available: this.site.interface_languages
-    }
+    };
   },
 
   panelContents() {
     const { available } = this.state;
     const currentLocale = I18n.currentLocale();
-    
+
     return h('ul', available.map(
       l => {
         let className = '';
-        
+
         if (l.code === currentLocale) {
           className += ' current';
         }
-        
+
         return h('li', this.attach("link", {
           className,
           action: "change",
@@ -39,7 +39,7 @@ export default createWidget("language-switcher-menu", {
       }
     ));
   },
-  
+
   change(code) {
     addParam(localeParam, code, { add_cookie: true, ctx: this });
   },

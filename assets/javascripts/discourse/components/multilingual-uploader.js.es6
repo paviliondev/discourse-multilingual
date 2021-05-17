@@ -11,7 +11,7 @@ export default Component.extend(UploadMixin, {
   classNameBindings: [':multilingual-uploader', 'uploadType'],
   code: null,
   message: null,
-  
+
   _init: on("didInsertElement", function() {
     this.messageBus.subscribe("/uploads/" + this.type, msg => {
       if (msg.uploaded) {
@@ -23,13 +23,13 @@ export default Component.extend(UploadMixin, {
       } else if (msg.errors) {
         this.set('message', msg.errors[0]);
       }
-      
+
       setTimeout(() => {
         this.set('message', null);
-      }, 10000)
+      }, 10000);
     });
   }),
-  
+
   @discourseComputed('uploadType')
   uploadUrl(uploadType) {
     return `/admin/multilingual/${uploadType}s`;
@@ -38,7 +38,7 @@ export default Component.extend(UploadMixin, {
   uploadDone() {
     // wait for message that uploaded file is processed.
   },
-  
+
   validateUploadedFilesOptions() {
     return { skipValidation: true };
   }

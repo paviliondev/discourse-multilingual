@@ -30,21 +30,21 @@ function getPath(ctx) {
 }
 
 function getParams(ctx, paramName = null) {
-  let parts = getPath(ctx).split('?')
+  let parts = getPath(ctx).split('?');
   let queryParams = parts.length > 1 ? parts[1] : '';
   let params = new URLSearchParams(queryParams);
   return paramName ? params.get(paramName) : params;
 }
 
 function buildPath(ctx, params) {
-  let parts = getPath(ctx).split('?')
+  let parts = getPath(ctx).split('?');
   parts[1] = params.toString();
   return parts.filter(p => p.length).join('?');
 }
 
 function useDiscoveryController(ctx, paramName) {
-  return getRouter(ctx).currentRouteName.indexOf('discovery') > -1 && 
-    discoveryParams.indexOf(paramName) > -1
+  return getRouter(ctx).currentRouteName.indexOf('discovery') > -1 &&
+    discoveryParams.indexOf(paramName) > -1;
 }
 
 // same as DiscourseURL.replaceState besides allowing modification of current path
@@ -57,7 +57,7 @@ function replaceState(path) {
       if (location && location.replaceURL) {
         location.replaceURL(path);
       }
-    });    
+    });
   }
 }
 
@@ -65,36 +65,34 @@ function addParam(paramName, value, opts = {}) {
   if (opts.add_cookie) {
     $.cookie(`discourse_${paramName}`, value);
   }
-  
+
   if (useDiscoveryController(opts.ctx, paramName)) {
     return setDiscoveryParam(opts.ctx, paramName, value);
   }
-  
+
   const params = getParams(opts.ctx);
   params.delete(paramName);
-  if (value) params.set(paramName, value);
-              
+  if (value) {params.set(paramName, value);}
+
   window.location.href = buildPath(opts.ctx, params);
-  
+
   return value;
 }
 
 function removeParam(paramName, opts = {}) {
-  const router = getRouter(opts.ctx);
-  
   const params = getParams(opts.ctx);
   let value = params.get(paramName);
-  
-  if (!value) return null;
-  
+
+  if (!value) {return null;}
+
   if (useDiscoveryController(opts.ctx, paramName)) {
     return setDiscoveryParam(opts.ctx, null);
   }
-  
+
   params.delete(paramName);
-      
+
   replaceState(buildPath(opts.ctx, params));
-        
+
   return value;
 }
 

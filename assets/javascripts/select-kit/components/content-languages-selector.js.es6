@@ -9,14 +9,14 @@ export default MultiSelectComponent.extend({
     filterable: true
   },
   initializeContentLanguges: true,
-  
+
   didInsertElement() {
     this._super(...arguments);
-            
+
     if (!this.value
         && this.initializeContentLanguges
         && this.currentUser.content_languages.length) {
-      this.set('value', this.currentUser.content_languages[0].code)
+      this.set('value', this.currentUser.content_languages[0].code);
     }
   }
 });

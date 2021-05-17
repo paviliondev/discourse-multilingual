@@ -3,7 +3,7 @@ import { default as DiscourseURL, userPath } from "discourse/lib/url";
 import { addParam, contentLanguageParam } from '../../discourse/lib/multilingual-route';
 
 export default SelectKitRowComponent.extend({
-  click(e) {
+  click() {
     if (this.rowValue === 'set_content_language') {
       DiscourseURL.routeTo(
         userPath(this.currentUser.username_lower + "/preferences/interface")

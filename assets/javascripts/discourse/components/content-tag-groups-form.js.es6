@@ -6,24 +6,24 @@ import I18n from "I18n";
 export default TagGroupsForm.extend({
   updateContentTags() {
     this.set('changingContentTags', I18n.t("tagging.groups.content_tags.update.message"));
-    
+
     ajax(`/tag_groups/${this.model.id}/content-tags`, {
       type: 'PUT'
     }).catch(popupAjaxError)
       .then(() => this.set('changingContentTags', null))
       .finally(() => this.tagsChanged());
   },
-  
-  destroyContentTags() {          
+
+  destroyContentTags() {
     this.set('changingContentTags', I18n.t("tagging.groups.content_tags.delete.message"));
-    
+
     ajax(`/tag_groups/${this.model.id}/content-tags`, {
       type: 'DELETE'
     }).catch(popupAjaxError)
       .then(() => this.set('changingContentTags', null))
       .finally(() => this.tagsChanged());
   },
-  
+
   actions: {
     destroyContentTags() {
       bootbox.confirm(
@@ -33,9 +33,9 @@ export default TagGroupsForm.extend({
         confirmed => (confirmed ? this.destroyContentTags() : null)
       );
     },
-    
+
     updateContentTags() {
       this.updateContentTags();
     }
   }
-})
+});

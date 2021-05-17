@@ -7,29 +7,29 @@ const TranslationPath = '/admin/multilingual/translations';
 
 MultilingualTranslation.reopenClass({
   list() {
-    return ajax(TranslationPath).catch(popupAjaxError)
+    return ajax(TranslationPath).catch(popupAjaxError);
   },
-  
+
   remove(code, type) {
     return ajax(TranslationPath, {
       method: "DELETE",
-      data: { 
+      data: {
         code,
         type
       }
-    }).catch(popupAjaxError)
+    }).catch(popupAjaxError);
   },
-  
+
   download(code, type) {
     return ajax(TranslationPath + '/download', {
-      data: { 
+      data: {
         code,
         type
       },
       xhrFields: {
         responseType: 'blob'
       }
-    })
+    });
   }
 });
 

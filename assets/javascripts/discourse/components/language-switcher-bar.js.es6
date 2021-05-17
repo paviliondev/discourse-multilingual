@@ -13,21 +13,21 @@ export default Component.extend({
 
   @on('init')
   setup() {
-    const availableLanguages = this.availableLanguages();    
+    const availableLanguages = this.availableLanguages();
     const currentLanguage = I18n.currentLocale();
     let visibleList = this.siteSettings.multilingual_guest_language_switcher_footer_visible.split('|');
-    
+
     availableLanguages.forEach((l) => {
       if (l.code === currentLanguage) {
         l.set('class', `${l.class} current`);
-        
+
         if (visibleList.indexOf(l.code) === -1) {
           visibleList.pop();
           visibleList.unshift(l.code);
         }
       }
     });
-    
+
     const visibleLimit = this.site.mobileView ? 3 : 10;
     let visibleLanguages = [];
     let hiddenLanguages = [];
@@ -37,11 +37,11 @@ export default Component.extend({
       } else {
         hiddenLanguages.push(l);
       }
-    })
-    
+    });
+
     this.setProperties({ visibleLanguages, hiddenLanguages });
   },
-  
+
   availableLanguages() {
     return this.site.interface_languages.map(l => {
       return EmberObject.create(Object.assign({}, l, { class: "language" }));
@@ -60,7 +60,7 @@ export default Component.extend({
   clickOutside(e) {
     const $hidden = $('.language-switcher-bar .hidden-languages');
     const $target = $(e.target);
-    
+
     if (!$target.closest($hidden).length) {
       this.set("showHidden", false);
     }

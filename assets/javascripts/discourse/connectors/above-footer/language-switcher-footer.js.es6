@@ -5,4 +5,4 @@ export default {
            !ctx.siteSettings.login_required &&
            !ctx.currentUser;
   }
-}
+};
