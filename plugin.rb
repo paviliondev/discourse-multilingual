@@ -104,27 +104,6 @@ after_initialize do
     result
   end
   
-  add_to_class(:application_controller, :client_locale) do
-     params[:locale] || cookies[:discourse_locale]
-  end
-  
-  add_to_class(:application_controller, :set_locale) do
-    if !current_user
-      if SiteSetting.multilingual_guest_language_switcher != "off" && client_locale
-        locale = client_locale
-      elsif SiteSetting.set_locale_from_accept_language_header
-        locale = locale_from_header
-      else
-        locale = SiteSetting.default_locale
-      end
-    else
-      locale = current_user.effective_locale
-    end
-    
-    I18n.locale = locale ? locale : SiteSettings::DefaultsProvider::DEFAULT_LOCALE
-    I18n.ensure_all_loaded!
-  end
-  
   if defined? register_editable_user_custom_field
     register_editable_user_custom_field :content_languages 
     register_editable_user_custom_field content_languages: []
@@ -271,9 +250,9 @@ after_initialize do
     I18n.t("multilingual.content_tag_group_name#{content_language_group_disabled ? "_disabled" : ""}") :
     object.name
   end
-  
+
   ## Extensions
-  
+
   %w[
     ../extensions/category_list.rb
     ../extensions/discourse_tagging.rb
@@ -283,59 +262,22 @@ after_initialize do
     ../extensions/post.rb
     ../extensions/tag_group.rb
     ../extensions/topic_serializer.rb
+    ../extensions/application_controller.rb
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
-  
-  if SiteSetting.multilingual_enabled
-    module ::I18n
-      class << self
-        prepend I18nMultilingualExtension
-      end
-    end
-    
-    module ::JsLocaleHelper
-      class << self
-        prepend JsLocaleHelperMultilingualExtension
-      end
-    end
-    
-    class ::ExtraLocalesController      
-      class << self
-        prepend ExtraLocalesControllerMultilingualClassExtension
-      end
-      
-      prepend ExtraLocalesControllerMultilingualExtension
-    end
-    
-    class ::TopicViewSerializer
-      prepend TopicSerializerMultilingualExtension 
-    end
-    
-    class ::TopicListItemSerializer
-      prepend TopicSerializerMultilingualExtension
-    end
-    
-    class ::TagGroup
-      class << self
-        prepend TagGroupMultilingualExtension
-      end
-    end
-    
-    module ::DiscourseTagging
-      class << self
-        prepend DiscourseTaggingMultilingualExtension
-      end
-    end
-    
-    class ::CategoryList
-      prepend CategoryListMultilingualExtension
-    end
-    
-    class ::Post
-      prepend MultilingualTranslatorPostExtension
-    end
-  end
+
+  ::I18n.singleton_class.prepend I18nMultilingualExtension
+  ::JsLocaleHelper.singleton_class.prepend JsLocaleHelperMultilingualExtension
+  ::ExtraLocalesController.singleton_class.prepend ExtraLocalesControllerMultilingualClassExtension
+  ::ExtraLocalesController.prepend ExtraLocalesControllerMultilingualExtension  
+  ::TopicViewSerializer.prepend TopicSerializerMultilingualExtension   
+  ::TopicListItemSerializer.prepend TopicSerializerMultilingualExtension  
+  ::TagGroup.singleton_class.prepend TagGroupMultilingualExtension
+  ::DiscourseTagging.singleton_class.prepend DiscourseTaggingMultilingualExtension  
+  ::CategoryList.prepend CategoryListMultilingualExtension  
+  ::Post.prepend MultilingualTranslatorPostExtension  
+  ::ApplicationController.prepend ApplicationControllerMultilingualExtension
   
   ## Hooks
   
@@ -345,7 +287,7 @@ after_initialize do
         content_languages = query.user ?
                             query.user.content_languages :
                             [*query.options[:content_languages]]
-            
+
         if content_languages.present? && content_languages.any?
           result = result.joins(:tags).where("lower(tags.name) in (?)", content_languages)
         end
