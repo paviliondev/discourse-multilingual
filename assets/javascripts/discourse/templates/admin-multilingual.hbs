@@ -14,10 +14,10 @@
         icon="tag"
         class="right"}}
       <li>
-        <a {{action "showSettings"}}>
-          {{d-icon "cog"}}
-          {{i18n "admin.plugins.change_settings_short"}}
-        </a>
+        {{d-button
+          action="showSettings"
+          label="admin.plugins.change_settings_short"
+          icon="cog"}}
       </li>
     </ul>
   </nav>

@@ -25,7 +25,7 @@ export default createWidget("language-switcher-menu", {
     return h(
       "ul",
       available.map((l) => {
-        let className = "";
+        let className = "ls-language";
 
         if (l.code === currentLocale) {
           className += " current";
