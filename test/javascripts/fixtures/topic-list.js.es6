@@ -67,4 +67,4 @@ export const topicList = [ 200, { "Content-Type": "application/json" },
       }
     ]
   }
-]
+];
