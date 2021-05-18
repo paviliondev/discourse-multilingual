@@ -40,8 +40,7 @@ function multilingualCategoryLinkRenderer(category, opts) {
   }
 
   const siteSettings = helperContext().siteSettings;
-  const categoryStyle =
-    opts.categoryStyle || siteSettings.category_style;
+  const categoryStyle = opts.categoryStyle || siteSettings.category_style;
   if (categoryStyle !== "none") {
     if (parentCat && parentCat !== category) {
       html += categoryStripe(

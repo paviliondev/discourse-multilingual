@@ -31,8 +31,9 @@ export default {
     }
 
     if (currentUser) {
-      hasLanguages = contentLanguages.filter((l) => isContentLanguage(l.code, ctx.siteSettings))
-        .length;
+      hasLanguages = contentLanguages.filter((l) =>
+        isContentLanguage(l.code, ctx.siteSettings)
+      ).length;
 
       if (!contentLanguages.some((l) => l.code === "set_content_language")) {
         contentLanguages.push({
