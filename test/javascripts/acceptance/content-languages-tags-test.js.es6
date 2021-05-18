@@ -1,19 +1,20 @@
-import { acceptance, updateCurrentUser } from "helpers/qunit-helpers";
+import { acceptance, updateCurrentUser } from "discourse/tests/helpers/qunit-helpers";
 import { topicList } from '../fixtures/topic-list';
 
-acceptance("Content languages tags", {
-  loggedIn: true,
-  settings: {
-    multilingual_enabled: true,
-    tagging_enabled: true
-  },
-  site: {
-    content_languages: [ { code: 'aa', name: 'Qafár af' } ]
-  }
-});
+const content_languages = [{ code: 'aa', name: 'Qafár af' }];
 
-test("displays language tags correctly", async assert => {
-  server.get('/latest.json', () => topicList);
-  await visit("/");
-  assert.equal(find(`.topic-languages .discourse-tag:eq(0)`).text(), "Qafár af");
+acceptance("Content language tags", function (needs) {
+  needs.user();
+  needs.settings({
+    multilingual_enabled: true,
+    multilingual_content_languages_enabled: true,
+    tagging_enabled: true
+  });
+  needs.site({ content_languages });
+
+  test("displays content language tags correctly", async assert => {
+    server.get('/latest.json', () => topicList);
+    await visit("/");
+    assert.equal(find(`.content-language-tags .discourse-tag:eq(0)`).text(), "Qafár af");
+  });
 });

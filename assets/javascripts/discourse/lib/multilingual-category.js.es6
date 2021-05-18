@@ -2,6 +2,7 @@ import { get } from "@ember/object";
 import { isRTL } from "discourse/lib/text-direction";
 import { iconHTML } from "discourse-common/lib/icon-library";
 import { escapeExpression } from "discourse/lib/utilities";
+import { helperContext } from "discourse-common/lib/helpers";
 import Category from "discourse/models/category";
 import getURL from "discourse-common/lib/get-url";
 import I18n from "I18n";
@@ -37,9 +38,10 @@ function multilingualCategoryLinkRenderer(category, opts) {
   if (!opts.hideParent) {
     parentCat = Category.findById(get(category, "parent_category_id"));
   }
-
+  
+  const siteSettings = helperContext().siteSettings;
   const categoryStyle =
-    opts.categoryStyle || Discourse.SiteSettings.category_style;
+    opts.categoryStyle || siteSettings.category_style;
   if (categoryStyle !== "none") {
     if (parentCat && parentCat !== category) {
       html += categoryStripe(
@@ -70,7 +72,7 @@ function multilingualCategoryLinkRenderer(category, opts) {
 
   let categoryName = escapeExpression(translatedCategoryName(category));
 
-  if (Discourse.SiteSettings.support_mixed_text_direction) {
+  if (siteSettings.support_mixed_text_direction) {
     categoryDir = isRTL(categoryName) ? 'dir="rtl"' : 'dir="ltr"';
   }
 

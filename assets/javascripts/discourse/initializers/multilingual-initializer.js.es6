@@ -102,7 +102,7 @@ export default {
 
               // See workaround above
               userLanguages = userLanguages.filter(
-                (l) => l && isContentLanguage(l.code)
+                (l) => l && isContentLanguage(l.code, siteSettings)
               );
 
               currentUser.set("content_languages", userLanguages);

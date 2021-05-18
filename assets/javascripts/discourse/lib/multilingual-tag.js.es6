@@ -1,12 +1,14 @@
 import { isContentLanguage } from "./multilingual";
 import { escapeExpression } from "discourse/lib/utilities";
+import { helperContext } from "discourse-common/lib/helpers";
 import getURL from "discourse-common/lib/get-url";
 import User from "discourse/models/user";
 import I18n from "I18n";
 
 function multilingualTagRenderer(tag, params) {
   params = params || {};
-  const clt = isContentLanguage(tag);
+  const siteSettings = helperContext().siteSettings;
+  const clt = isContentLanguage(tag, siteSettings);
 
   if (clt && !params.contentLanguageTag) {
     return "";
@@ -33,8 +35,8 @@ function multilingualTagRenderer(tag, params) {
 
   const href = path ? ` href='${getURL(path)}' ` : "";
 
-  if (Discourse.SiteSettings.tag_style || params.style) {
-    classes.push(params.style || Discourse.SiteSettings.tag_style);
+  if (siteSettings.tag_style || params.style) {
+    classes.push(params.style || siteSettings.tag_style);
   }
 
   let val =

@@ -1,28 +1,32 @@
-import { acceptance, updateCurrentUser } from "helpers/qunit-helpers";
+import { acceptance, updateCurrentUser } from "discourse/tests/helpers/qunit-helpers";
 
-acceptance("Content languages dropdown", {
-  loggedIn: true,
-  settings: {
-    multilingual_enabled: true
-  }
-});
+const content_languages = [{ code: 'aa', name: 'Qafár af' }];
 
-test("displays user's content languages", async assert => {
-  updateCurrentUser({ content_languages: [ { code: 'aa', name: 'Qafár af' } ] });
+acceptance("Content languages dropdown", function (needs) {
+  needs.user();
+  needs.settings({
+    multilingual_enabled: true,
+    multilingual_content_languages_enabled: true
+  });
+  needs.site({ content_languages });
 
-  await visit("/");
+  test("displays user's content languages", async assert => {
+    updateCurrentUser({ content_languages });
 
-  assert.equal(
-    find('.content-languages-dropdown').hasClass("has-selection"),
-    true,
-    "has content languages"
-  );
+    await visit("/");
 
-  await click(".content-languages-dropdown button");
+    assert.equal(
+      find('.content-languages-dropdown button').hasClass("has-languages"),
+      true,
+      "has content languages"
+    );
 
-  assert.equal(
-    find('.content-languages-dropdown .select-kit-collection li').length,
-    2,
-    'it should render content languages add the set languages link'
-  );
+    await click(".content-languages-dropdown button");
+
+    assert.equal(
+      find('.content-languages-dropdown .select-kit-collection li').length,
+      2,
+      'it should render content languages add the set languages link'
+    );
+  });
 });
