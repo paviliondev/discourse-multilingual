@@ -38,7 +38,7 @@ function multilingualCategoryLinkRenderer(category, opts) {
   if (!opts.hideParent) {
     parentCat = Category.findById(get(category, "parent_category_id"));
   }
-  
+
   const siteSettings = helperContext().siteSettings;
   const categoryStyle =
     opts.categoryStyle || siteSettings.category_style;
