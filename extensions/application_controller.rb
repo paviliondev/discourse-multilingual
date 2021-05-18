@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module ApplicationControllerMultilingualExtension
   def with_resolved_locale(check_current_user: true)
-    if guest_locale_switcher_enabled && client_locale
+    if guest_locale_switcher_enabled && client_locale.present?
       I18n.ensure_all_loaded!
       I18n.with_locale(client_locale) { yield }
     else
