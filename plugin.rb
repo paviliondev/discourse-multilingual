@@ -272,7 +272,7 @@ after_initialize do
 
   tags_cb = ::PostRevisor.tracked_topic_fields[:tags]
 
-  ::PostRevisor.tracked_topic_fields[:tags] = lambda do |tc, tags|
+  ::PostRevisor.tracked_topic_fields[:tags] = lambda do |tc, tags, fields|
     if Multilingual::ContentLanguage.enabled
       content_languages = tc.topic.content_languages
       combined = (tags + content_languages).uniq
@@ -281,7 +281,7 @@ after_initialize do
     end
   end
 
-  ::PostRevisor.track_topic_field(:content_language_tags) do |tc, content_language_tags|
+  ::PostRevisor.track_topic_field(:content_language_tags) do |tc, content_language_tags, fields|
     if Multilingual::ContentLanguage.enabled
       content_language_tags = [*content_language_tags]
       tc.check_result(DiscourseTagging.validate_require_language_tag(tc.guardian, tc.topic, content_language_tags))
