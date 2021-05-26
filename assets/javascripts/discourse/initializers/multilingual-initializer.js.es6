@@ -123,14 +123,14 @@ export default {
         },
       });
 
-      function tagDropCallback(_, item) {
+      function tagDropCallback(item) {
         set(item, "label", I18n.translate_tag(item.name));
         return item;
       }
 
-      function tagDropArrayCallback(_, content) {
+      function tagDropArrayCallback(content) {
         if (Array.isArray(content)) {
-          return content.map((item) => tagDropCallback(_, item));
+          return content.map((item) => tagDropCallback(item));
         } else {
           return tagDropCallback(content);
         }
@@ -138,7 +138,7 @@ export default {
 
       api.modifyClass("component:tag-drop", {
         modifyContent(content) {
-          return tagDropArrayCallback(_, content);
+          return tagDropArrayCallback(content);
         },
       });
 
@@ -148,7 +148,7 @@ export default {
             this.selectKit.options.headerComponent ===
             "tag-drop/tag-drop-header"
           ) {
-            let item = tagDropCallback(_, this.item);
+            let item = tagDropCallback(this.item);
             return item.label || this.title || this.name;
           } else {
             return this._super(...arguments);
