@@ -65,8 +65,8 @@
       text-align: center;
 
       &.disabled {
-        background-color: $primary-very-low;
-        color: $primary-low;
+        background-color: var(--primary-very-low);
+        color: var(--primary-low);
       }
     }
 

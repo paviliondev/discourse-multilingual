@@ -21,10 +21,10 @@
 
 .language-switcher-bar {
   width: 100%;
-  border-top: 1px solid $primary-low;
+  border-top: 1px solid var(--primary-low);
   box-sizing: border-box;
   box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.15);
-  background-color: $secondary;
+  background-color: var(--secondary);
   position: fixed;
   bottom: 0;
   left: 0;
