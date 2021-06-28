@@ -11,27 +11,6 @@ ol.category-breadcrumb li.content-language-discovery {
   margin: 0;
 }
 
-.edit-category-modal .field-item.category-name {
-  > span,
-  > label {
-    display: inline-block;
-  }
-
-  > span {
-    margin-left: 7px;
-  }
-
-  .d-icon {
-    width: 0.9em;
-    height: 0.9em;
-  }
-
-  input:disabled {
-    background-color: $primary-very-low;
-    color: rgba($primary, 0.7);
-  }
-}
-
 .topic-language-selector {
   margin-bottom: 9px;
   background-color: #f1f1f1;

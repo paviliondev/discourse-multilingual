@@ -8,7 +8,7 @@
 
   .select-kit-header .name,
   .select-kit-row .name {
-    color: $primary;
+    color: var(--primary);
   }
 }
 
@@ -18,10 +18,10 @@
     margin-left: 5px;
 
     &.has-languages {
-      background-color: $tertiary;
+      background-color: var(--tertiary);
 
       .d-icon {
-        color: $secondary;
+        color: var(--secondary);
       }
     }
   }
@@ -48,7 +48,7 @@
       cursor: pointer;
 
       &.active {
-        background: $tertiary-low;
+        background: var(--tertiary-low);
       }
     }
   }

@@ -3,7 +3,7 @@
   padding: 5px 10px;
   font-size: 1.1em;
   text-decoration: none;
-  color: $primary;
+  color: var(--primary);
   cursor: pointer;
 
   &:last-of-type {
@@ -11,11 +11,11 @@
   }
 
   &:hover {
-    background-color: $tertiary-low !important;
+    background-color: var(--tertiary-low) !important;
   }
 
   &.current {
-    background-color: $tertiary-low;
+    background-color: var(--tertiary-low);
   }
 }
 
@@ -28,26 +28,26 @@
 
 .language-switcher-bar {
   position: relative;
-  background-color: $secondary;
-  border: 1px solid rgba($primary, 0.1);
+  background-color: var(--secondary);
+  border: 1px solid rgba(var(--primary-rgb), 0.1);
   border-radius: 2px;
   box-shadow: shadow("dropdown");
   padding: 10px;
   display: flex;
 
   button.btn {
-    background-color: $secondary;
+    background-color: var(--secondary);
 
     .d-icon {
-      color: $primary;
+      color: var(--primary);
     }
 
     &:hover,
     &.btn-hover:hover {
-      background-color: $secondary;
+      background-color: var(--secondary);
 
       .d-icon {
-        color: $primary;
+        color: var(--primary);
       }
     }
   }
@@ -57,8 +57,8 @@
     overflow: scroll;
     max-height: 400px;
     width: 400px;
-    background-color: $secondary;
-    border: 1px solid $primary-low;
+    background-color: var(--secondary);
+    border: 1px solid var(--primary-low);
     box-shadow: shadow("dropdown");
     bottom: 60px;
     padding: 10px 14px;
