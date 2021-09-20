@@ -6,7 +6,6 @@ describe TopicCreator do
   fab!(:staff) { Fabricate(:moderator) }
   fab!(:user)  { Fabricate(:user) }
   fab!(:tag)  { Fabricate(:tag) }
-  # fab!(:topic) { Fabricate(:topic, title: 'Topic title test', custom_fields: {}) }
 
   let(:valid_attrs) { Fabricate.attributes_for(:topic) }
   let(:message) { 'hello' }
