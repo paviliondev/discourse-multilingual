@@ -20,6 +20,7 @@ en:
   multilingual:
     content_tag_group_name: "Multilingual Content Tags"
     content_tag_group_name_disabled: "Multilingual Disabled Content Tags"
+    content_language_tag_required: "You must include at least 1 topic language."
     
     languages:
       upload_format_incorrect: "Incorrect format. Use format of [Discourse names.yml](https://github.com/discourse/discourse/blob/master/config/locales/names.yml)."

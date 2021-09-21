@@ -139,13 +139,7 @@ after_initialize do
           AND tg.name = '#{Multilingual::ContentTag::GROUP}'
         )").exists?)
 
-      topic.errors.add(:base,
-        I18n.t(
-         "tags.required_tags_from_group",
-         count: 1,
-         tag_group_name: Multilingual::ContentTag::GROUP
-        )
-      )
+      topic.errors.add(:base, I18n.t("multilingual.content_language_tag_required"))
 
       false
     else

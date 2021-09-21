@@ -6,7 +6,6 @@ describe TopicCreator do
   fab!(:staff) { Fabricate(:moderator) }
   fab!(:user)  { Fabricate(:user) }
   fab!(:tag)  { Fabricate(:tag) }
-  fab!(:topic) { Fabricate(:topic, title: 'Topic title test', custom_fields: {}) }
 
   let(:valid_attrs) { Fabricate.attributes_for(:topic) }
   let(:message) { 'hello' }
@@ -22,16 +21,26 @@ describe TopicCreator do
       SiteSetting.multilingual_require_content_language_tag = 'yes'
     end
 
-    it "should rollback when no tags are present" do
-      expect do
-        TopicCreator.create(user, Guardian.new(user), valid_attrs)
-      end.to raise_error(ActiveRecord::Rollback)
-    end
+    context "when no language tag is present" do
+      before do
+        topic = Topic.new
+        errors = ActiveModel::Errors.new(topic)
+        Topic.stubs(:new).returns(topic)
+        topic.stubs(:errors).returns(errors)
+        errors.expects(:add).with(:base, "You must include at least 1 topic language.")
+      end
 
-    it "should rollback when only non language tags are present" do
-      expect do
-        TopicCreator.create(user, Guardian.new(user), valid_attrs.merge(tags: [tag.name]))
-      end.to raise_error(ActiveRecord::Rollback)
+      it "should rollback with a sensible error when no tags are present" do
+        expect do
+          TopicCreator.create(user, Guardian.new(user), valid_attrs)
+        end.to raise_error(ActiveRecord::Rollback)
+      end
+
+      it "should rollback with a sensible error when only non language tags are present" do
+        expect do
+          TopicCreator.create(user, Guardian.new(user), valid_attrs.merge(tags: [tag.name]))
+        end.to raise_error(ActiveRecord::Rollback)
+      end
     end
 
     it "should work when a language tag is present" do
