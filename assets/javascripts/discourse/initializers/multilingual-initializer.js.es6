@@ -250,8 +250,6 @@ export default {
 
       if (currentUser && currentUser.admin) {
         api.modifyClass("component:table-header-toggle", {
-          showToggle: notEmpty("toggleAll"),
-
           click(e) {
             if ($(e.target).parents(".toggle-all").length) {
               return true;

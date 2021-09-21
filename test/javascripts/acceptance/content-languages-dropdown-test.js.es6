@@ -16,12 +16,12 @@ acceptance("Content languages dropdown", function (needs) {
     await visit("/");
 
     assert.equal(
-      find('.content-languages-dropdown button').hasClass("has-languages"),
+      find('.content-languages-dropdown summary').hasClass("has-languages"),
       true,
       "has content languages"
     );
 
-    await click(".content-languages-dropdown button");
+    await click(".content-languages-dropdown summary");
 
     assert.equal(
       find('.content-languages-dropdown .select-kit-collection li').length,

@@ -3,8 +3,16 @@
     {{table-header-toggle field="code" labelKey="multilingual.code" order=order asc=ascending automatic=true}}
     {{table-header-toggle field="name" labelKey="multilingual.languages.name" order=order asc=ascending automatic=true}}
     {{table-header-toggle field="nativeName" labelKey="multilingual.languages.native_name" order=order asc=ascending automatic=true}}
-    {{table-header-toggle field="content_enabled" labelKey="multilingual.languages.content" order=order asc=ascending classNames=controlColumnClassNames toggleAll=allContentEnabled automatic=true}}
-    {{table-header-toggle field="interface_enabled" labelKey="multilingual.languages.interface" order=order asc=ascending classNames=controlColumnClassNames toggleAll=allInterfaceEnabled automatic=true}}
+    {{#table-header-toggle field="content_enabled" labelKey="multilingual.languages.content" order=order asc=ascending classNames=controlColumnClassNames automatic=true}}
+      <span class="toggle-all">
+        (<span>{{i18n "multilingual.languages.toggle_all"}}</span>{{input type="checkbox" checked=allContentEnabled}})
+      </span>
+    {{/table-header-toggle}}
+    {{#table-header-toggle field="interface_enabled" labelKey="multilingual.languages.interface" order=order asc=ascending classNames=controlColumnClassNames automatic=true}}
+      <span class="toggle-all">
+        (<span>{{i18n "multilingual.languages.toggle_all"}}</span>{{input type="checkbox" checked=allInterfaceEnabled}})
+      </span>
+    {{/table-header-toggle}}    
     <th class="language-control">Actions</th>
   </thead>
   <tbody>
