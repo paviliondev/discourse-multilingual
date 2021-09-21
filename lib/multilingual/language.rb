@@ -98,13 +98,14 @@ class Multilingual::Language
 
   def self.update(language, opts = {})
     language = language.with_indifferent_access
+    updated = false
 
     ['interface', 'content'].each do |type|
       exclusion_prop = "#{type}_enabled".to_sym
       exclusion_key = "#{type}_language"
 
       if language[exclusion_prop].in? ["true", "false", true, false]
-        Multilingual::LanguageExclusion.set(
+        updated = Multilingual::LanguageExclusion.set(
           language[:code],
           exclusion_key,
           enabled: language[exclusion_prop]
@@ -113,6 +114,8 @@ class Multilingual::Language
     end
 
     after_update([language[:code]]) if opts[:run_hooks]
+
+    updated
   end
 
   def self.after_update(updated)

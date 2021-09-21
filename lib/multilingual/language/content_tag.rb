@@ -3,7 +3,7 @@ class Multilingual::ContentTag
   KEY = 'content_tag'.freeze
   GROUP = 'content_languages'.freeze
   GROUP_DISABLED = 'content_languages_disabled'.freeze
-  QUERY = "#{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND tg.name = '#{GROUP}'"
+  QUERY = "#{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND tg.name IN ('#{GROUP}','#{GROUP_DISABLED}')"
 
   def self.all
     Multilingual::Cache.wrap(KEY) do
@@ -136,7 +136,8 @@ class Multilingual::ContentTag
   end
 
   def self.bulk_destroy(codes)
-
+    Tag.where("id in (#{QUERY}) and name in (?)", codes).destroy_all
+    Multilingual::Cache.new(KEY).delete
   end
 
   def self.load(ctag_names)
@@ -166,10 +167,12 @@ class Multilingual::ContentTag
   class Conflict
     KEY = 'content_tag_conflict'
 
+    def self.all_uncached
+      Tag.where("id not in (#{QUERY}) and name in (?)", Multilingual::Language.all.keys).pluck(:name)
+    end
+
     def self.all
-      Multilingual::Cache.wrap(Conflict::KEY) do
-        Tag.where("id not in (#{QUERY}) and name in (?)", Multilingual::Language.all.keys).pluck(:name)
-      end
+      Multilingual::Cache.wrap(Conflict::KEY) { all_uncached }
     end
 
     def self.exists?(code)

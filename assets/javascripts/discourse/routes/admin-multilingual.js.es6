@@ -16,7 +16,10 @@ export default DiscourseRoute.extend({
   },
 
   setupController(controller, model) {
-    controller.set("tagGroupId", model.content_language_tag_group_id);
+    controller.setProperties({
+      tagGroupId: model.content_language_tag_group_id,
+      documentationUrl: "https://thepavilion.io/c/knowledge/discourse/multilingual"
+    });
   },
 
   actions: {

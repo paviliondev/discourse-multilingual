@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 ## Note ##
 # The featured topic list in CategoryList is used in the /categories route:
 #   * when desktop_category_page_style includes 'featured'; and / or

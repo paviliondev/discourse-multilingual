@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require_relative '../../plugin_helper'
 
 describe Multilingual::ContentTag do
   fab!(:tag1) { Fabricate(:tag, name: "tag1") }

@@ -54,7 +54,7 @@ class Multilingual::CustomLanguage
   end
 
   def self.after_destroy(destroyed)
-    Multilingual::ContentTag.bulk_update(destroyed, "disable")
+    Multilingual::ContentTag.bulk_destroy(destroyed)
     Multilingual::Language.after_change(destroyed)
   end
 

@@ -16,6 +16,10 @@
     & > li:last-of-type > a {
       margin-right: 0;
     }
+
+    a.btn {
+      display: flex;
+    }
   }
 
   .query {
