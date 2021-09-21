@@ -21,7 +21,7 @@ describe DiscourseTagging do
     ).map(&:name)
     expect(tags).not_to include(Tag.find_by(name: 'fr').name)
   end
-  
+
   it "filter_visible result doesn't include content language tags" do
     tags = DiscourseTagging.filter_visible(topic.tags, Guardian.new(user))
     expect(tags.size).to eq(3)

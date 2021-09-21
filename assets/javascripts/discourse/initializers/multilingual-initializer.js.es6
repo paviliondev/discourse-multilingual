@@ -11,7 +11,6 @@ import { isContentLanguage } from "../lib/multilingual";
 import Composer from "discourse/models/composer";
 import { iconHTML } from "discourse-common/lib/icon-library";
 import renderTag from "discourse/lib/render-tag";
-import { notEmpty } from "@ember/object/computed";
 import { computed, set } from "@ember/object";
 import { scheduleOnce } from "@ember/runloop";
 import I18n from "I18n";

@@ -34,7 +34,7 @@ describe Multilingual::AdminLanguagesController do
   it "updates languages" do
     Multilingual::Language.update({ code: 'fr', interface_enabled: false, content_enabled: false }, run_hooks: true)
 
-    put "/admin/multilingual/languages.json", params: { languages: [ { code: 'fr', content_enabled: true } ]}
+    put "/admin/multilingual/languages.json", params: { languages: [ { code: 'fr', content_enabled: true } ] }
     expect(response.status).to eq(200)
 
     french = Multilingual::Language.get(['fr']).first
