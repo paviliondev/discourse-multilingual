@@ -6,14 +6,18 @@ describe CategoryList do
   fab!(:user) { Fabricate(:user) }
 
   before(:all) do
+    SiteSetting.tagging_enabled = true
     SiteSetting.multilingual_enabled = true
     SiteSetting.multilingual_content_languages_enabled = true
-    Multilingual::Language.setup
+
+    Multilingual::Cache.new(Multilingual::ContentTag::KEY).delete
+    Multilingual::ContentTag.update_all
 
     @cat1 = Fabricate(:category_with_definition)
     @cat2 = Fabricate(:category_with_definition)
     Fabricate(:topic, category: @cat1, tags: [Tag.find_by(name: 'fr')])
     Fabricate(:topic, category: @cat2)
+
     CategoryFeaturedTopic.feature_topics
   end
 

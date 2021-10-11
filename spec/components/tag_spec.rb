@@ -10,6 +10,8 @@ describe Tag do
     SiteSetting.tagging_enabled = true
     SiteSetting.multilingual_enabled = true
     SiteSetting.multilingual_content_languages_enabled = true
+
+    Multilingual::Cache.new(Multilingual::ContentTag::KEY).delete
     Multilingual::ContentTag.update_all
   end
 

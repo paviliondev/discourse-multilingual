@@ -4,8 +4,11 @@ require_relative '../plugin_helper'
 
 describe TopicQuery do
   before(:all) do
+    SiteSetting.tagging_enabled = true
     SiteSetting.multilingual_enabled = true
-    Multilingual::Language.setup
+    SiteSetting.multilingual_content_languages_enabled = true
+    Multilingual::Cache.new(Multilingual::ContentTag::KEY).delete
+    Multilingual::ContentTag.update_all
   end
 
   context "user has content languages" do
