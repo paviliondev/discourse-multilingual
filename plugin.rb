@@ -56,6 +56,7 @@ after_initialize do
     ../extensions/tag_group.rb
     ../extensions/topic_serializer.rb
     ../extensions/application_controller.rb
+    ../extensions/tag.rb
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
@@ -69,6 +70,7 @@ after_initialize do
   ::TopicViewSerializer.prepend TopicSerializerMultilingualExtension
   ::TopicListItemSerializer.prepend TopicSerializerMultilingualExtension
   ::TagGroup.singleton_class.prepend TagGroupMultilingualExtension
+  ::Tag.singleton_class.prepend TagMultilingualExtension
   ::DiscourseTagging.singleton_class.prepend DiscourseTaggingMultilingualExtension
   ::CategoryList.prepend CategoryListMultilingualExtension
   ::Post.prepend MultilingualTranslatorPostExtension
