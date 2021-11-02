@@ -1,6 +1,7 @@
 import { getOwner } from "discourse-common/lib/get-owner";
 import { next } from "@ember/runloop";
 import DiscourseURL from "discourse/lib/url";
+import cookie from "discourse/lib/cookie";
 
 const contentLanguageParam = "content_languages";
 const localeParam = "locale";
@@ -67,7 +68,7 @@ function replaceState(path) {
 
 function addParam(paramName, value, opts = {}) {
   if (opts.add_cookie) {
-    $.cookie(`discourse_${paramName}`, value);
+    cookie(`discourse_${paramName}`, value);
   }
 
   if (useDiscoveryController(opts.ctx, paramName)) {
