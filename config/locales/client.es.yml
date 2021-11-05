@@ -1,0 +1,51 @@
+en:
+  js:  
+    tagging:
+      groups:
+        content_tags:
+          delete: 
+            btn: "Eliminar todas las etiquetas"
+            confirm: "¿Estás seguro que deseas eliminar todas las etiquetas?"
+            message: "Eliminando todas las etiquetas"
+          update: 
+            btn: "Actualizar todas las etiquetas"
+            message: "Actualizando todas las etiquetas"
+          
+    topic:
+      content_languages:
+        placeholder: "Idioma(s) del tema"
+        
+    user:
+      content_languages:
+        title: "Idiomas del contenido"
+        placeholder: "Seleccionar idiomas del contenido"
+        instructions: "Idiomas de contenido del usuario"
+        set: "Seleccionar lenguajes del contenido"
+  
+  admin_js:
+    multilingual:
+      label: "Multilingüe"
+      code: "Código"
+      
+      languages:
+        title: "Idiomas"
+        custom: "Personalizado"
+        base: "Base"
+        name: "Nombre"
+        native_name: "Nombre original"
+        content: "Contenido"
+        content_tag: "Etiqueta de contenido"
+        content_tag_conflict: "conflicto de etiqueta"
+        interface: "Interfase"
+        type: "Tipo"
+        actions: "Acciones"
+        interface_not_supported: "no hay traducciones"
+        query_placeholder: "código o nombre"
+        custom_only: "sólo personalizado"
+        disabled: "deshabilitado"
+        toggle_all: "todo"
+      
+      translations:
+        type: "Tipo"
+        remove: "Eliminar"
+        title: "Traducciones"
