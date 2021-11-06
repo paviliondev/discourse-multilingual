@@ -1,0 +1,25 @@
+en:
+  site_settings:
+    multilingual_enabled: Plug-in multilingüe habilitado.
+    multilingual_content_languages_enabled: Idiomas del contenido habilitados.
+    multilingual_require_content_language_tag: Requerir etiqueta de idioma en todos los temas.
+    multilingual_guest_language_switcher: Habilitar el seleccionador de idioma para el usuario invitado.
+    multilingual_guest_language_switcher_footer_visible: Idiomas siempre visibles en el seleccionador del pie de página.
+    multilingual_tag_translations_enforce_format: Aplicar el formato de etiqueta de Discourse en las traducciones de las etiquetas.
+    multilingual_translator_content_tag_sync: >
+      Sincronizar las etiquetas de contenido de idiomas con el idioma detectado de las publicaciones 
+      realizado por<a href='https://github.com/discourse/discourse-translator'>El Plug-in Traductor de Discourse</a>.
+      Requiere que el Plug-in Traductor de Discourse y los idiomas de contenido estén habilitados.
+    
+    errors:
+      multilingual_disabled: El Plug-in Multilingüe está deshabilitado
+      multilingual_content_languages_disabled: Los idiomas de contenido están deshabilitados
+      multilingual_translator_disabled: El plug-in traductor no está instalado y habilitado
+      multilingual_allow_user_locale_disabled: configuración regional del usuario deshabilitada
+  
+  multilingual:
+    content_tag_group_name: Etiquetas de Contenido Multilingüe
+    content_tag_group_name_disabled: Etiquetas de Contenido Multilingüe Deshabilitadas.
+    
+    languages:
+      upload_format_incorrect: "Formato incorrect. Utilice el formato de [Discourse names.yml](https://github.com/discourse/discourse/blob/master/config/locales/names.yml)."
