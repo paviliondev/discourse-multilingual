@@ -87,7 +87,7 @@ after_initialize do
 
   register_editable_user_custom_field :content_languages
   register_editable_user_custom_field content_languages: []
-  whitelist_public_user_custom_field :content_languages
+  allow_public_user_custom_field :content_languages
 
   add_to_class(:site, :interface_languages) { Multilingual::InterfaceLanguage.list }
   add_to_class(:site, :content_languages) { Multilingual::ContentLanguage.list }
