@@ -15,6 +15,7 @@ export default DropdownSelectBox.extend({
     showFullTitle: false,
     autoFilterable: false,
     headerComponent: "content-languages-header",
+    hasLanguages: false
   },
 
   didInsertElement() {

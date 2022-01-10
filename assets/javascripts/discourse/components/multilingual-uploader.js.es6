@@ -1,11 +1,11 @@
 import { alias } from "@ember/object/computed";
 import Component from "@ember/component";
-import UploadMixin from "discourse/mixins/upload";
+import UppyUploadMixin from "discourse/mixins/uppy-upload";
 import { on } from "@ember/object/evented";
 import { default as discourseComputed } from "discourse-common/utils/decorators";
 import I18n from "I18n";
 
-export default Component.extend(UploadMixin, {
+export default Component.extend(UppyUploadMixin, {
   type: "yml",
   addDisabled: alias("uploading"),
   classNameBindings: [":multilingual-uploader", "uploadType"],

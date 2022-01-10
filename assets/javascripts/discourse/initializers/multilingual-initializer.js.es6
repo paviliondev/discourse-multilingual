@@ -55,6 +55,8 @@ export default {
       api.onPageChange(() => removeParam(localeParam, { ctx: this }));
 
       api.modifyClass("controller:preferences/interface", {
+        pluginId: "discourse-multilingual",
+
         @discourseComputed()
         availableLocales() {
           return this.site.interface_languages.map((l) => {
@@ -111,6 +113,8 @@ export default {
       });
 
       api.modifyClass("component:tag-drop", {
+        pluginId: "discourse-multilingual",
+
         _prepareSearch(query) {
           const data = {
             q: query,
@@ -136,12 +140,16 @@ export default {
       }
 
       api.modifyClass("component:tag-drop", {
+        pluginId: "discourse-multilingual",
+
         modifyContent(content) {
           return tagDropArrayCallback(content);
         },
       });
 
       api.modifyClass("component:selected-name", {
+        pluginId: "discourse-multilingual",
+
         label: computed("title", "name", function () {
           if (
             this.selectKit.options.headerComponent ===
@@ -222,6 +230,8 @@ export default {
       }
 
       api.modifyClass("route:tag-groups-edit", {
+        pluginId: "discourse-multilingual",
+
         setupController(controller, model) {
           this._super(controller, model);
 
@@ -238,6 +248,8 @@ export default {
       });
 
       api.modifyClass("controller:tag-groups-edit", {
+        pluginId: "discourse-multilingual",
+
         setupContentTagControls() {
           scheduleOnce("afterRender", () => {
             $(".tag-groups-container").addClass("content-tags");
@@ -249,6 +261,8 @@ export default {
 
       if (currentUser && currentUser.admin) {
         api.modifyClass("component:table-header-toggle", {
+          pluginId: "discourse-multilingual",
+
           click(e) {
             if ($(e.target).parents(".toggle-all").length) {
               return true;

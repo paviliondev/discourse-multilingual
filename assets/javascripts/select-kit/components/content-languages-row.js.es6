@@ -6,7 +6,7 @@ import {
 } from "../../discourse/lib/multilingual-route";
 
 export default SelectKitRowComponent.extend({
-  click() {
+  click(e) {
     if (this.rowValue === "set_content_language") {
       DiscourseURL.routeTo(
         userPath(this.currentUser.username_lower + "/preferences/interface")
@@ -16,7 +16,7 @@ export default SelectKitRowComponent.extend({
     } else if (!this.currentUser) {
       addParam(contentLanguageParam, this.rowValue, { ctx: this });
     } else {
-      this._super();
+      this._super(e);
     }
   },
 });
