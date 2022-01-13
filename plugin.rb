@@ -76,8 +76,8 @@ after_initialize do
   ::Post.prepend MultilingualTranslatorPostExtension
   ::ApplicationController.prepend ApplicationControllerMultilingualExtension
 
-  register_html_builder('server:before-script-load') do
-    loader = Multilingual::LocaleLoader.new
+  register_html_builder('server:before-script-load') do |ctx|
+    loader = Multilingual::LocaleLoader.new(ctx)
     result = ""
     result += loader.preload_i18n
     result += loader.preload_custom_locale if loader.custom_locale?
