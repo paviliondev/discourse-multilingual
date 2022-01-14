@@ -2,6 +2,16 @@
 class ::Multilingual::LocaleLoader
   include ::ApplicationHelper
 
+  attr_reader :ctx
+
+  def initialize(ctx)
+    @ctx = ctx
+  end
+
+  def request
+    @ctx && @ctx.request ? @ctx.request : ActionDispatch::Request.new
+  end
+
   def asset_path(url)
     ActionController::Base.helpers.asset_path(url)
   end
