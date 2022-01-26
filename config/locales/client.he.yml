@@ -1,0 +1,47 @@
+he:
+  js:
+    tagging:
+      groups:
+        content_tags:
+          delete:
+            btn: "Delete all tags"
+            confirm: "Are you sure you want to delete all content languge tags?"
+            message: "Deleting all tags"
+          update:
+            btn: "Update all tags"
+            message: "Updating all tags"
+    topic:
+      content_languages:
+        placeholder: "topic language(s)"
+    user:
+      content_languages:
+        title: "Content languages"
+        placeholder: "Select content languages"
+        instructions: "User content languages"
+        set: "Set content languages"
+  admin_js:
+    multilingual:
+      label: "Multilingual"
+      code: "Code"
+      documentation: Documentation
+      languages:
+        title: "Languages"
+        custom: "Custom"
+        base: "Base"
+        name: "Name"
+        native_name: "Native Name"
+        content: "Content"
+        content_tag: "Content Tag"
+        content_tag_conflict: "tag conflict"
+        interface: "Interface"
+        type: "Type"
+        actions: "Actions"
+        interface_not_supported: "no translations"
+        query_placeholder: "code or name"
+        custom_only: "custom only"
+        disabled: "disabled"
+        toggle_all: "all"
+      translations:
+        type: "Type"
+        remove: "Remove"
+        title: "Translations"
