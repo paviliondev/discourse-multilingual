@@ -1,32 +1,29 @@
 es:
-  js:  
+  js:
     tagging:
       groups:
         content_tags:
-          delete: 
+          delete:
             btn: "Eliminar todas las etiquetas"
             confirm: "¿Estás seguro que deseas eliminar todas las etiquetas?"
             message: "Eliminando todas las etiquetas"
-          update: 
+          update:
             btn: "Actualizar todas las etiquetas"
             message: "Actualizando todas las etiquetas"
-          
     topic:
       content_languages:
         placeholder: "Idioma(s) del tema"
-        
     user:
       content_languages:
         title: "Idiomas del contenido"
         placeholder: "Seleccionar idiomas del contenido"
         instructions: "Idiomas de contenido del usuario"
         set: "Seleccionar lenguajes del contenido"
-  
   admin_js:
     multilingual:
       label: "Multilingüe"
       code: "Código"
-      
+      documentation: Documentation
       languages:
         title: "Idiomas"
         custom: "Personalizado"
@@ -44,7 +41,6 @@ es:
         custom_only: "sólo personalizado"
         disabled: "deshabilitado"
         toggle_all: "todo"
-      
       translations:
         type: "Tipo"
         remove: "Eliminar"
