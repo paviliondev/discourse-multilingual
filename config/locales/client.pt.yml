@@ -4,18 +4,18 @@ pt:
       groups:
         content_tags:
           delete:
-            btn: "Delete all tags"
+            btn: "Excluir todas as tags"
             confirm: "Are you sure you want to delete all content languge tags?"
-            message: "Deleting all tags"
+            message: "Excluir todas as tags"
           update:
-            btn: "Update all tags"
-            message: "Updating all tags"
+            btn: "Atualizar todas as tags"
+            message: "Atualizar todas as tags"
     topic:
       content_languages:
-        placeholder: "topic language(s)"
+        placeholder: "idioma(s) de tópicos"
     user:
       content_languages:
-        title: "Content languages"
+        title: "Idiomas de Conteúdo"
         placeholder: "Select content languages"
         instructions: "User content languages"
         set: "Set content languages"
@@ -36,12 +36,12 @@ pt:
         interface: "Interface"
         type: "Type"
         actions: "Actions"
-        interface_not_supported: "no translations"
-        query_placeholder: "code or name"
-        custom_only: "custom only"
-        disabled: "disabled"
-        toggle_all: "all"
+        interface_not_supported: "sem traduções"
+        query_placeholder: "código ou nome"
+        custom_only: "somente personalizado"
+        disabled: "desabilitado"
+        toggle_all: "todos"
       translations:
-        type: "Type"
-        remove: "Remove"
+        type: "Tipo"
+        remove: "Excluir"
         title: "Translations"
