@@ -12,15 +12,4 @@ RSpec.configure do |config|
   end
 end
 
-if ENV['SIMPLECOV']
-  require 'simplecov'
-
-  SimpleCov.start do
-    root "plugins/discourse-multilingual"
-    track_files "plugins/discourse-multilingual/**/*.rb"
-    add_filter { |src| src.filename =~ /(\/spec\/|\/db\/|plugin\.rb|gems)/ }
-    SimpleCov.minimum_coverage 80
-  end
-end
-
 require 'rails_helper'
