@@ -24,6 +24,14 @@ describe DiscourseTagging do
     expect(tags).not_to include(lang_tag.name)
   end
 
+  it "works when the discourse tagging filter returns a context" do
+    lang_tag = Tag.find_by(name: 'fr')
+    topic = Fabricate(:topic, tags: [tag1, tag2, tag3, lang_tag])
+    tags, context = DiscourseTagging.filter_allowed_tags(Guardian.new(user), for_input: true, with_context: true)
+
+    expect(tags.map(&:name)).not_to include(lang_tag.name)
+  end
+
   it "filter_visible result doesn't include content language tags" do
     lang_tag = Tag.find_by(name: 'fr')
     topic = Fabricate(:topic, tags: [tag1, tag2, tag3, lang_tag])
