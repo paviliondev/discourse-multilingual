@@ -1,4 +1,5 @@
 import { acceptance } from "discourse/tests/helpers/qunit-helpers";
+import { test } from "qunit";
 import { topicList } from "../fixtures/topic-list";
 
 const content_languages = [{ code: "aa", name: "Qafár af" }];

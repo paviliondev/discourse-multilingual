@@ -11,6 +11,11 @@ class Multilingual::ContentLanguage
     SiteSetting.multilingual_content_languages_enabled
   end
 
+  def self.topic_filtering_enabled
+    self.enabled &&
+    SiteSetting.multilingual_content_languages_topic_filtering_enabled
+  end
+
   def initialize(code, name)
     @code = code
     @name = name

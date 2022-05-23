@@ -7,6 +7,7 @@ describe TopicQuery do
     SiteSetting.tagging_enabled = true
     SiteSetting.multilingual_enabled = true
     SiteSetting.multilingual_content_languages_enabled = true
+
     Multilingual::Cache.new(Multilingual::ContentTag::KEY).delete
     Multilingual::ContentTag.update_all
   end
@@ -37,11 +38,22 @@ describe TopicQuery do
       Fabricate(:topic, tags: [tag2])
     }
 
-    it "filters topic list properly" do
+    before do
       user1.custom_fields['content_languages'] = ['aa', 'ab']
       user1.save_custom_fields(true)
+    end
+
+    it "filters topic list when content language topic filtering is enabled" do
+      SiteSetting.multilingual_content_languages_topic_filtering_enabled = true
 
       expect(TopicQuery.new(user1).list_latest.topics.count).to eq(2)
+      expect(TopicQuery.new(user2).list_latest.topics.count).to eq(4)
+    end
+
+    it "does not filter topic list when content language topic filtering is disabled" do
+      SiteSetting.multilingual_content_languages_topic_filtering_enabled = false
+
+      expect(TopicQuery.new(user1).list_latest.topics.count).to eq(4)
       expect(TopicQuery.new(user2).list_latest.topics.count).to eq(4)
     end
   end

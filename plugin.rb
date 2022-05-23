@@ -253,7 +253,7 @@ after_initialize do
   end
 
   TopicQuery.add_custom_filter(:content_languages) do |result, query|
-    if Multilingual::ContentLanguage.enabled
+    if Multilingual::ContentLanguage.topic_filtering_enabled
       content_languages = query.user ?
                           query.user.content_languages :
                           [*query.options[:content_languages]]

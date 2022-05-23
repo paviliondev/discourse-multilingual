@@ -13,7 +13,7 @@
 module CategoryListMultilingualExtension
   def trim_results
 
-    if Multilingual::ContentLanguage.enabled
+    if Multilingual::ContentLanguage.topic_filtering_enabled
       @categories.each do |c|
         next if c.displayable_topics.blank?
 

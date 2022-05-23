@@ -2,10 +2,13 @@ plugins:
   multilingual_enabled:
     default: true
     client: true
-  multilingual_content_languages_enabled: 
+  multilingual_content_languages_enabled:
     default: false
     client: true
     validator: ContentLanguagesValidator
+  multilingual_content_languages_topic_filtering_enabled:
+    default: true
+    client: true
   multilingual_guest_language_switcher:
     client: true
     type: enum
@@ -33,4 +36,3 @@ plugins:
   multilingual_enable_custom_translations:
     default: false
     client: true
-  
