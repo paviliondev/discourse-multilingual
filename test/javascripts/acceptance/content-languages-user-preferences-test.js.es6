@@ -2,9 +2,8 @@ import {
   acceptance,
   exists,
   loggedInUser,
-  updateCurrentUser,
 } from "discourse/tests/helpers/qunit-helpers";
-import { settled } from "@ember/test-helpers";
+import { click, visit } from "@ember/test-helpers";
 import { test } from "qunit";
 
 const content_languages = [
