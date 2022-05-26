@@ -12,6 +12,7 @@ export default {
     return (
       ctx.siteSettings.multilingual_enabled &&
       ctx.siteSettings.multilingual_content_languages_enabled &&
+      ctx.siteSettings.multilingual_content_languages_topic_filtering_enabled &&
       (this.currentUser ||
         getRouter(ctx).currentRouteName.indexOf("categories") === -1)
     );
