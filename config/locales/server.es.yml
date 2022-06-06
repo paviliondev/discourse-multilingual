@@ -2,6 +2,7 @@ es:
   site_settings:
     multilingual_enabled: Plug-in multilingüe habilitado.
     multilingual_content_languages_enabled: Idiomas del contenido habilitados.
+    multilingual_content_languages_topic_filtering_enabled: Topic filtering for content languages enabled.
     multilingual_require_content_language_tag: Requerir etiqueta de idioma en todos los temas.
     multilingual_guest_language_switcher: Habilitar el seleccionador de idioma para el usuario invitado.
     multilingual_guest_language_switcher_footer_visible: Idiomas siempre visibles en el seleccionador del pie de página.

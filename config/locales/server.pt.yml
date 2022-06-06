@@ -1,22 +1,23 @@
 pt:
   site_settings:
-    multilingual_enabled: Multilingual plugin enabled.
-    multilingual_content_languages_enabled: Content languages enabled.
-    multilingual_require_content_language_tag: Require a content language tag on all topics.
-    multilingual_guest_language_switcher: Enable guest language switcher.
-    multilingual_guest_language_switcher_footer_visible: Languages always visible in the footer language switcher.
-    multilingual_tag_translations_enforce_format: Enforce Discourse tag formatting on tag translations.
+    multilingual_enabled: Plugin multilíngue ativado.
+    multilingual_content_languages_enabled: Idiomas de conteúdo ativados.
+    multilingual_content_languages_topic_filtering_enabled: Topic filtering for content languages enabled.
+    multilingual_require_content_language_tag: Exige uma tag de idioma de conteúdo em todos os tópicos.
+    multilingual_guest_language_switcher: Habilitar alternador de idioma visitante.
+    multilingual_guest_language_switcher_footer_visible: Idiomas sempre visíveis no idioma do rodapé.
+    multilingual_tag_translations_enforce_format: Forçar formatação de tag Discourse nas traduções de tags.
     multilingual_translator_content_tag_sync: >
-      Sync content language tags with post languages detected by <a href='https://github.com/discourse/discourse-translator'>Discourse Translator Plugin</a>. Requires Discourse Translator Plugin, and content languages to be enabled.
-    multilingual_enable_custom_translations: Enable custom translations (experimental)
+      Sincronizar tags de idioma de conteúdo com a postagem de idiomas detectados pelo <a href='https://github.com/discourse/discourse-translator'>Discourse Translator Plugin</a>. Requer o Plugin Discourse Tradutor e idiomas de conteúdo para ser ativado.
+    multilingual_enable_custom_translations: Habilitar traduções personalizadas (experimental)
     errors:
-      multilingual_disabled: Multilingual plugin is disabled
-      multilingual_content_languages_disabled: Content languages are disabled
-      multilingual_translator_disabled: Translator plugin is not installed and enabled
-      multilingual_allow_user_locale_disabled: allow user locale is disabled
+      multilingual_disabled: Plugin multilíngue ativado
+      multilingual_content_languages_disabled: Idiomas de conteúdo ativados
+      multilingual_translator_disabled: Plugin Tradutor não está instalado e habilitado
+      multilingual_allow_user_locale_disabled: permitir localidade do usuário está desativado
   multilingual:
-    content_tag_group_name: "Multilingual Content Tags"
-    content_tag_group_name_disabled: "Multilingual Disabled Content Tags"
-    content_language_tag_required: "You must include at least 1 topic language."
+    content_tag_group_name: "Tags de Conteúdo Multilíngue"
+    content_tag_group_name_disabled: "Tags de Conteúdo Multilíngue"
+    content_language_tag_required: "Você deve incluir pelo menos 1 idioma tópico."
     languages:
-      upload_format_incorrect: "Incorrect format. Use format of [Discourse names.yml](https://github.com/discourse/discourse/blob/master/config/locales/names.yml)."
+      upload_format_incorrect: "Formato incorreto. Use o formato [Discourse names.yml](https://github.com/discourse/discourse/blob/master/config/locales/names.yml)."
