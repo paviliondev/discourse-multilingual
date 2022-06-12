@@ -18,8 +18,8 @@ describe TagGroup do
     expect(Multilingual::ContentTag.groups.count).to eq(2)
 
     expect(TagGroup.visible(anon_guardian)).not_to include(Multilingual::ContentTag.groups.first)
-    expect(TagGroup.visible(anon_guardian)).not_to include(Multilingual::ContentTag.groups.second)    
+    expect(TagGroup.visible(anon_guardian)).not_to include(Multilingual::ContentTag.groups.second)
     expect(TagGroup.visible(user_guardian)).not_to include(Multilingual::ContentTag.groups.first)
-    expect(TagGroup.visible(user_guardian)).not_to include(Multilingual::ContentTag.groups.second)    
+    expect(TagGroup.visible(user_guardian)).not_to include(Multilingual::ContentTag.groups.second)
   end
 end
