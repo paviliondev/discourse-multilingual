@@ -56,8 +56,8 @@ describe TopicCreator do
       expect(topic).to be_valid
     end
 
-    it "should work when a language tag contains an underscore" do
-      attrs = valid_attrs.merge(content_language_tags: [Multilingual::ContentTag.all.select { |t| t.include?("_") }.first])
+    it "should work when a language tag contains an underscore and capitalised characters" do
+      attrs = valid_attrs.merge(content_language_tags: [Multilingual::ContentTag.all.select { |t| t.include?("_") && t.downcase != t }.first])
       topic = TopicCreator.create(user, Guardian.new(user), attrs)
 
       expect(topic).to be_valid
