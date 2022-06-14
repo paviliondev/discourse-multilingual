@@ -47,12 +47,21 @@ describe TopicCreator do
       attrs = valid_attrs.merge(content_language_tags: [Multilingual::ContentTag.all.first])
       topic = TopicCreator.create(user, Guardian.new(user), attrs)
       expect(topic).to be_valid
+      expect(topic.tags.count).to eq(1)
     end
 
     it "should work when a language tag and a non language tag is present" do
       attrs = valid_attrs.merge(content_language_tags: [tag.name, Multilingual::ContentTag.all.first])
       topic = TopicCreator.create(user, Guardian.new(user), attrs)
       expect(topic).to be_valid
+    end
+
+    it "should work when a language tag contains an underscore and capitalised characters" do
+      attrs = valid_attrs.merge(content_language_tags: [Multilingual::ContentTag.all.select { |t| t.include?("_") && t.downcase != t }.first])
+      topic = TopicCreator.create(user, Guardian.new(user), attrs)
+
+      expect(topic).to be_valid
+      expect(topic.tags.count).to eq(1)
     end
 
     context 'when staff are exempt' do

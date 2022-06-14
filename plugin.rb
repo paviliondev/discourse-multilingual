@@ -259,7 +259,7 @@ after_initialize do
                           [*query.options[:content_languages]]
 
       if content_languages.present? && content_languages.any?
-        result = result.joins(:tags).where("lower(tags.name) in (?)", content_languages)
+        result = result.joins(:tags).where("tags.name in (?)", content_languages)
       end
     end
 

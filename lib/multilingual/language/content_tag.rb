@@ -141,11 +141,11 @@ class Multilingual::ContentTag
   end
 
   def self.load(ctag_names)
-    [*ctag_names].map { |t| t.underscore }
+    [*ctag_names]
       .reduce([]) do |result, name|
-        result.push(Tag.find_by(name: name)) if self.exists?(name)
-        result
-      end
+      result.push(Tag.find_by(name: name)) if self.exists?(name)
+       result
+    end
   end
 
   def self.update_topic(topic, ctag_names = [])
