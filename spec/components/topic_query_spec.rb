@@ -20,12 +20,12 @@ describe TopicQuery do
 
     fab!(:language_topic1) {
       tag1 = Tag.find_by(name: 'tag1')
-      language_tag1 = Tag.find_by(name: 'aa')
+      language_tag1 = Tag.find_by(name: Multilingual::ContentTag.all.first)
       Fabricate(:topic, tags: [tag1, language_tag1])
     }
 
     fab!(:language_topic2) {
-      language_tag2 = Tag.find_by(name: 'ab')
+      language_tag2 = Tag.find_by(name: Multilingual::ContentTag.all.select { |t| t.include?("_") }.first)
       Fabricate(:topic, tags: [language_tag2])
     }
 
@@ -39,11 +39,11 @@ describe TopicQuery do
     }
 
     before do
-      user1.custom_fields['content_languages'] = ['aa', 'ab']
+      user1.custom_fields['content_languages'] = [Multilingual::ContentTag.all.first, Multilingual::ContentTag.all.select { |t| t.include?("_") }.first]
       user1.save_custom_fields(true)
     end
 
-    it "filters topic list when content language topic filtering is enabled" do
+    it "filters topic list when content language topic filtering is enabled, whilst supporting capitalisation in content tags" do
       SiteSetting.multilingual_content_languages_topic_filtering_enabled = true
 
       expect(TopicQuery.new(user1).list_latest.topics.count).to eq(2)
