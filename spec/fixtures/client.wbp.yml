@@ -1,0 +1,14 @@
+wbp:
+  js:
+    filters:
+      categories:
+        title: "karlirr-kari"
+      
+      latest:
+        title: "mintirlpari"
+      
+      unread:
+        title: "waji-nyanyi"
+        
+    topic:
+      create: "yirrarni"
