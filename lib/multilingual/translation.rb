@@ -12,7 +12,7 @@ class Multilingual::Translation
   def self.get_custom(type)
     Multilingual::Cache.wrap("#{KEY}_#{type.to_s}") do
       result = {}
-      Multilingual::TranslationFile.by_type(type).each do |f|
+      Multilingual::CustomTranslation.by_type(type).each do |f|
         result[f.code.to_s] = f.open
       end
       result
@@ -50,7 +50,7 @@ class Multilingual::Translation
   end
 
   def self.setup
-    Multilingual::TranslationFile.load
+    Multilingual::CustomTranslation.load
     Multilingual::TranslationLocale.load
   end
 end
