@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 class Multilingual::CustomTranslation < ActiveRecord::Base
   self.table_name = 'custom_translations'
-  # include ActiveModel::Serialization
 
   PATH ||= "#{Multilingual::PLUGIN_PATH}/config/translations".freeze
   KEY ||= 'file'.freeze
@@ -14,14 +13,15 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
     opts = Multilingual::CustomTranslation.process_filename(args[:file])
       raise opts[:error] if opts[:error]
+
     self[:file] = args[:file]
     self[:code] = opts[:code]
     self[:file_type] = opts[:file_type]
     self[:ext] = opts[:ext]
 
     result = save_file(args[:yml])
-
       raise result[:error] if result[:error]
+
     self[:yml] = result
 
     begin
