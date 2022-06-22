@@ -14,9 +14,9 @@ describe Multilingual::AdminTranslationsController do
     sign_in(admin_user)
     SiteSetting.multilingual_enabled = true
     SiteSetting.multilingual_content_languages_enabled = true
+    Multilingual::CustomLanguage.create("wbp", name: "Warlpiri", run_hooks: true)
     Multilingual::Language.setup
     Multilingual::ContentTag.update_all
-    Multilingual::CustomLanguage.create("wbp", { "name" => "Warlpiri", "nativeName" => "Warlpiri" })
   end
 
   before(:each) do
@@ -28,7 +28,7 @@ describe Multilingual::AdminTranslationsController do
       file: fixture_file_upload(category_translation)
     }
     expect(response.status).to eq(200)
-    Multilingual::TranslationFile.by_type(["category_name"]).count eq(1)
+    expect(Multilingual::CustomTranslation.by_type(["category_name"]).count).to eq(1)
   end
 
   it "uploads server locale" do
@@ -36,7 +36,7 @@ describe Multilingual::AdminTranslationsController do
       file: fixture_file_upload(server_locale)
     }
     expect(response.status).to eq(200)
-    Multilingual::TranslationFile.by_type(["server"]).count eq(1)
+    expect(Multilingual::CustomTranslation.by_type(["server"]).count).to eq(1)
   end
 
   it "uploads tag translation" do
@@ -44,6 +44,6 @@ describe Multilingual::AdminTranslationsController do
       file: fixture_file_upload(tag_translation)
     }
     expect(response.status).to eq(200)
-    Multilingual::TranslationFile.by_type(["tag"]).count eq(1)
+    expect(Multilingual::CustomTranslation.by_type(["tag"]).count).to eq(1)
   end
 end
