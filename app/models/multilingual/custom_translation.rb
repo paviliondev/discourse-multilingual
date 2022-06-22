@@ -8,13 +8,18 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   attr_accessor :file, :code, :file_type, :ext, :yml
   serialize :translation_data
 
+  #TODO confirm what needs to be added to cache and add test
+  #TODO implement
+  #TODO iterate model on initialise to re-instantiate files and cache
+
   def initialize(args)
     super(args)
 
-    opts = Multilingual::CustomTranslation.process_filename(args[:file])
+    self[:file] = args[:file]
+
+    opts = Multilingual::CustomTranslation.process_filename(self[:file])
       raise opts[:error] if opts[:error]
 
-    self[:file] = args[:file]
     self[:code] = opts[:code]
     self[:file_type] = opts[:file_type]
     self[:ext] = opts[:ext]
@@ -52,10 +57,14 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
     return result if result[:error]
 
-    file = format(processed[:translations])
+    result = restore_file(processed[:translations])
+  end
+
+  def restore_file(processed_translations)
+    file = format(processed_translations)
     File.open(path, 'w') { |f| f.write file.to_yaml }
 
-    result = processed[:translations]
+    result = processed_translations
   end
 
   def interface_file
