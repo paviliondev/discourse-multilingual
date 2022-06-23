@@ -17,6 +17,8 @@ describe Multilingual::AdminTranslationsController do
     Multilingual::CustomLanguage.create("wbp", name: "Warlpiri", run_hooks: true)
     Multilingual::Language.setup
     Multilingual::ContentTag.update_all
+    I18n.locale = "wbp"
+    I18n.load_locale("wbp")
   end
 
   before(:each) do
@@ -28,7 +30,8 @@ describe Multilingual::AdminTranslationsController do
       file: fixture_file_upload(category_translation)
     }
     expect(response.status).to eq(200)
-    expect(Multilingual::CustomTranslation.by_type(["category_name"]).count).to eq(1)
+    expect(Multilingual::TranslationFile.by_type(["category_name"]).count).to eq(1)
+    expect(Multilingual::Translation.get("category_name", ["welcome"])).to eq({"wbp"=>"pardu-pardu-mani"})
   end
 
   it "uploads server locale" do
@@ -36,7 +39,9 @@ describe Multilingual::AdminTranslationsController do
       file: fixture_file_upload(server_locale)
     }
     expect(response.status).to eq(200)
-    expect(Multilingual::CustomTranslation.by_type(["server"]).count).to eq(1)
+    expect(Multilingual::TranslationFile.by_type(["server"]).count).to eq(1)
+    I18n.locale = "wbp"
+    expect(I18n.t'topics').to eq("tematy")
   end
 
   it "uploads tag translation" do
@@ -44,6 +49,7 @@ describe Multilingual::AdminTranslationsController do
       file: fixture_file_upload(tag_translation)
     }
     expect(response.status).to eq(200)
-    expect(Multilingual::CustomTranslation.by_type(["tag"]).count).to eq(1)
+    expect(Multilingual::TranslationFile.by_type(["tag"]).count).to eq(1)
+    expect(Multilingual::Translation.get("tag", "wbp")).to eq({"pavilion"=>"parnka", "follow"=>"ngurra"})
   end
 end
