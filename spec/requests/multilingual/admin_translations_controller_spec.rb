@@ -31,7 +31,7 @@ describe Multilingual::AdminTranslationsController do
     }
     expect(response.status).to eq(200)
     expect(Multilingual::TranslationFile.by_type(["category_name"]).count).to eq(1)
-    expect(Multilingual::Translation.get("category_name", ["welcome"])).to eq({"wbp"=>"pardu-pardu-mani"})
+    expect(Multilingual::Translation.get("category_name", ["welcome"])).to eq({ "wbp" => "pardu-pardu-mani" })
   end
 
   it "uploads server locale" do
@@ -41,7 +41,7 @@ describe Multilingual::AdminTranslationsController do
     expect(response.status).to eq(200)
     expect(Multilingual::TranslationFile.by_type(["server"]).count).to eq(1)
     I18n.locale = "wbp"
-    expect(I18n.t'topics').to eq("tematy")
+    expect(I18n.t 'topics').to eq("tematy")
   end
 
   it "uploads tag translation" do
@@ -50,6 +50,6 @@ describe Multilingual::AdminTranslationsController do
     }
     expect(response.status).to eq(200)
     expect(Multilingual::TranslationFile.by_type(["tag"]).count).to eq(1)
-    expect(Multilingual::Translation.get("tag", "wbp")).to eq({"pavilion"=>"parnka", "follow"=>"ngurra"})
+    expect(Multilingual::Translation.get("tag", "wbp")).to eq({ "pavilion" => "parnka", "follow" => "ngurra" })
   end
 end
