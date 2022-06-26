@@ -42,6 +42,7 @@ describe Multilingual::AdminTranslationsController do
     expect(Multilingual::TranslationFile.by_type(["server"]).count).to eq(1)
     I18n.locale = "wbp"
     expect(I18n.t 'topics').to eq("tematy")
+    expect(I18n.t 'views.mountain').to eq("góry")
   end
 
   it "uploads tag translation" do
