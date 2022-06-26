@@ -17,8 +17,6 @@ describe Multilingual::AdminTranslationsController do
     Multilingual::CustomLanguage.create("wbp", name: "Warlpiri", run_hooks: true)
     Multilingual::Language.setup
     Multilingual::ContentTag.update_all
-    I18n.locale = "wbp"
-    I18n.load_locale("wbp")
   end
 
   before(:each) do
