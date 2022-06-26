@@ -29,7 +29,13 @@ class Multilingual::TranslationFile
     return result if result[:error]
 
     file = format(processed[:translations])
-    File.open(path, 'w') { |f| f.write file.to_yaml }
+    unless @type == :server
+      File.open(path, 'w') { |f| f.write file.to_yaml }
+
+      config = Rails.application.config
+
+      config.i18n.load_path += Dir[path]
+    end
 
     after_save
     result
@@ -48,7 +54,9 @@ class Multilingual::TranslationFile
 
   def after_save
     Multilingual::TranslationLocale.register(self) if interface_file
-    after_all(reload_i18n: true, locale: @code, action: :save)
+    unless @type == :server
+      after_all(reload_i18n: true, locale: @code, action: :save)
+    end
   end
 
   def after_remove
@@ -94,6 +102,9 @@ class Multilingual::TranslationFile
 
       if @type === :tag && SiteSetting.multilingual_tag_translations_enforce_format
         translations[key] = DiscourseTagging.clean_tag(translation)
+      end
+      if @type === :server
+        I18n.backend.store_translations(@code.to_sym, translation)
       end
     end
 
