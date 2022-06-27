@@ -32,17 +32,6 @@ describe Multilingual::AdminTranslationsController do
     expect(Multilingual::Translation.get("category_name", ["welcome"])).to eq({ "wbp" => "pardu-pardu-mani" })
   end
 
-  it "uploads server locale" do
-    post '/admin/multilingual/translations.json', params: {
-      file: Rack::Test::UploadedFile.new(server_locale)
-    }
-    expect(response.status).to eq(200)
-    expect(Multilingual::TranslationFile.by_type(["server"]).count).to eq(1)
-    I18n.locale = "wbp"
-    expect(I18n.t 'topics').to eq("tematy")
-    expect(I18n.t 'views.mountain').to eq("góry")
-  end
-
   it "uploads tag translation" do
     post '/admin/multilingual/translations.json', params: {
       file: Rack::Test::UploadedFile.new(tag_translation)
