@@ -2,4 +2,6 @@ wbp:
   title: "Rozprawiać"
   topics: "tematy"
   posts: "posty"
-  views: "wyświetlenia"
+  views:
+    mountain: "góry"
+    sea: "morze"
