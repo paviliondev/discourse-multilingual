@@ -23,7 +23,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
     self[:code] = opts[:code]
     self[:file_type] = opts[:file_type]
     self[:ext] = opts[:ext]
-
+byebug
     result = save_file(args[:yml])
       raise result[:error] if result[:error]
 
@@ -57,7 +57,19 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
     return result if result[:error]
 
-    result = restore_file(processed[:translations])
+    unless self[:file_type] == "server"
+      File.open(path, 'w') { |f| f.write file.to_yaml }
+
+      config = Rails.application.config
+
+      config.i18n.load_path += Dir[path]
+
+      result = restore_file(processed[:translations])
+    else
+      result = processed_translations
+    end
+
+    return result
   end
 
   def restore_file(processed_translations)
@@ -68,7 +80,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   end
 
   def interface_file
-    @file_type === :server || @file_type === :client
+    self[:file_type] === "server" || self[:file_type] === "client"
   end
 
   def remove
@@ -80,7 +92,9 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
   def after_save
     Multilingual::TranslationLocale.register(self) #if interface_file
-    after_all(reload_i18n: true, locale: self[:code], action: :save)
+    unless [:file_type] == :server
+      after_all(reload_i18n: true, locale: self[:code], action: :save)
+    end
   end
 
   def after_remove
@@ -126,6 +140,10 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
       if self[:file_type] === :tag && SiteSetting.multilingual_tag_translations_enforce_format
         translations[key] = DiscourseTagging.clean_tag(translation)
+      end
+      if self[:file_type] === "server"
+        byebug
+        I18n.backend.store_translations(self[:code].to_sym, translation)
       end
     end
 
