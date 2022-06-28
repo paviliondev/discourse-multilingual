@@ -6,6 +6,8 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   KEY ||= 'file'.freeze
 
   attr_accessor :file, :code, :file_type, :ext, :yml
+
+  validates :file, :yml, presence: true
   serialize :translation_data
 
   #TODO confirm what needs to be added to cache and add test
@@ -23,7 +25,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
     self[:code] = opts[:code]
     self[:file_type] = opts[:file_type]
     self[:ext] = opts[:ext]
-byebug
+
     result = save_file(args[:yml])
       raise result[:error] if result[:error]
 
@@ -31,6 +33,7 @@ byebug
 
     begin
       self.save!
+
       add_locale_to_cache
 
       after_save
@@ -66,7 +69,7 @@ byebug
 
       result = restore_file(processed[:translations])
     else
-      result = processed_translations
+      result = processed[:translations][self[:code]]
     end
 
     return result
@@ -91,8 +94,8 @@ byebug
   end
 
   def after_save
-    Multilingual::TranslationLocale.register(self) #if interface_file
-    unless [:file_type] == :server
+    Multilingual::TranslationLocale.register(self) if interface_file
+    if self[:file_type] == "client"
       after_all(reload_i18n: true, locale: self[:code], action: :save)
     end
   end
@@ -142,7 +145,6 @@ byebug
         translations[key] = DiscourseTagging.clean_tag(translation)
       end
       if self[:file_type] === "server"
-        byebug
         I18n.backend.store_translations(self[:code].to_sym, translation)
       end
     end
@@ -171,7 +173,9 @@ byebug
   # end
 
   def add_locale_to_cache
-    I18n.available_locales = I18n.available_locales.push(self[:code].to_sym)
+    existing_locales = I18n.config.available_locales
+    new_locales      = existing_locales.push(self[:code].to_sym)
+    I18n.config.available_locales = new_locales
   end
 
   def self.by_type(types)
