@@ -2,8 +2,8 @@
 class Multilingual::AdminTranslationsController < Admin::AdminController
   def list
     serializer = ActiveModel::ArraySerializer.new(
-      Multilingual::TranslationFile.all,
-      each_serializer: Multilingual::TranslationFileSerializer
+      Multilingual::CustomTranslation.all,
+      each_serializer: Multilingual::CustomTranslationSerializer
     )
     render json: MultiJson.dump(serializer)
   end
@@ -22,18 +22,12 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
       begin
         yml = YAML.safe_load(raw_file.tempfile)
 
-        opts = Multilingual::TranslationFile.process_filename(raw_file.original_filename)
-        raise opts[:error] if opts[:error]
-
-        file = Multilingual::TranslationFile.new(opts)
-
-        result = file.save(yml)
-        raise result[:error] if result[:error]
+        result = Multilingual::CustomTranslation.new({ file: raw_file.original_filename, code: nil, file_type: nil, ext: nil, yml: yml })
 
         data = {
           uploaded: true,
-          code: file.code,
-          type: file.type
+          code: result.code,
+          file_type: result.file_type
         }
       rescue => e
         data = failed_json.merge(errors: [e.message])
@@ -52,7 +46,7 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
 
   def remove
     opts = translation_params
-    file = Multilingual::TranslationFile.new(opts)
+    file = Multilingual::CustomTranslation.new(opts)
     file.remove
 
     render json: {
@@ -63,7 +57,7 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
   end
 
   def download
-    file = Multilingual::TranslationFile.new(translation_params)
+    file = Multilingual::CustomTranslation.new(translation_params)
 
     send_file(
       file.path,

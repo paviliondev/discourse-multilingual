@@ -11,11 +11,7 @@ class Multilingual::Translation
 
   def self.get_custom(type)
     Multilingual::Cache.wrap("#{KEY}_#{type.to_s}") do
-      result = {}
-      Multilingual::TranslationFile.by_type(type).each do |f|
-        result[f.code.to_s] = f.open
-      end
-      result
+      result = Multilingual::CustomTranslation.find_by(file_type: type) || {}
     end
   end
 
@@ -26,13 +22,17 @@ class Multilingual::Translation
   def self.get(type, keys)
     if is_custom(type)
       data = get_custom(type)
-
+#byebug
       if type == 'category_name'
         result = {}
+        byebug
+        data = JSON.parse data["yml"].gsub('=>', ':')
+        code = data["code"]
         data.each { |c, d| result[c] = recurse(d, keys.dup) }
-        result
+        byebug
+        return { code => result }
       else
-        data[keys]
+        JSON.parse data["yml"].gsub('=>', ':')
       end
     end
   end
@@ -50,7 +50,7 @@ class Multilingual::Translation
   end
 
   def self.setup
-    Multilingual::TranslationFile.load
+    Multilingual::CustomTranslation.load
     Multilingual::TranslationLocale.load
   end
 end

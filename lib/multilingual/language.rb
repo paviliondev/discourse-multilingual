@@ -14,6 +14,7 @@ class Multilingual::Language
                 :custom
 
   def initialize(code, opts = {})
+
     @code = code.to_s
 
     opts = opts.with_indifferent_access

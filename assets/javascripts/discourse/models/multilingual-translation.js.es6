@@ -10,21 +10,21 @@ MultilingualTranslation.reopenClass({
     return ajax(TranslationPath).catch(popupAjaxError);
   },
 
-  remove(code, type) {
+  remove(code, file_type) {
     return ajax(TranslationPath, {
       method: "DELETE",
       data: {
         code,
-        type,
+        file_type,
       },
     }).catch(popupAjaxError);
   },
 
-  download(code, type) {
+  download(code, file_type) {
     return ajax(TranslationPath + "/download", {
       data: {
         code,
-        type,
+        file_type,
       },
       xhrFields: {
         responseType: "blob",
