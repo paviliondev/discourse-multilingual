@@ -30,6 +30,7 @@ describe Multilingual::AdminTranslationsController do
     expect(response.status).to eq(200)
     expect(Multilingual::CustomTranslation.by_type(["category_name"]).count).to eq(1)
     expect(Multilingual::Translation.get("category_name", ["welcome"])).to eq({ "wbp" => "pardu-pardu-mani" })
+    expect(Multilingual::Translation.get("category_name", ["knowledge", "clients"])).to eq({ "wbp" => "kalyardi milya-pinyi" })
   end
 
   it "uploads server locale" do
