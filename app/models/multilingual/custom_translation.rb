@@ -72,7 +72,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
       result = processed[:translations][self[:code]]
     end
 
-    return result
+    result
   end
 
   def restore_file(processed_translations)

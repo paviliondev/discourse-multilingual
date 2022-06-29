@@ -30,7 +30,7 @@ class Multilingual::Translation
 
         result = look_for(yml_data, keys)
 
-        return { code => result }
+        { code => result }
       else
         JSON.parse data["yml"].gsub('=>', ':')
       end
@@ -45,7 +45,7 @@ class Multilingual::Translation
         new_keys.shift
         look_for(data.first.last, new_keys)
       else
-        return data.first.last
+        data.first.last
       end
     else
       new_data = data.dup
