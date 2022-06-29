@@ -24,18 +24,33 @@ class Multilingual::Translation
       data = get_custom(type)
 
       if type == 'category_name'
-        result = {}
-
         yml_data = JSON.parse data["yml"].gsub('=>', ':')
 
         code = data["code"]
 
-        yml_data.each { |c, d| result = c == keys.first ? recurse(d, keys.dup) || d : result }
+        result = look_for(yml_data, keys)
 
         return { code => result }
       else
         JSON.parse data["yml"].gsub('=>', ':')
       end
+    end
+  end
+
+  def self.look_for(data, keys)
+
+    if keys.first == data.first.first
+      if data.first.last.is_a?(Hash)
+        new_keys = keys.dup
+        new_keys.shift
+        look_for(data.first.last, new_keys)
+      else
+        return data.first.last
+      end
+    else
+      new_data = data.dup
+      new_data.shift
+      look_for(new_data, keys)
     end
   end
 
