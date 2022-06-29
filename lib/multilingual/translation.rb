@@ -22,14 +22,16 @@ class Multilingual::Translation
   def self.get(type, keys)
     if is_custom(type)
       data = get_custom(type)
-#byebug
+
       if type == 'category_name'
         result = {}
-        byebug
-        data = JSON.parse data["yml"].gsub('=>', ':')
+
+        yml_data = JSON.parse data["yml"].gsub('=>', ':')
+
         code = data["code"]
-        data.each { |c, d| result[c] = recurse(d, keys.dup) }
-        byebug
+
+        yml_data.each { |c, d| result = c == keys.first ? recurse(d, keys.dup) || d : result }
+
         return { code => result }
       else
         JSON.parse data["yml"].gsub('=>', ':')
