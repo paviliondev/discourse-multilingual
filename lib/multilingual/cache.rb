@@ -92,6 +92,7 @@ class Multilingual::Cache
   end
 
   def self.reset
+    self.load_classes if @listable_classes == nil
     @listable_classes.each { |klass| Multilingual::Cache.new(klass::KEY).delete }
 
     Multilingual::Translation::CUSTOM_TYPES.each do |type|
