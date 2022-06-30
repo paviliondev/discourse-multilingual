@@ -23,6 +23,8 @@ class Multilingual::Translation
     if is_custom(type)
       data = get_custom(type)
 
+      return nil if data == {}
+
       if type == 'category_name'
         yml_data = JSON.parse data["yml"].gsub('=>', ':')
 
