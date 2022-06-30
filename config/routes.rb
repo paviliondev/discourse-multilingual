@@ -11,7 +11,7 @@ Discourse::Application.routes.append do
     delete 'admin/multilingual/languages' => 'admin_languages#remove'
 
     get 'admin/multilingual/translations' => 'admin_translations#list'
-    post 'admin/multilingual/translations.json' => 'admin_translations#upload'
+    post 'admin/multilingual/translations' => 'admin_translations#upload'
     delete 'admin/multilingual/translations' => 'admin_translations#remove'
 
     get 'admin/multilingual/translations/download' => 'admin_translations#download'
