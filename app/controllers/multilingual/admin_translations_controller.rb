@@ -22,7 +22,16 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
       begin
         yml = YAML.safe_load(raw_file.tempfile)
 
-        result = Multilingual::CustomTranslation.new({ file: raw_file.original_filename, code: nil, file_type: nil, ext: nil, yml: yml })
+        file = raw_file.original_filename
+
+        opts = process_filename(file)
+          raise opts[:error] if opts[:error]
+
+        code = opts[:code]
+        file_type = opts[:file_type]
+        ext = opts[:ext]
+
+        result = Multilingual::CustomTranslation.create!(file_name: file, code: code, file_type: file_type, file_ext: ext, translation_data: yml)
 
         data = {
           uploaded: true,
@@ -70,5 +79,25 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
 
   def translation_params
     params.permit(:code, :type)
+  end
+
+  def process_filename(filename)
+    result = Hash.new
+    parts = filename.split('.')
+    result = {
+      file_type: parts[0],
+      code: parts[1],
+      ext: parts[2]
+    }
+
+    if !Multilingual::Translation.validate_type(result[:file_type])
+      result[:error] = 'invalid type'
+    end
+
+    if result[:ext] != 'yml'
+      result[:error] = "incorrect format"
+    end
+
+    result
   end
 end

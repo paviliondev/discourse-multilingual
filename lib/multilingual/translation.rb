@@ -26,7 +26,8 @@ class Multilingual::Translation
       return nil if data == {}
 
       if type == 'category_name'
-        yml_data = JSON.parse data["yml"].gsub('=>', ':')
+
+        yml_data = data["translation_data"]
 
         code = data["code"]
 
@@ -34,7 +35,7 @@ class Multilingual::Translation
 
         { code => result }
       else
-        JSON.parse data["yml"].gsub('=>', ':')
+        data["translation_data"]
       end
     end
   end
