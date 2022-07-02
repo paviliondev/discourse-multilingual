@@ -11,7 +11,7 @@ class Multilingual::Translation
 
   def self.get_custom(type)
     Multilingual::Cache.wrap("#{KEY}_#{type.to_s}") do
-      result = Multilingual::CustomTranslation.find_by(file_type: type) || {}
+      result = Multilingual::CustomTranslation.where(file_type: type) || {}
     end
   end
 
@@ -19,29 +19,34 @@ class Multilingual::Translation
     CUSTOM_TYPES.include?(type)
   end
 
-  def self.get(type, keys)
+  def self.get(type, keys = [])
     if is_custom(type)
       data = get_custom(type)
 
       return nil if data == {}
 
-      if type == 'category_name'
+      result = {}
+      data.each do |d|
+        if type == 'category_name'
 
-        yml_data = data["translation_data"]
+          yml_data = d["translation_data"]
 
-        code = data["code"]
+          code = d["code"]
 
-        result = look_for(yml_data, keys)
+          this_result = look_for(yml_data, keys)
 
-        { code => result }
-      else
-        data["translation_data"]
+          result[code.to_sym] = this_result
+        else
+          code = d["code"]
+          result[code.to_sym] = d["translation_data"]
+        end
       end
+      result
     end
   end
 
   def self.look_for(data, keys)
-
+    return nil if data == {}
     if keys.first == data.first.first
       if data.first.last.is_a?(Hash)
         new_keys = keys.dup

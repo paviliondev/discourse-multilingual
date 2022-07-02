@@ -37,7 +37,7 @@ export default {
     }
 
     I18n.translate_tag = function (tag) {
-      const translations = I18n.tag_translations || {};
+      const translations = I18n.tag_translations[I18n.default.currentLocale()] || {};
       return translations[tag] || tag;
     };
 
