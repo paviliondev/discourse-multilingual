@@ -29,8 +29,8 @@ describe Multilingual::AdminTranslationsController do
     }
     expect(response.status).to eq(200)
     expect(Multilingual::CustomTranslation.by_type(["category_name"]).count).to eq(1)
-    expect(Multilingual::Translation.get("category_name", ["welcome"])).to eq({ :wbp => "pardu-pardu-mani" })
-    expect(Multilingual::Translation.get("category_name", ["knowledge", "clients"])).to eq({ :wbp => "kalyardi milya-pinyi" })
+    expect(Multilingual::Translation.get("category_name", ["welcome"])).to eq({ wbp: "pardu-pardu-mani" })
+    expect(Multilingual::Translation.get("category_name", ["knowledge", "clients"])).to eq({ wbp: "kalyardi milya-pinyi" })
     get '/admin/multilingual/translations.json'
     expect(response.status).to eq(200)
     parsed = response.parsed_body
@@ -55,6 +55,6 @@ describe Multilingual::AdminTranslationsController do
     }
     expect(response.status).to eq(200)
     expect(Multilingual::CustomTranslation.by_type(["tag"]).count).to eq(1)
-    expect(Multilingual::Translation.get("tag")).to eq({ :wbp => { "pavilion" => "parnka", "follow" => "ngurra" }})
+    expect(Multilingual::Translation.get("tag")).to eq({ wbp: { "pavilion" => "parnka", "follow" => "ngurra" } })
   end
 end
