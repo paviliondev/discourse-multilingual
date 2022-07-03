@@ -72,6 +72,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   end
 
   def after_remove
+    self.destroy!
     Multilingual::TranslationLocale.deregister(self) if interface_file
     after_all(reload_i18n: true, locale: self.code, action: :remove)
   end

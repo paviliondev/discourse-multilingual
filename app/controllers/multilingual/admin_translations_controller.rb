@@ -55,13 +55,14 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
 
   def remove
     opts = translation_params
-    file = Multilingual::CustomTranslation.new(opts)
+
+    file = Multilingual::CustomTranslation.where(file_type: opts[:file_type], code: opts[:code]).first
     file.remove
 
     render json: {
       removed: true,
       code: opts[:code],
-      type: opts[:type]
+      type: opts[:file_type]
     }
   end
 
@@ -78,7 +79,7 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
   protected
 
   def translation_params
-    params.permit(:code, :type)
+    params.permit(:code, :file_type)
   end
 
   def process_filename(filename)
