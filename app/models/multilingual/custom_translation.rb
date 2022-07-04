@@ -10,8 +10,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   before_save :save_file
   after_save :after_save
 
-  #TODO confirm what needs to be added to cache and add test
-  #TODO implement
+  #TODO confirm what needs to be added to cache and implement
   #TODO iterate model on initialise to re-instantiate files and cache
 
   def exists?
