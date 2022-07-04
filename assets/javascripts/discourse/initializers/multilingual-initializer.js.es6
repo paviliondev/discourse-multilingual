@@ -40,9 +40,9 @@ export default {
       if (I18n.tag_translations !== undefined &&
         I18n.tag_translations[I18n.default.currentLocale()] !== undefined &&
         I18n.tag_translations[I18n.default.currentLocale()][tag] !== undefined) {
-        return I18n.tag_translations[I18n.default.currentLocale()][tag]
+        return I18n.tag_translations[I18n.default.currentLocale()][tag];
       } else {
-        return tag
+        return tag;
       }
     };
 
