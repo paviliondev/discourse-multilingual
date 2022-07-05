@@ -8,6 +8,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   validates :file_name, :code, :file_type, :file_ext, :translation_data, presence: true
   serialize :translation_data
   before_save :save_file
+  after_save :after_save
 
   def exists?
     self.class.all.map(&:code).include?(self.code)
