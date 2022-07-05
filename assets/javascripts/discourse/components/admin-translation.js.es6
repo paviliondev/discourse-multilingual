@@ -10,7 +10,7 @@ export default Component.extend({
       this.set("removing", true);
 
       MultilingualTranslation.remove(
-        this.get("translation.code"),
+        this.get("translation.locale"),
         this.get("translation.file_type")
       ).then((result) => {
         this.set("removing", false);
@@ -20,7 +20,7 @@ export default Component.extend({
 
     download() {
       MultilingualTranslation.download(
-        this.get("translation.code"),
+        this.get("translation.locale"),
         this.get("translation.file_type")
       );
     },

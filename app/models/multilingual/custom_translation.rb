@@ -5,13 +5,13 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   PATH ||= "#{Multilingual::PLUGIN_PATH}/config/translations".freeze
   KEY ||= 'file'.freeze
 
-  validates :file_name, :code, :file_type, :file_ext, :translation_data, presence: true
+  validates :file_name, :locale, :file_type, :file_ext, :translation_data, presence: true
   serialize :translation_data
   before_save :save_file
   after_save :after_save
 
   def exists?
-    self.class.all.map(&:code).include?(self.code)
+    self.class.all.map(&:locale).include?(self.locale)
   end
 
   def open
@@ -35,7 +35,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
       result = restore_file(processed[:translations])
     else
-      result = processed[:translations][self.code]
+      result = processed[:translations][self.locale]
     end
 
     result
@@ -63,19 +63,19 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
     add_locale_to_cache
     Multilingual::TranslationLocale.register(self) if interface_file
     if self.file_type == "client"
-      after_all(reload_i18n: true, locale: self.code, action: :save)
+      after_all(reload_i18n: true, locale: self.locale, action: :save)
     end
   end
 
   def after_remove
     self.destroy!
     Multilingual::TranslationLocale.deregister(self) if interface_file
-    after_all(reload_i18n: true, locale: self.code, action: :remove)
+    after_all(reload_i18n: true, locale: self.locale, action: :remove)
   end
 
   def after_all(opts = {})
     Multilingual::Cache.refresh!(opts)
-    Multilingual::Cache.refresh_clients(self.code)
+    Multilingual::Cache.refresh_clients(self.locale)
   end
 
   def path
@@ -83,7 +83,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   end
 
   def filename
-    "#{self.file_type.to_s}.#{self.code.to_s}.yml"
+    "#{self.file_type.to_s}.#{self.locale.to_s}.yml"
   end
 
   def process(translations)
@@ -113,7 +113,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
         translations[key] = DiscourseTagging.clean_tag(translation)
       end
       if self.file_type === "server"
-        I18n.backend.store_translations(self.code.to_sym, translation)
+        I18n.backend.store_translations(self.locale.to_sym, translation)
       end
     end
 
@@ -131,7 +131,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
   def add_locale_to_cache
     existing_locales = I18n.config.available_locales
-    new_locales      = existing_locales.push(self.code.to_sym)
+    new_locales      = existing_locales.push(self.locale.to_sym)
     I18n.config.available_locales = new_locales
   end
 

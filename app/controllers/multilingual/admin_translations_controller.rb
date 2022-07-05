@@ -27,13 +27,13 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
         opts = process_filename(file)
           raise opts[:error] if opts[:error]
 
-        code, file_type, ext = opts.values_at(:code, :file_type, :ext)
+        locale, file_type, ext = opts.values_at(:locale, :file_type, :ext)
 
-        result = Multilingual::CustomTranslation.create!(file_name: file, code: code, file_type: file_type, file_ext: ext, translation_data: yml)
+        result = Multilingual::CustomTranslation.create!(file_name: file, locale: locale, file_type: file_type, file_ext: ext, translation_data: yml)
 
         data = {
           uploaded: true,
-          code: result.code,
+          locale: result.locale,
           file_type: result.file_type
         }
       rescue => e
@@ -54,12 +54,12 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
   def remove
     opts = translation_params
 
-    file = Multilingual::CustomTranslation.where(file_type: opts[:file_type], code: opts[:code]).first
+    file = Multilingual::CustomTranslation.where(file_type: opts[:file_type], locale: opts[:locale]).first
     file.remove
 
     render json: {
       removed: true,
-      code: opts[:code],
+      locale: opts[:locale],
       type: opts[:file_type]
     }
   end
@@ -77,7 +77,7 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
   protected
 
   def translation_params
-    params.permit(:code, :file_type)
+    params.permit(:locale, :file_type)
   end
 
   def process_filename(filename)
@@ -85,7 +85,7 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
     parts = filename.split('.')
     result = {
       file_type: parts[0],
-      code: parts[1],
+      locale: parts[1],
       ext: parts[2]
     }
 

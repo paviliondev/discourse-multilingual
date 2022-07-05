@@ -10,7 +10,7 @@ export default Component.extend(UppyUploadMixin, {
   addDisabled: alias("uploading"),
   elementId: "multilingual-uploader",
   classNameBindings: [":multilingual-uploader", "uploadType"],
-  code: null,
+  locale: null,
   message: null,
 
   _init: on("didInsertElement", function () {

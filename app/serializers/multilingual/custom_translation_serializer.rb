@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 class Multilingual::CustomTranslationSerializer < ::ApplicationSerializer
-  attributes :code, :file_type
+  attributes :locale, :file_type
 
-  def code
-    object[:code]
+  def locale
+    object[:locale]
   end
 
   def file_type

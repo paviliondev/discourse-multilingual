@@ -22,7 +22,7 @@ nl:
   admin_js:
     multilingual:
       label: "Multilingual"
-      code: "Code"
+      locale: "Locale"
       documentation: Documentation
       languages:
         title: "Languages"

@@ -31,14 +31,14 @@ class Multilingual::Translation
 
           yml_data = d["translation_data"]
 
-          code = d["code"]
+          locale = d["locale"]
 
           this_result = look_for(yml_data, keys)
 
-          result[code.to_sym] = this_result
+          result[locale.to_sym] = this_result
         else
-          code = d["code"]
-          result[code.to_sym] = d["translation_data"]
+          locale = d["locale"]
+          result[locale.to_sym] = d["translation_data"]
         end
       end
       result

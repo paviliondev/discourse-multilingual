@@ -35,7 +35,7 @@ describe Multilingual::AdminTranslationsController do
     get '/admin/multilingual/translations.json'
     expect(response.status).to eq(200)
     parsed = response.parsed_body
-    expect(parsed.first["code"]).to eq ("wbp")
+    expect(parsed.first["locale"]).to eq ("wbp")
     expect(parsed.first["file_type"]).to eq ("category_name")
   end
 
