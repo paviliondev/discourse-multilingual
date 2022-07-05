@@ -10,9 +10,6 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   before_save :save_file
   after_save :after_save
 
-  #TODO confirm what needs to be added to cache and implement
-  #TODO iterate model on initialise to re-instantiate files and cache
-
   def exists?
     self.class.all.map(&:code).include?(self.code)
   end
@@ -29,7 +26,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
     return result if result[:error]
 
-    unless self.file_type == "server"
+    if self.file_type == "client"
       File.open(path, 'w') { |f| f.write file_name.to_yaml }
 
       config = Rails.application.config
