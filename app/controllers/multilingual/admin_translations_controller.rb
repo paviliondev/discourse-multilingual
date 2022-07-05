@@ -27,9 +27,7 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
         opts = process_filename(file)
           raise opts[:error] if opts[:error]
 
-        code = opts[:code]
-        file_type = opts[:file_type]
-        ext = opts[:ext]
+        code, file_type, ext = opts.values_at(:code, :file_type, :ext)
 
         result = Multilingual::CustomTranslation.create!(file_name: file, code: code, file_type: file_type, file_ext: ext, translation_data: yml)
 
