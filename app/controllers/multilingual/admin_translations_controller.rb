@@ -82,6 +82,8 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
 
   def process_filename(filename)
     result = Hash.new
+
+    #TODO improve this with more standard/robust filename manipulation?
     parts = filename.split('.')
     result = {
       file_type: parts[0],
