@@ -8,6 +8,7 @@ describe Multilingual::AdminTranslationsController do
   let(:custom_languages) { "#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/custom_languages.yml" }
   let(:category_translation) { "#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/category_name.wbp.yml" }
   let(:server_locale) { "#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/server.wbp.yml" }
+  let(:client_locale) { "#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/client.fr.yml" }
   let(:tag_translation) { "#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/tag.wbp.yml" }
 
   before(:all) do
@@ -48,6 +49,22 @@ describe Multilingual::AdminTranslationsController do
     I18n.locale = "wbp"
     expect(I18n.t 'topics').to eq("tematy")
     expect(I18n.t 'views.mountain').to eq("góry")
+  end
+
+  it "uploads client locale" do
+    post '/admin/multilingual/translations.json', params: {
+      file: Rack::Test::UploadedFile.new(client_locale)
+    }
+    expect(response.status).to eq(200)
+    expect(Multilingual::CustomTranslation.by_type(["client"]).count).to eq(1)
+    I18n.locale = "fr"
+    expect(I18n.t ("js.filters.latest.title")).to eq("Wowah")
+
+    delete '/admin/multilingual/translations.json', params: {
+      file_type: "client", locale: "fr"
+    }
+    expect(response.status).to eq(200)
+    expect(I18n.t ("js.filters.latest.title")).to eq("Récents")
   end
 
   it "uploads tag translation" do

@@ -77,9 +77,4 @@ class Multilingual::Translation
     return val["_"] if val.is_a?(Hash)
     nil
   end
-
-  def self.setup
-    Multilingual::CustomTranslation.load
-    Multilingual::TranslationLocale.load
-  end
 end

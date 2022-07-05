@@ -9,7 +9,6 @@ module Multilingual
   end
 
   def self.setup
-    Multilingual::Translation.setup
     Multilingual::Language.setup
     Multilingual::Cache.setup
   end
