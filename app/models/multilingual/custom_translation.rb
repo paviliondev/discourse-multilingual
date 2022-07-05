@@ -75,9 +75,9 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   end
 
   def process_data(translations, unload = false)
-    translations.each do |key, translation|
+    translations.each do |k, translation|
       if self.file_type === :tag && SiteSetting.multilingual_tag_translations_enforce_format
-        translations[key] = DiscourseTagging.clean_tag(translation)
+        translations[k] = DiscourseTagging.clean_tag(translation)
       end
       if interface_file
         translation.each do |key, value|
@@ -115,7 +115,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
         end
       end.reduce(&:merge)
     else
-      {prefix => object}
+      { prefix => object }
     end
   end
 
