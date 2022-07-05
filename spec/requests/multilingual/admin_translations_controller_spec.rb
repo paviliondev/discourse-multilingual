@@ -31,6 +31,7 @@ describe Multilingual::AdminTranslationsController do
     expect(Multilingual::CustomTranslation.by_type(["category_name"]).count).to eq(1)
     expect(Multilingual::Translation.get("category_name", ["welcome"])).to eq({ wbp: "pardu-pardu-mani" })
     expect(Multilingual::Translation.get("category_name", ["knowledge", "clients"])).to eq({ wbp: "kalyardi milya-pinyi" })
+    expect(Multilingual::Translation.get("category_name", ["knowledge"])).to eq({ wbp: "milya-pinyi" })
     get '/admin/multilingual/translations.json'
     expect(response.status).to eq(200)
     parsed = response.parsed_body

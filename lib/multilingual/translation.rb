@@ -51,7 +51,11 @@ class Multilingual::Translation
       if data.first.last.is_a?(Hash)
         new_keys = keys.dup
         new_keys.shift
-        look_for(data.first.last, new_keys)
+        if new_keys == [] then
+          look_for(data.first.last, ["_"])
+        else
+          look_for(data.first.last, new_keys)
+        end
       else
         data.first.last
       end
