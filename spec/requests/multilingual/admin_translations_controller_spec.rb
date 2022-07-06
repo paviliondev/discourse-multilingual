@@ -28,8 +28,15 @@ describe Multilingual::AdminTranslationsController do
       file: Rack::Test::UploadedFile.new(category_translation)
     }
     expect(response.status).to eq(200)
-    expect(Multilingual::TranslationFile.by_type(["category_name"]).count).to eq(1)
-    expect(Multilingual::Translation.get("category_name", ["welcome"])).to eq({ "wbp" => "pardu-pardu-mani" })
+    expect(Multilingual::CustomTranslation.by_type(["category_name"]).count).to eq(1)
+    expect(Multilingual::Translation.get("category_name", ["welcome"])).to eq({ wbp: "pardu-pardu-mani" })
+    expect(Multilingual::Translation.get("category_name", ["knowledge", "clients"])).to eq({ wbp: "kalyardi milya-pinyi" })
+    expect(Multilingual::Translation.get("category_name", ["knowledge"])).to eq({ wbp: "milya-pinyi" })
+    get '/admin/multilingual/translations.json'
+    expect(response.status).to eq(200)
+    parsed = response.parsed_body
+    expect(parsed.first["locale"]).to eq ("wbp")
+    expect(parsed.first["file_type"]).to eq ("category_name")
   end
 
   it "uploads server locale" do
@@ -37,7 +44,7 @@ describe Multilingual::AdminTranslationsController do
       file: Rack::Test::UploadedFile.new(server_locale)
     }
     expect(response.status).to eq(200)
-    expect(Multilingual::TranslationFile.by_type(["server"]).count).to eq(1)
+    expect(Multilingual::CustomTranslation.by_type(["server"]).count).to eq(1)
     I18n.locale = "wbp"
     expect(I18n.t 'topics').to eq("tematy")
     expect(I18n.t 'views.mountain').to eq("góry")
@@ -48,7 +55,7 @@ describe Multilingual::AdminTranslationsController do
       file: Rack::Test::UploadedFile.new(tag_translation)
     }
     expect(response.status).to eq(200)
-    expect(Multilingual::TranslationFile.by_type(["tag"]).count).to eq(1)
-    expect(Multilingual::Translation.get("tag", "wbp")).to eq({ "pavilion" => "parnka", "follow" => "ngurra" })
+    expect(Multilingual::CustomTranslation.by_type(["tag"]).count).to eq(1)
+    expect(Multilingual::Translation.get("tag")).to eq({ wbp: { "pavilion" => "parnka", "follow" => "ngurra" } })
   end
 end

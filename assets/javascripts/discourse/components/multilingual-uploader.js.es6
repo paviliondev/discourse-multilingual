@@ -8,8 +8,9 @@ import I18n from "I18n";
 export default Component.extend(UppyUploadMixin, {
   type: "yml",
   addDisabled: alias("uploading"),
+  elementId: "multilingual-uploader",
   classNameBindings: [":multilingual-uploader", "uploadType"],
-  code: null,
+  locale: null,
   message: null,
 
   _init: on("didInsertElement", function () {

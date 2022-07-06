@@ -1,48 +1,55 @@
 # frozen_string_literal: true
-class Multilingual::TranslationFile
-  include ActiveModel::Serialization
+class Multilingual::CustomTranslation < ActiveRecord::Base
+  self.table_name = 'custom_translations'
 
   PATH ||= "#{Multilingual::PLUGIN_PATH}/config/translations".freeze
   KEY ||= 'file'.freeze
 
-  attr_accessor :code, :type
-
-  def initialize(opts)
-    @code = opts[:code].to_sym
-    @type = opts[:type].to_sym
-  end
+  validates :file_name, :locale, :file_type, :file_ext, :translation_data, presence: true
+  serialize :translation_data
+  before_save :save_file
+  after_save :after_save
 
   def exists?
-    self.class.all.map(&:code).include?(@code)
+    self.class.all.map(&:locale).include?(self.locale)
   end
 
   def open
     YAML.safe_load(File.open(path)) if exists?
   end
 
-  def save(translations)
+  def save_file
     result = Hash.new
 
-    processed = process(translations)
+    processed = process(self.translation_data)
     result[:error] = processed[:error] if processed[:error]
 
     return result if result[:error]
 
-    file = format(processed[:translations])
-    unless @type == :server
-      File.open(path, 'w') { |f| f.write file.to_yaml }
+    if self.file_type == "client"
+      File.open(path, 'w') { |f| f.write file_name.to_yaml }
 
       config = Rails.application.config
 
       config.i18n.load_path += Dir[path]
+
+      result = restore_file(processed[:translations])
+    else
+      result = processed[:translations][self.locale]
     end
 
-    after_save
     result
   end
 
+  def restore_file(processed_translations)
+    file = format(processed_translations)
+    File.open(path, 'w') { |f| f.write file.to_yaml }
+
+    result = processed_translations
+  end
+
   def interface_file
-    @type === :server || @type === :client
+    self.file_type === "server" || self.file_type === "client"
   end
 
   def remove
@@ -53,20 +60,22 @@ class Multilingual::TranslationFile
   end
 
   def after_save
+    add_locale_to_cache
     Multilingual::TranslationLocale.register(self) if interface_file
-    unless @type == :server
-      after_all(reload_i18n: true, locale: @code, action: :save)
+    if self.file_type == "client"
+      after_all(reload_i18n: true, locale: self.locale, action: :save)
     end
   end
 
   def after_remove
+    self.destroy!
     Multilingual::TranslationLocale.deregister(self) if interface_file
-    after_all(reload_i18n: true, locale: @code, action: :remove)
+    after_all(reload_i18n: true, locale: self.locale, action: :remove)
   end
 
   def after_all(opts = {})
     Multilingual::Cache.refresh!(opts)
-    Multilingual::Cache.refresh_clients(@code)
+    Multilingual::Cache.refresh_clients(self.locale)
   end
 
   def path
@@ -74,7 +83,7 @@ class Multilingual::TranslationFile
   end
 
   def filename
-    "#{@type.to_s}.#{@code.to_s}.yml"
+    "#{self.file_type.to_s}.#{self.locale.to_s}.yml"
   end
 
   def process(translations)
@@ -89,7 +98,7 @@ class Multilingual::TranslationFile
         result[:error] = "language not supported"
       end
 
-      if @type === :client &&
+      if self.file_type === :client &&
         (translations.values.first.keys + ['js', 'admin_js', 'wizard_js']).uniq.length != 3
 
         result[:error] = "file format error"
@@ -100,11 +109,11 @@ class Multilingual::TranslationFile
 
     translations.each do |key, translation|
 
-      if @type === :tag && SiteSetting.multilingual_tag_translations_enforce_format
+      if self.file_type === :tag && SiteSetting.multilingual_tag_translations_enforce_format
         translations[key] = DiscourseTagging.clean_tag(translation)
       end
-      if @type === :server
-        I18n.backend.store_translations(@code.to_sym, translation)
+      if self.file_type === "server"
+        I18n.backend.store_translations(self.locale.to_sym, translation)
       end
     end
 
@@ -120,18 +129,14 @@ class Multilingual::TranslationFile
     file
   end
 
-  def self.all
-    Multilingual::Cache.wrap(KEY) do
-      filenames.reduce([]) do |result, filename|
-        opts = process_filename(filename)
-        result.push(Multilingual::TranslationFile.new(opts)) if !opts[:error]
-        result
-      end
-    end
+  def add_locale_to_cache
+    existing_locales = I18n.config.available_locales
+    new_locales      = existing_locales.push(self.locale.to_sym)
+    I18n.config.available_locales = new_locales
   end
 
   def self.by_type(types)
-    all.select { |f| [*types].map(&:to_sym).include?(f.type) }
+    all.select { |f| [*types].map(&:to_sym).include?(f[:file_type].to_sym) }
   end
 
   def self.filenames
@@ -141,26 +146,6 @@ class Multilingual::TranslationFile
       load
       filenames
     end
-  end
-
-  def self.process_filename(filename)
-    result = Hash.new
-    parts = filename.split('.')
-    result = {
-      type: parts[0],
-      code: parts[1],
-      ext: parts[2]
-    }
-
-    if !Multilingual::Translation.validate_type(result[:type])
-      result[:error] = 'invalid type'
-    end
-
-    if result[:ext] != 'yml'
-      result[:error] = "incorrect format"
-    end
-
-    result
   end
 
   def self.load

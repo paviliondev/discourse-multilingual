@@ -34,16 +34,16 @@ after_initialize do
     ../lib/multilingual/language/content.rb
     ../lib/multilingual/language/interface.rb
     ../lib/multilingual/language.rb
-    ../lib/multilingual/translation/file.rb
     ../lib/multilingual/translation/locale.rb
     ../lib/multilingual/translation.rb
     ../lib/multilingual/translator.rb
     ../lib/multilingual/locale_loader.rb
     ../jobs/update_content_language_tags.rb
     ../config/routes.rb
+    ../app/models/multilingual/custom_translation.rb
     ../app/serializers/multilingual/basic_language_serializer.rb
     ../app/serializers/multilingual/language_serializer.rb
-    ../app/serializers/multilingual/translation_file_serializer.rb
+    ../app/serializers/multilingual/custom_translation_serializer.rb
     ../app/controllers/multilingual/admin_controller.rb
     ../app/controllers/multilingual/admin_languages_controller.rb
     ../app/controllers/multilingual/admin_translations_controller.rb

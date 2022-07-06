@@ -7,7 +7,7 @@ class Multilingual::Cache
 
   def self.load_classes
     %w[
-      translation_file
+      custom_translation
       content_tag
       content_tag/conflict
       language_exclusion
@@ -92,6 +92,7 @@ class Multilingual::Cache
   end
 
   def self.reset
+    self.load_classes if @listable_classes == nil
     @listable_classes.each { |klass| Multilingual::Cache.new(klass::KEY).delete }
 
     Multilingual::Translation::CUSTOM_TYPES.each do |type|
@@ -100,7 +101,13 @@ class Multilingual::Cache
   end
 
   def self.instantiate
-    @listable_classes.each { |klass| klass.send(:all) if klass.respond_to?(:all) }
+    @listable_classes.each do |klass|
+      if klass.respond_to?(:add_locale_to_cache)
+      # klass.send(:add_locale_to_cache)
+      else
+        klass.send(:all) if klass.respond_to?(:all)
+      end
+    end
     @state = 'cached'
   end
 
