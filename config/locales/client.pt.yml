@@ -4,44 +4,44 @@ pt:
       groups:
         content_tags:
           delete:
-            btn: "Excluir todas as tags"
-            confirm: "Tem certeza que deseja excluir todas as tags do idioma de conteúdo?"
-            message: "Excluir todas as tags"
+            btn: "Delete all tags"
+            confirm: "Are you sure you want to delete all content languge tags?"
+            message: "Deleting all tags"
           update:
-            btn: "Atualizar todas as tags"
-            message: "Atualizar todas as tags"
+            btn: "Update all tags"
+            message: "Updating all tags"
     topic:
       content_languages:
-        placeholder: "idioma(s) de tópicos"
+        placeholder: "topic language(s)"
     user:
       content_languages:
-        title: "Idiomas de Conteúdo"
-        placeholder: "Selecione idiomas de conteúdo"
-        instructions: "Idiomas de conteúdo para usuário"
-        set: "Defina idiomas de conteúdo"
+        title: "Content languages"
+        placeholder: "Select content languages"
+        instructions: "User content languages"
+        set: "Set content languages"
   admin_js:
     multilingual:
-      label: "Multilíngue"
-      code: "Código"
-      documentation: Documentação
+      label: "Multilingual"
+      locale: "Locale"
+      documentation: Documentation
       languages:
-        title: "Idiomas"
-        custom: "Personalizado"
+        title: "Languages"
+        custom: "Custom"
         base: "Base"
-        name: "Nome"
-        native_name: "Nome Nativo"
-        content: "Conteúdo"
-        content_tag: "Tag de Conteúdo"
-        content_tag_conflict: "conflito de tag"
+        name: "Name"
+        native_name: "Native Name"
+        content: "Content"
+        content_tag: "Content Tag"
+        content_tag_conflict: "tag conflict"
         interface: "Interface"
-        type: "Tipo"
-        actions: "Ações"
-        interface_not_supported: "sem traduções"
-        query_placeholder: "código ou nome"
-        custom_only: "somente personalizado"
-        disabled: "desabilitado"
-        toggle_all: "todos"
+        type: "Type"
+        actions: "Actions"
+        interface_not_supported: "no translations"
+        query_placeholder: "code or name"
+        custom_only: "custom only"
+        disabled: "disabled"
+        toggle_all: "all"
       translations:
-        type: "Tipo"
-        remove: "Excluir"
-        title: "Traduções"
+        type: "Type"
+        remove: "Remove"
+        title: "Translations"
