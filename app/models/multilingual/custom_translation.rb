@@ -7,18 +7,14 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
   validates :file_name, :locale, :file_type, :file_ext, :translation_data, presence: true
   serialize :translation_data
-  before_save :save_file
+  before_save :process_file
   after_save :after_save
 
   def exists?
     self.class.all.map(&:locale).include?(self.locale)
   end
 
-  def open
-    YAML.safe_load(File.open(path)) if exists?
-  end
-
-  def save_file
+  def process_file
     result = Hash.new
 
     processed = process(self.translation_data)
@@ -26,64 +22,28 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
     return result if result[:error]
 
-    if self.file_type == "client"
-      File.open(path, 'w') { |f| f.write file_name.to_yaml }
-
-      config = Rails.application.config
-
-      config.i18n.load_path += Dir[path]
-
-      result = restore_file(processed[:translations])
-    else
-      result = processed[:translations][self.locale]
-    end
-
-    result
-  end
-
-  def restore_file(processed_translations)
-    file = format(processed_translations)
-    File.open(path, 'w') { |f| f.write file.to_yaml }
-
-    result = processed_translations
+    result = processed[:translations][self.locale]
   end
 
   def interface_file
     self.file_type === "server" || self.file_type === "client"
   end
 
-  def remove
-    if exists?
-      File.delete(path) if File.exist?(path)
-      after_remove
-    end
+  def after_save
+    add_locale
   end
 
-  def after_save
-    add_locale_to_cache
-    Multilingual::TranslationLocale.register(self) if interface_file
-    if self.file_type == "client"
-      after_all(reload_i18n: true, locale: self.locale, action: :save)
+  def remove
+    if exists?
+      if interface_file
+        process_data(self.translation_data, true)
+      end
+      after_remove
     end
   end
 
   def after_remove
     self.destroy!
-    Multilingual::TranslationLocale.deregister(self) if interface_file
-    after_all(reload_i18n: true, locale: self.locale, action: :remove)
-  end
-
-  def after_all(opts = {})
-    Multilingual::Cache.refresh!(opts)
-    Multilingual::Cache.refresh_clients(self.locale)
-  end
-
-  def path
-    PATH + "/#{filename}"
-  end
-
-  def filename
-    "#{self.file_type.to_s}.#{self.locale.to_s}.yml"
   end
 
   def process(translations)
@@ -107,19 +67,56 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
     return result if result[:error]
 
-    translations.each do |key, translation|
-
-      if self.file_type === :tag && SiteSetting.multilingual_tag_translations_enforce_format
-        translations[key] = DiscourseTagging.clean_tag(translation)
-      end
-      if self.file_type === "server"
-        I18n.backend.store_translations(self.locale.to_sym, translation)
-      end
-    end
+    process_data(translations)
 
     result[:translations] = translations
 
     result
+  end
+
+  def process_data(translations, unload = false)
+    translations.each do |k, translation|
+      if self.file_type === :tag && SiteSetting.multilingual_tag_translations_enforce_format
+        translations[k] = DiscourseTagging.clean_tag(translation)
+      end
+      if interface_file
+        translation.each do |key, value|
+          if value.is_a?(Hash)
+            key_values = dot_it(value, key)
+            key_values.each do |dotted_key, dotted_value|
+              if !unload
+                TranslationOverride.create!(locale: self.locale, translation_key: dotted_key, value: dotted_value)
+              else
+                override = TranslationOverride.find_by(locale: self.locale, translation_key: dotted_key, value: dotted_value)
+                override.destroy! if override
+              end
+            end
+          else
+            if !unload
+              TranslationOverride.create!(locale: self.locale, translation_key: key, value: value)
+            else
+              override = TranslationOverride.find_by(locale: self.locale, translation_key: key, value: value)
+              override.destroy! if override
+            end
+          end
+        end
+        TranslationOverride.reload_all_overrides!
+      end
+    end
+  end
+
+  def dot_it(object, prefix = nil)
+    if object.is_a? Hash
+      object.map do |key, value|
+        if prefix
+          dot_it value, "#{prefix}.#{key}"
+        else
+          dot_it value, "#{key}"
+        end
+      end.reduce(&:merge)
+    else
+      { prefix => object }
+    end
   end
 
   ## Use this to apply any necessary formatting
@@ -129,7 +126,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
     file
   end
 
-  def add_locale_to_cache
+  def add_locale
     existing_locales = I18n.config.available_locales
     new_locales      = existing_locales.push(self.locale.to_sym)
     I18n.config.available_locales = new_locales
@@ -137,18 +134,5 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
   def self.by_type(types)
     all.select { |f| [*types].map(&:to_sym).include?(f[:file_type].to_sym) }
-  end
-
-  def self.filenames
-    if Dir.exist?(PATH)
-      Dir.entries(PATH)
-    else
-      load
-      filenames
-    end
-  end
-
-  def self.load
-    Dir.mkdir(PATH) unless Dir.exist?(PATH)
   end
 end
