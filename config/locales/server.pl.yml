@@ -9,7 +9,6 @@ pl:
     multilingual_tag_translations_enforce_format: Enforce Discourse tag formatting on tag translations.
     multilingual_translator_content_tag_sync: >
       Sync content language tags with post languages detected by <a href='https://github.com/discourse/discourse-translator'>Discourse Translator Plugin</a>. Requires Discourse Translator Plugin, and content languages to be enabled.
-    multilingual_enable_custom_translations: Enable custom translations (experimental)
     errors:
       multilingual_disabled: Multilingual plugin is disabled
       multilingual_content_languages_disabled: Content languages are disabled

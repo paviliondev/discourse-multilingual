@@ -9,7 +9,6 @@ es:
     multilingual_tag_translations_enforce_format: Aplicar el formato de etiqueta de Discourse en las traducciones de las etiquetas.
     multilingual_translator_content_tag_sync: >
       Sincronizar las etiquetas de contenido de idiomas con el idioma detectado de las publicaciones realizado por<a href='https://github.com/discourse/discourse-translator'>El Plug-in Traductor de Discourse</a>. Requiere que el Plug-in Traductor de Discourse y los idiomas de contenido estén habilitados.
-    multilingual_enable_custom_translations: Enable custom translations (experimental)
     errors:
       multilingual_disabled: El Plug-in Multilingüe está deshabilitado
       multilingual_content_languages_disabled: Los idiomas de contenido están deshabilitados
