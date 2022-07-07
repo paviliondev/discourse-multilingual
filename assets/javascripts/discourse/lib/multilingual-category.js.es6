@@ -108,4 +108,8 @@ function multilingualCategoryLinkRenderer(category, opts) {
   return `<${tagName} class="badge-wrapper ${extraClasses}" ${href}>${html}</${tagName}>`;
 }
 
-export { multilingualCategoryLinkRenderer, translatedCategoryName, translatedCategoryDescription };
+export {
+  multilingualCategoryLinkRenderer,
+  translatedCategoryName,
+  translatedCategoryDescription,
+};
