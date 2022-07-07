@@ -2,7 +2,7 @@
 class Multilingual::Translation
   KEY ||= "translation"
   CORE_TYPES ||= %w{client server}
-  CUSTOM_TYPES ||= %w{tag category_name}
+  CUSTOM_TYPES ||= %w{tag category_name category_description}
   TYPES = CORE_TYPES + CUSTOM_TYPES
 
   def self.validate_type(type)
@@ -27,7 +27,7 @@ class Multilingual::Translation
 
       result = {}
       data.each do |d|
-        if type == 'category_name'
+        if ['category_name', 'category_description'].include? (type)
 
           yml_data = d["translation_data"]
 
