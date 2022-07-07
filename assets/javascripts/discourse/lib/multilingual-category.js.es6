@@ -16,6 +16,15 @@ function translatedCategoryName(category) {
   return translatedName || get(category, "name");
 }
 
+function translatedCategoryDescription(category) {
+  let translatedDescription;
+  let descriptionTranslations = get(category, "description_translations");
+  if (descriptionTranslations) {
+    translatedDescription = descriptionTranslations[I18n.currentLocale()];
+  }
+  return translatedDescription || get(category, "description_excerpt");
+}
+
 function categoryStripe(color, classes) {
   let style = color ? "style='background-color: #" + color + ";'" : "";
   return "<span class='" + classes + "' " + style + "></span>";
@@ -99,4 +108,4 @@ function multilingualCategoryLinkRenderer(category, opts) {
   return `<${tagName} class="badge-wrapper ${extraClasses}" ${href}>${html}</${tagName}>`;
 }
 
-export { multilingualCategoryLinkRenderer, translatedCategoryName };
+export { multilingualCategoryLinkRenderer, translatedCategoryName, translatedCategoryDescription };
