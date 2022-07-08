@@ -1,7 +1,6 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { default as discourseComputed } from "discourse-common/utils/decorators";
 import { multilingualTagRenderer } from "../lib/multilingual-tag";
-import { multilingualCategoryLinkRenderer } from "../lib/multilingual-category";
 import {
   discoveryParams,
   localeParam,
@@ -50,7 +49,7 @@ export default {
 
     withPluginApi("0.8.36", (api) => {
       api.replaceTagRenderer(multilingualTagRenderer);
-      api.replaceCategoryLinkRenderer(multilingualCategoryLinkRenderer);
+      // api.replaceCategoryLinkRenderer(multilingualCategoryLinkRenderer);
 
       discoveryParams.forEach((param) => {
         api.addDiscoveryQueryParam(param, {
