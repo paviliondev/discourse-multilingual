@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # name: discourse-multilingual
 # about: Features to support multilingual forums
-# version: 1.0
+# version: 0.2.0
 # url: https://github.com/paviliondev/discourse-multilingual
 # authors: Angus McLeod, Robert Barrow
 
