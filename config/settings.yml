@@ -33,6 +33,3 @@ plugins:
   multilingual_translator_content_tag_sync:
     default: false
     validator: TranslatorContentTagValidator
-  multilingual_enable_custom_translations:
-    default: false
-    client: true

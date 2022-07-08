@@ -11,7 +11,6 @@ en:
       Sync content language tags with post languages detected
       by <a href='https://github.com/discourse/discourse-translator'>Discourse Translator Plugin</a>.
       Requires Discourse Translator Plugin, and content languages to be enabled.
-    multilingual_enable_custom_translations: Enable custom translations (experimental)
 
     errors:
       multilingual_disabled: Multilingual plugin is disabled

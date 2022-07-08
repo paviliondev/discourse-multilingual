@@ -4,11 +4,9 @@
       {{nav-item
         route="adminMultilingualLanguages"
         label="multilingual.languages.title"}}
-      {{#if siteSettings.multilingual_enable_custom_translations}}
-        {{nav-item
-          route="adminMultilingualTranslations"
-          label="multilingual.translations.title"}}
-      {{/if}}
+      {{nav-item
+        route="adminMultilingualTranslations"
+        label="multilingual.translations.title"}}
       {{nav-item
         route="tagGroups.edit"
         routeParam=tagGroupId
