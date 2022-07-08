@@ -120,7 +120,7 @@ class Multilingual::Language
   end
 
   def self.after_update(updated)
-   # after_change(updated)
+    after_change(updated)
     Multilingual::ContentTag.update_all
   end
 
