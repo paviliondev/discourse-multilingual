@@ -188,9 +188,9 @@ after_initialize do
 
   add_to_serializer(:current_user, :content_languages) do
     if user_content_languages = object.content_languages
-      user_content_languages.map do |code|
+      user_content_languages.map do |locale|
         Multilingual::BasicLanguageSerializer.new(
-          Multilingual::Language.get(code).first,
+          Multilingual::Language.get(locale).first,
           root: false
         )
       end

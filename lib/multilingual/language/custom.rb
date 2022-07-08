@@ -12,8 +12,8 @@ class Multilingual::CustomLanguage
         key LIKE '#{Multilingual::CustomLanguage::KEY}_%'
       ").each do |record|
         begin
-          code = record.key.split("#{Multilingual::CustomLanguage::KEY}_").last
-          result[code] = JSON.parse(record.value)
+          locale = record.key.split("#{Multilingual::CustomLanguage::KEY}_").last
+          result[locale] = JSON.parse(record.value)
         rescue JSON::ParserError => e
           puts e.message
         end
@@ -23,27 +23,27 @@ class Multilingual::CustomLanguage
     end
   end
 
-  def self.create(code, opts = {})
+  def self.create(locale, opts = {})
     Multilingual::Language.before_change if opts[:run_hooks]
 
     if PluginStore.set(
       Multilingual::PLUGIN_NAME,
-      "#{KEY}_#{code.to_s}",
+      "#{KEY}_#{locale.to_s}",
       opts.with_indifferent_access.slice(*ATTRS)
     )
-      after_create([code]) if opts[:run_hooks]
+      after_create([locale]) if opts[:run_hooks]
       true
     end
   end
 
-  def self.destroy(code, opts = {})
+  def self.destroy(locale, opts = {})
     Multilingual::Language.before_change if opts[:run_hooks]
 
-    Multilingual::LanguageExclusion.set(code, Multilingual::InterfaceLanguage::KEY, enabled: true)
-    Multilingual::LanguageExclusion.set(code, Multilingual::ContentLanguage::KEY, enabled: true)
+    Multilingual::LanguageExclusion.set(locale, Multilingual::InterfaceLanguage::KEY, enabled: true)
+    Multilingual::LanguageExclusion.set(locale, Multilingual::ContentLanguage::KEY, enabled: true)
 
-    if PluginStore.remove(Multilingual::PLUGIN_NAME, "#{KEY}_#{code.to_s}")
-      after_destroy([code]) if opts[:run_hooks]
+    if PluginStore.remove(Multilingual::PLUGIN_NAME, "#{KEY}_#{locale.to_s}")
+      after_destroy([locale]) if opts[:run_hooks]
       true
     end
   end
@@ -58,8 +58,8 @@ class Multilingual::CustomLanguage
     Multilingual::Language.after_change(destroyed)
   end
 
-  def self.is_custom?(code)
-    all.keys.include?(code.to_s)
+  def self.is_custom?(locale)
+    all.keys.include?(locale.to_s)
   end
 
   def self.bulk_create(languages = {})
@@ -80,13 +80,13 @@ class Multilingual::CustomLanguage
     created
   end
 
-  def self.bulk_destroy(codes)
+  def self.bulk_destroy(locales)
     destroyed = []
 
     Multilingual::Language.before_change
 
     PluginStoreRow.transaction do
-      [*codes].each do |c|
+      [*locales].each do |c|
         if destroy(c)
           destroyed.push(c)
         end

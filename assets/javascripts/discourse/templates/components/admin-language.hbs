@@ -1,5 +1,5 @@
-<td class="code">
-  {{language.code}}
+<td class="locale">
+  {{language.locale}}
 </td>
 
 <td class="name">
@@ -13,9 +13,9 @@
 <td class={{contentClass}}>
   {{#if contentDisabled}}
     {{#if language.content_tag_conflict}}
-      {{#link-to "tags.show" language.code}}
+      {{#link-to "tag.show" language.locale}}
         {{d-icon "warning"}}
-        <span>{{i18n "multilingual.languages.content_tag_conflict" tagName=language.code}}</span>
+        <span>{{i18n "multilingual.languages.content_tag_conflict" tagName=language.locale}}</span>
       {{/link-to}}
     {{else}}
       {{i18n "multilingual.languages.disabled"}}
@@ -41,7 +41,7 @@
   {{#if actionsDisabled}}
     {{i18n "multilingual.languages.disabled"}}
   {{else}}
-    {{#d-button action="remove" disabled=removing}}
+    {{#d-button click=(action "remove") disabled=removing}}
       {{#if removing}}
         {{loading-spinner size="small"}}
       {{else}}

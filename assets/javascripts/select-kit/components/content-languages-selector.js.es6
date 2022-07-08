@@ -3,7 +3,7 @@ import MultiSelectComponent from "select-kit/components/multi-select";
 export default MultiSelectComponent.extend({
   classNames: ["content-languages-selector", "classNames"],
   allowAny: false,
-  valueProperty: "code",
+  valueProperty: "locale",
   nameProperty: "name",
   options: {
     filterable: true,
@@ -18,7 +18,7 @@ export default MultiSelectComponent.extend({
       this.initializeContentLanguges &&
       this.currentUser.content_languages.length
     ) {
-      this.set("value", this.currentUser.content_languages[0].code);
+      this.set("value", this.currentUser.content_languages[0].locale);
     }
   },
 });
