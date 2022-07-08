@@ -22,7 +22,7 @@ pt:
   admin_js:
     multilingual:
       label: "Multilíngue"
-      code: "Código"
+      locale: "Locale"
       documentation: Documentação
       languages:
         title: "Idiomas"
