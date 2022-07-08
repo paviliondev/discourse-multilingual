@@ -41,7 +41,7 @@
   {{#if actionsDisabled}}
     {{i18n "multilingual.languages.disabled"}}
   {{else}}
-    {{#d-button action="remove" disabled=removing}}
+    {{#d-button click=(action "remove") disabled=removing}}
       {{#if removing}}
         {{loading-spinner size="small"}}
       {{else}}
