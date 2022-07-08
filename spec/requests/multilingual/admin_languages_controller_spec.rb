@@ -26,15 +26,15 @@ describe Multilingual::AdminLanguagesController do
   it "removes custom languages" do
     Multilingual::CustomLanguage.create('abc', name: 'Custom Language', run_hooks: true)
 
-    delete "/admin/multilingual/languages.json", params: { codes: ['abc'] }
+    delete "/admin/multilingual/languages.json", params: { locales: ['abc'] }
     expect(response.status).to eq(200)
     expect(Multilingual::Language.exists?('abc')).to eq(false)
   end
 
   it "updates languages" do
-    Multilingual::Language.update({ code: 'fr', interface_enabled: false, content_enabled: false }, run_hooks: true)
+    Multilingual::Language.update({ locale: 'fr', interface_enabled: false, content_enabled: false }, run_hooks: true)
 
-    put "/admin/multilingual/languages.json", params: { languages: [ { code: 'fr', content_enabled: true } ] }
+    put "/admin/multilingual/languages.json", params: { languages: [ { locale: 'fr', content_enabled: true } ] }
     expect(response.status).to eq(200)
 
     french = Multilingual::Language.get(['fr']).first

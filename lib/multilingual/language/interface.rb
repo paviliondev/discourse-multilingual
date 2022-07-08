@@ -2,25 +2,25 @@
 class Multilingual::InterfaceLanguage
   include ActiveModel::Serialization
 
-  attr_reader :code, :name
+  attr_reader :locale, :name
 
   KEY ||= 'interface_language'.freeze
 
-  def initialize(code, name)
-    @code = code
+  def initialize(locale, name)
+    @locale = locale
     @name = name
   end
 
-  def self.excluded?(code)
-    Multilingual::LanguageExclusion.get(KEY, code)
+  def self.excluded?(locale)
+    Multilingual::LanguageExclusion.get(KEY, locale)
   end
 
-  def self.supported?(code)
-    self.all.include?(code.to_s)
+  def self.supported?(locale)
+    self.all.include?(locale.to_s)
   end
 
-  def self.enabled?(code)
-    Multilingual::Language.exists?(code) && supported?(code) && !excluded?(code)
+  def self.enabled?(locale)
+    Multilingual::Language.exists?(locale) && supported?(locale) && !excluded?(locale)
   end
 
   def self.all
@@ -28,8 +28,8 @@ class Multilingual::InterfaceLanguage
   end
 
   def self.list
-    self.all.select { |code| self.enabled?(code) }
-      .map { |code|self.new(code, Multilingual::Language.all[code]['nativeName']) }
-      .sort_by(&:code)
+    self.all.select { |locale| self.enabled?(locale) }
+      .map { |locale|self.new(locale, Multilingual::Language.all[locale]['nativeName']) }
+      .sort_by(&:locale)
   end
 end

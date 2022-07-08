@@ -5,7 +5,7 @@ class Multilingual::AdminLanguagesController < Admin::AdminController
   end
 
   def remove
-    if Multilingual::CustomLanguage.bulk_destroy(params[:codes])
+    if Multilingual::CustomLanguage.bulk_destroy(params[:locales])
       serialize_languages(Multilingual::Language.filter(filter_params.to_h))
     else
       render json: failed_json
@@ -59,7 +59,7 @@ class Multilingual::AdminLanguagesController < Admin::AdminController
   def language_params
     params.permit(
       languages: [
-        :code,
+        :locale,
         :name,
         :nativeName,
         :custom,

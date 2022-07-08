@@ -4,7 +4,7 @@ class Multilingual::Language
 
   include ActiveModel::Serialization
 
-  attr_accessor :code,
+  attr_accessor :locale,
                 :name,
                 :nativeName,
                 :content_enabled,
@@ -13,23 +13,23 @@ class Multilingual::Language
                 :interface_supported,
                 :custom
 
-  def initialize(code, opts = {})
+  def initialize(locale, opts = {})
 
-    @code = code.to_s
+    @locale = locale.to_s
 
     opts = opts.with_indifferent_access
     @name = opts[:name].to_s
     @nativeName = opts[:nativeName].to_s
 
-    @content_enabled = Multilingual::ContentLanguage.enabled?(@code)
-    @content_tag_conflict = Multilingual::ContentTag::Conflict.exists?(@code)
-    @interface_enabled = Multilingual::InterfaceLanguage.enabled?(@code)
-    @interface_supported = Multilingual::InterfaceLanguage.supported?(@code)
-    @custom = Multilingual::CustomLanguage.is_custom?(@code)
+    @content_enabled = Multilingual::ContentLanguage.enabled?(@locale)
+    @content_tag_conflict = Multilingual::ContentTag::Conflict.exists?(@locale)
+    @interface_enabled = Multilingual::InterfaceLanguage.enabled?(@locale)
+    @interface_supported = Multilingual::InterfaceLanguage.supported?(@locale)
+    @custom = Multilingual::CustomLanguage.is_custom?(@locale)
   end
 
-  def self.get(codes)
-    [*codes].map { |code| self.new(code, self.all[code]) }
+  def self.get(locales)
+    [*locales].map { |locale| self.new(locale, self.all[locale]) }
   end
 
   def self.all
@@ -41,14 +41,14 @@ class Multilingual::Language
   def self.base
     result = ::LocaleSiteSetting.language_names
 
-    ::LocaleSiteSetting.supported_locales.each do |code|
-      if !::LocaleSiteSetting.language_names[code]
-        parts = code.split('_')
-        primary_code = parts.first
+    ::LocaleSiteSetting.supported_locales.each do |locale|
+      if !::LocaleSiteSetting.language_names[locale]
+        parts = locale.split('_')
+        primary_locale = parts.first
         region = parts.second
 
-        if region && result[primary_code]
-          result[code] = result.delete(primary_code)
+        if region && result[primary_locale]
+          result[locale] = result.delete(primary_locale)
         end
       end
     end
@@ -56,12 +56,12 @@ class Multilingual::Language
     result
   end
 
-  def self.exists?(code)
-    self.all[code.to_s].present?
+  def self.exists?(locale)
+    self.all[locale.to_s].present?
   end
 
   def self.list
-    self.all.map { |k, v| self.new(k, v) }.sort_by(&:code)
+    self.all.map { |k, v| self.new(k, v) }.sort_by(&:locale)
   end
 
   def self.filter(params = {})
@@ -71,17 +71,17 @@ class Multilingual::Language
       q = params[:query].downcase
 
       languages = languages.select do |l|
-        l.code.downcase.include?(q) ||
+        l.locale.downcase.include?(q) ||
         l.name.downcase.include?(q)
       end
     end
 
-    type = params[:order].present? ? params[:order].to_sym : :code
+    type = params[:order].present? ? params[:order].to_sym : :locale
 
     languages = languages.sort_by do |l|
       val = l.send(type)
 
-      if [:code, :name, :nativeName].include?(type)
+      if [:locale, :name, :nativeName].include?(type)
         val
       elsif [:content_enabled, :custom].include?(type)
         (val ? 0 : 1)
@@ -107,20 +107,20 @@ class Multilingual::Language
 
       if language[exclusion_prop].in? ["true", "false", true, false]
         updated = Multilingual::LanguageExclusion.set(
-          language[:code],
+          language[:locale],
           exclusion_key,
           enabled: language[exclusion_prop]
         )
       end
     end
 
-    after_update([language[:code]]) if opts[:run_hooks]
+    after_update([language[:locale]]) if opts[:run_hooks]
 
     updated
   end
 
   def self.after_update(updated)
-    after_change(updated)
+   # after_change(updated)
     Multilingual::ContentTag.update_all
   end
 
@@ -128,9 +128,9 @@ class Multilingual::Language
     Multilingual::Cache.state = 'changing'
   end
 
-  def self.after_change(codes = [])
+  def self.after_change(locales = [])
     Multilingual::Cache.refresh!(reload_i18n: true)
-    Multilingual::Cache.refresh_clients(codes)
+    Multilingual::Cache.refresh_clients(locales)
   end
 
   def self.bulk_update(languages)
@@ -141,7 +141,7 @@ class Multilingual::Language
     PluginStoreRow.transaction do
       [*languages].each do |l|
         if update(l)
-          updated.push(l['code'])
+          updated.push(l['locale'])
         end
       end
 

@@ -7,8 +7,8 @@ import { click, visit } from "@ember/test-helpers";
 import { test } from "qunit";
 
 const content_languages = [
-  { code: "aa", name: "Qafár af" },
-  { code: "ab", name: "аҧсуа бызшәа" },
+  { locale: "aa", name: "Qafár af" },
+  { locale: "ab", name: "аҧсуа бызшәа" },
 ];
 
 acceptance(

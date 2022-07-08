@@ -1,7 +1,7 @@
 import Site from "discourse/models/site";
 
-function isContentLanguage(code, siteSettings) {
-  if (!code || !siteSettings.multilingual_content_languages_enabled) {
+function isContentLanguage(locale, siteSettings) {
+  if (!locale || !siteSettings.multilingual_content_languages_enabled) {
     return false;
   }
 
@@ -10,7 +10,7 @@ function isContentLanguage(code, siteSettings) {
     return false;
   }
 
-  return site.content_languages.find((cl) => cl.code === code);
+  return site.content_languages.find((cl) => cl.locale === locale);
 }
 
 export { isContentLanguage };

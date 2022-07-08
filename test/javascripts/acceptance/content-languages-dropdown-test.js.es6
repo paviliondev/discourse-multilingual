@@ -6,7 +6,7 @@ import {
 import { test } from "qunit";
 import { click, visit } from "@ember/test-helpers";
 
-const content_languages = [{ code: "aa", name: "Qafár af" }];
+const content_languages = [{ locale: "aa", name: "Qafár af" }];
 
 acceptance(
   "Discovery navigation when topic filtering disabled",

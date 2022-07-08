@@ -28,9 +28,9 @@ export default Component.extend({
     return `multilingual.languages.${custom ? "custom" : "base"}`;
   },
 
-  @discourseComputed("language.code")
-  interfaceToggleDisabled(code) {
-    return code === "en";
+  @discourseComputed("language.locale")
+  interfaceToggleDisabled(locale) {
+    return locale === "en";
   },
 
   @discourseComputed("language.content_tag_conflict")
@@ -76,8 +76,8 @@ export default Component.extend({
   actions: {
     remove() {
       this.set("removing", true);
-      let codes = [this.get("language.code")];
-      MultilingualLanguage.remove(codes).then((result) => {
+      let locales = [this.get("language.locale")];
+      MultilingualLanguage.remove(locales).then((result) => {
         this.set("removing", false);
         this.removed(result);
       });

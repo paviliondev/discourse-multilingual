@@ -3,7 +3,7 @@ import { test } from "qunit";
 import { topicList } from "../fixtures/topic-list";
 import { visit } from "@ember/test-helpers";
 
-const content_languages = [{ code: "aa", name: "Qafár af" }];
+const content_languages = [{ locale: "aa", name: "Qafár af" }];
 
 acceptance("Content language tags", function (needs) {
   needs.user();

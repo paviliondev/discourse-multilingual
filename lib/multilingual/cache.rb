@@ -118,13 +118,13 @@ class Multilingual::Cache
     instantiate_core(opts)
   end
 
-  def self.refresh_clients(codes)
-    codes = [*codes].map(&:to_s)
-    changing_default = codes.include?(SiteSetting.default_locale.to_s)
+  def self.refresh_clients(locales)
+    locales = [*locales].map(&:to_s)
+    changing_default = locales.include?(SiteSetting.default_locale.to_s)
     user_ids = nil
 
     if !changing_default && SiteSetting.allow_user_locale
-      user_ids = User.where(locale: codes).pluck(:id)
+      user_ids = User.where(locale: locales).pluck(:id)
     end
 
     if changing_default || user_ids
