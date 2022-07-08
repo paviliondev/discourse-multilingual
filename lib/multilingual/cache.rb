@@ -126,8 +126,7 @@ class Multilingual::Cache
     if !changing_default && SiteSetting.allow_user_locale
       user_ids = User.where(locale: locales).pluck(:id)
     end
-
-    if changing_default || user_ids
+    if changing_default || user_ids.present?
       Discourse.request_refresh!(user_ids: user_ids)
     end
   end
