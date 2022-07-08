@@ -59,7 +59,7 @@ class Multilingual::AdminLanguagesController < Admin::AdminController
   end
 
   def remove_params
-    params.permit(:locales => [])
+    params.permit(locales: [])
   end
 
   def language_params
