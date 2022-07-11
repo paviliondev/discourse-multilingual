@@ -166,7 +166,7 @@ after_initialize do
 
   add_class_method(:js_locale_helper, :output_locale_tags) do |locale_str|
     <<~JS
-      I18n.tag_translations = #{Multilingual::Translation.get("tag").to_json[locale_str.to_sym]};
+      I18n.tag_translations = #{Multilingual::Translation.get("tag")[locale_str.to_sym]};
     JS
   end
 
