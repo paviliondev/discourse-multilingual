@@ -49,7 +49,6 @@ export default {
 
     withPluginApi("0.8.36", (api) => {
       api.replaceTagRenderer(multilingualTagRenderer);
-      // api.replaceCategoryLinkRenderer(multilingualCategoryLinkRenderer);
 
       discoveryParams.forEach((param) => {
         api.addDiscoveryQueryParam(param, {
