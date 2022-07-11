@@ -30,6 +30,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   end
 
   def after_save
+    Discourse.cache.clear
     add_locale
   end
 
