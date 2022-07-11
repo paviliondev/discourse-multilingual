@@ -197,6 +197,10 @@ after_initialize do
     end
   end
 
+  add_to_serializer(:basic_category, :slug_path) do
+    object.slug_path
+  end
+
   add_to_serializer(:basic_category, :name) do
     object.uncategorized? ? I18n.t('uncategorized_category_name', locale: SiteSetting.default_locale) :
     ((scope && scope.current_user ? Multilingual::Translation.get("category_name", object.slug_path)[scope.current_user.locale.to_sym] :
@@ -219,6 +223,15 @@ after_initialize do
     object.uncategorized? ? I18n.t('category.uncategorized_description', locale: SiteSetting.default_locale) :
     ((scope && scope.current_user ? Multilingual::Translation.get("category_description", object.slug_path)[scope.current_user.locale.to_sym] :
     object.description_excerpt) || object.description_excerpt)
+  end
+
+  add_to_serializer(:site, :categories) do
+    object.categories.map do |c|
+      c[:name] = c[:slug] == "uncategorized" ? I18n.t('uncategorized_category_name', locale: SiteSetting.default_locale) :
+      ((scope && scope.current_user ? Multilingual::Translation.get("category_name", c[:slug_path])[scope.current_user.locale.to_sym] :
+      c[:name]) || c[:name])
+      c.to_h
+    end
   end
 
   add_to_serializer(:basic_category, :include_name_translations?) { name_translations.present? }
