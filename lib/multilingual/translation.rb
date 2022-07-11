@@ -57,7 +57,11 @@ class Multilingual::Translation
           look_for(data.first.last, new_keys)
         end
       else
-        data.first.last
+        if keys.count == 1
+          data.first.last
+        else
+          nil
+        end
       end
     else
       new_data = data.dup
