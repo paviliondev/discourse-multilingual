@@ -18,7 +18,7 @@ export default Component.extend({
   @observes("allInterfaceEnabled")
   updateAllInterface() {
     this.languages.forEach((l) => {
-      if (l.code !== "en") {
+      if (l.locale !== "en") {
         set(l, "interface_enabled", this.allInterfaceEnabled);
       }
     });

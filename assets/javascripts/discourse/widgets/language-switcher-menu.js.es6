@@ -27,7 +27,7 @@ export default createWidget("language-switcher-menu", {
       available.map((l) => {
         let className = "ls-language";
 
-        if (l.code === currentLocale) {
+        if (l.locale === currentLocale) {
           className += " current";
         }
 
@@ -36,7 +36,7 @@ export default createWidget("language-switcher-menu", {
           this.attach("link", {
             className,
             action: "change",
-            actionParam: l.code,
+            actionParam: l.locale,
             rawLabel: l.name,
           })
         );
@@ -44,8 +44,8 @@ export default createWidget("language-switcher-menu", {
     );
   },
 
-  change(code) {
-    addParam(localeParam, code, { add_cookie: true, ctx: this });
+  change(locale) {
+    addParam(localeParam, locale, { add_cookie: true, ctx: this });
   },
 
   html() {

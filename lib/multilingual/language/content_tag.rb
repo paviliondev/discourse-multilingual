@@ -88,9 +88,9 @@ class Multilingual::ContentTag
 
       Multilingual::Language.list.each do |l|
         if l.content_enabled
-          enable.push(l.code) if all.exclude?(l.code)
+          enable.push(l.locale) if all.exclude?(l.locale)
         else
-          disable.push(l.code) if all.include?(l.code)
+          disable.push(l.locale) if all.include?(l.locale)
         end
       end
 
@@ -101,16 +101,16 @@ class Multilingual::ContentTag
     end
   end
 
-  def self.bulk_update(codes, action)
+  def self.bulk_update(locales, action)
     tag_groups = []
     tags = []
 
-    [*codes].each do |code|
+    [*locales].each do |locale|
       is_new = false
-      tag = Tag.find_by(name: code)
+      tag = Tag.find_by(name: locale)
 
       if !tag
-        tag = Tag.new(name: code)
+        tag = Tag.new(name: locale)
         is_new = true
       end
 
@@ -135,8 +135,8 @@ class Multilingual::ContentTag
     end
   end
 
-  def self.bulk_destroy(codes)
-    Tag.where("id in (#{QUERY}) and name in (?)", codes).destroy_all
+  def self.bulk_destroy(locales)
+    Tag.where("id in (#{QUERY}) and name in (?)", locales).destroy_all
     Multilingual::Cache.new(KEY).delete
   end
 
@@ -175,8 +175,8 @@ class Multilingual::ContentTag
       Multilingual::Cache.wrap(Conflict::KEY) { all_uncached }
     end
 
-    def self.exists?(code)
-      all.include?(code)
+    def self.exists?(locale)
+      all.include?(locale)
     end
   end
 end

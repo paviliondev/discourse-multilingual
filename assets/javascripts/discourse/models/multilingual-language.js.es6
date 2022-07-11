@@ -38,10 +38,10 @@ MultilingualLanguage.reopenClass({
     }).catch(popupAjaxError);
   },
 
-  remove(codes) {
+  remove(locales) {
     return ajax(LanguagesPath, {
       method: "DELETE",
-      data: Object.assign(getParams(), { codes }),
+      data: Object.assign(getParams(), { locales }),
     }).catch(popupAjaxError);
   },
 });

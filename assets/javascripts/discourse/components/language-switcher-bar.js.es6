@@ -20,12 +20,12 @@ export default Component.extend({
     );
 
     availableLanguages.forEach((l) => {
-      if (l.code === currentLanguage) {
+      if (l.locale === currentLanguage) {
         l.set("class", `${l.class} current`);
 
-        if (visibleList.indexOf(l.code) === -1) {
+        if (visibleList.indexOf(l.locale) === -1) {
           visibleList.pop();
-          visibleList.unshift(l.code);
+          visibleList.unshift(l.locale);
         }
       }
     });
@@ -35,7 +35,7 @@ export default Component.extend({
     let hiddenLanguages = [];
     availableLanguages.forEach((l) => {
       if (
-        visibleList.indexOf(l.code) > -1 &&
+        visibleList.indexOf(l.locale) > -1 &&
         visibleLanguages.length < visibleLimit
       ) {
         visibleLanguages.push(l);
@@ -72,9 +72,9 @@ export default Component.extend({
   },
 
   actions: {
-    change(code) {
+    change(locale) {
       this.set("showHidden", false);
-      addParam(localeParam, code, { add_cookie: true, ctx: this });
+      addParam(localeParam, locale, { add_cookie: true, ctx: this });
     },
 
     toggleHidden() {

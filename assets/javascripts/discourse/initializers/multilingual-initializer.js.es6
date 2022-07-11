@@ -67,7 +67,7 @@ export default {
         availableLocales() {
           return this.site.interface_languages.map((l) => {
             return {
-              value: l.code,
+              value: l.locale,
               name: l.name,
             };
           });
@@ -102,14 +102,14 @@ export default {
               }
 
               if (rawUserLanguages) {
-                userLanguages = rawUserLanguages.map((code) => {
-                  return contentLanguages.find((l) => l.code === code);
+                userLanguages = rawUserLanguages.map((locale) => {
+                  return contentLanguages.find((l) => l.locale === locale);
                 });
               }
 
               // See workaround above
               userLanguages = userLanguages.filter(
-                (l) => l && isContentLanguage(l.code, siteSettings)
+                (l) => l && isContentLanguage(l.locale, siteSettings)
               );
 
               currentUser.set("content_languages", userLanguages);
