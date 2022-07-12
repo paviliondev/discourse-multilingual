@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # name: discourse-multilingual
 # about: Features to support multilingual forums
-# version: 0.2.0
+# version: 0.2.1
 # url: https://github.com/paviliondev/discourse-multilingual
 # authors: Angus McLeod, Robert Barrow
 
@@ -166,7 +166,7 @@ after_initialize do
 
   add_class_method(:js_locale_helper, :output_locale_tags) do |locale_str|
     <<~JS
-      I18n.tag_translations = #{Multilingual::Translation.get("tag", locale_str).to_json};
+      I18n.tag_translations = #{Multilingual::Translation.get("tag").to_json};
     JS
   end
 
@@ -197,12 +197,41 @@ after_initialize do
     end
   end
 
-  add_to_serializer(:basic_category, :name_translations) do
-    Multilingual::Translation.get("category_name", object.slug_path)
+  add_to_serializer(:basic_category, :slug_path) do
+    object.slug_path
   end
 
-  add_to_serializer(:basic_category, :description_translations) do
-    Multilingual::Translation.get("category_description", object.slug_path)
+  add_to_serializer(:basic_category, :name) do
+    object.uncategorized? ? I18n.t('uncategorized_category_name', locale: SiteSetting.default_locale) :
+    ((scope && scope.current_user ? Multilingual::Translation.get("category_name", object.slug_path)[scope.current_user.locale.to_sym] :
+    object.name) || object.name)
+  end
+
+  add_to_serializer(:basic_category, :description_text) do
+    object.uncategorized? ? I18n.t('category.uncategorized_description', locale: SiteSetting.default_locale) :
+    ((scope && scope.current_user ? Multilingual::Translation.get("category_description", object.slug_path)[scope.current_user.locale.to_sym] :
+    object.description_text) || object.description_text)
+  end
+
+  add_to_serializer(:basic_category, :description) do
+    object.uncategorized? ? I18n.t('category.uncategorized_description', locale: SiteSetting.default_locale) :
+    ((scope && scope.current_user ? Multilingual::Translation.get("category_description", object.slug_path)[scope.current_user.locale.to_sym] :
+    object.description) || object.description)
+  end
+
+  add_to_serializer(:basic_category, :description_excerpt) do
+    object.uncategorized? ? I18n.t('category.uncategorized_description', locale: SiteSetting.default_locale) :
+    ((scope && scope.current_user ? Multilingual::Translation.get("category_description", object.slug_path)[scope.current_user.locale.to_sym] :
+    object.description_excerpt) || object.description_excerpt)
+  end
+
+  add_to_serializer(:site, :categories) do
+    object.categories.map do |c|
+      c[:name] = c[:slug] == "uncategorized" ? I18n.t('uncategorized_category_name', locale: SiteSetting.default_locale) :
+      ((scope && scope.current_user && c[:slug_path] ? Multilingual::Translation.get("category_name", c[:slug_path])[scope.current_user.locale.to_sym] :
+      c[:name]) || c[:name])
+      c.to_h
+    end
   end
 
   add_to_serializer(:basic_category, :include_name_translations?) { name_translations.present? }

@@ -46,7 +46,7 @@ class Multilingual::Translation
   end
 
   def self.look_for(data, keys)
-    return nil if data == {}
+    return nil if data == {} || !keys.present?
     if keys.first == data.first.first
       if data.first.last.is_a?(Hash)
         new_keys = keys.dup
@@ -57,7 +57,11 @@ class Multilingual::Translation
           look_for(data.first.last, new_keys)
         end
       else
-        data.first.last
+        if keys.count == 1
+          data.first.last
+        else
+          nil
+        end
       end
     else
       new_data = data.dup

@@ -24,6 +24,18 @@ describe Multilingual::Translation do
     expect(Multilingual::Translation.get("category_name", ["welcome"])).to eq({ wbp: "pardu-pardu-mani" })
     expect(Multilingual::Translation.get("category_name", ["knowledge", "clients"])).to eq({ wbp: "kalyardi milya-pinyi" })
     expect(Multilingual::Translation.get("category_name", ["knowledge"])).to eq({ wbp: "milya-pinyi" })
+    expect(Multilingual::Translation.get("category_name", ["knowledge", "made up completely"])).to eq({ wbp: nil })
+  end
+
+  it "Untranslated sub-categories return nil" do
+    Multilingual::CustomTranslation.create(
+      file_name: "category_name.wbp.yml",
+      file_type: "category_name",
+      locale: "wbp",
+      file_ext: "yml",
+      translation_data: { "welcome" => "pardu-pardu-mani" }
+    )
+    expect(Multilingual::Translation.get("category_name", ["welcome", "made up completely"])).to eq({ wbp: nil })
   end
 
   it "category descriptions are available as a translation" do
