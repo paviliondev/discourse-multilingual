@@ -228,7 +228,7 @@ after_initialize do
   add_to_serializer(:site, :categories) do
     object.categories.map do |c|
       c[:name] = c[:slug] == "uncategorized" ? I18n.t('uncategorized_category_name', locale: SiteSetting.default_locale) :
-      ((scope && scope.current_user && c[:slug_path] ? Multilingual::Translation.get("category_name", c[:slug_path])[scope.current_user.locale.to_sym] :
+      ((scope && scope.current_user && scope.current_user.locale && c[:slug_path] ? Multilingual::Translation.get("category_name", c[:slug_path])[scope.current_user.locale.to_sym] :
       c[:name]) || c[:name])
       c.to_h
     end
