@@ -5,4 +5,4 @@ export const tag_translations = {
     "music": "musique",
     "compliment": "féliciter"
   }
-}
+};
