@@ -3,11 +3,9 @@
 require_relative '../../plugin_helper'
 
 describe Multilingual::Language do
-  before(:all) do
-    SiteSetting.multilingual_enabled = true
-    SiteSetting.multilingual_content_languages_enabled = true
-    Multilingual::Language.setup
-  end
+  SiteSetting.multilingual_enabled = true
+  SiteSetting.multilingual_content_languages_enabled = true
+  Multilingual::Language.setup
 
   before(:each) do
     Multilingual::Cache.refresh!

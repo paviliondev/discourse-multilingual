@@ -4,13 +4,10 @@ require_relative '../../plugin_helper'
 
 describe Multilingual::ContentTag do
   fab!(:tag1) { Fabricate(:tag, name: "tag1") }
-
-  before(:all) do
-    SiteSetting.multilingual_enabled = true
-    SiteSetting.multilingual_content_languages_enabled = true
-    Multilingual::ContentTag.bulk_update(['aa'], 'enable')
-    Multilingual::ContentTag.update_all
-  end
+  SiteSetting.multilingual_enabled = true
+  SiteSetting.multilingual_content_languages_enabled = true
+  Multilingual::ContentTag.bulk_update(['aa'], 'enable')
+  Multilingual::ContentTag.update_all
 
   it 'should create tags' do
     language_tag = Tag.find_by(name: 'aa')

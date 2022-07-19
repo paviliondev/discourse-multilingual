@@ -5,21 +5,19 @@ require_relative '../plugin_helper'
 describe CategoryList do
   fab!(:user) { Fabricate(:user) }
 
-  before(:all) do
-    SiteSetting.tagging_enabled = true
-    SiteSetting.multilingual_enabled = true
-    SiteSetting.multilingual_content_languages_enabled = true
+  SiteSetting.tagging_enabled = true
+  SiteSetting.multilingual_enabled = true
+  SiteSetting.multilingual_content_languages_enabled = true
 
-    Multilingual::Cache.new(Multilingual::ContentTag::KEY).delete
-    Multilingual::ContentTag.update_all
+  Multilingual::Cache.new(Multilingual::ContentTag::KEY).delete
+  Multilingual::ContentTag.update_all
 
-    @cat1 = Fabricate(:category_with_definition)
-    @cat2 = Fabricate(:category_with_definition)
-    Fabricate(:topic, category: @cat1, tags: [Tag.find_by(name: 'fr')])
-    Fabricate(:topic, category: @cat2)
+  @cat1 = Fabricate(:category_with_definition)
+  @cat2 = Fabricate(:category_with_definition)
+  Fabricate(:topic, category: @cat1, tags: [Tag.find_by(name: 'fr')])
+  Fabricate(:topic, category: @cat2)
 
-    CategoryFeaturedTopic.feature_topics
-  end
+  CategoryFeaturedTopic.feature_topics
 
   it "only shows content language topics if content language topic filtering is enabled" do
     SiteSetting.multilingual_content_languages_topic_filtering_enabled = true
