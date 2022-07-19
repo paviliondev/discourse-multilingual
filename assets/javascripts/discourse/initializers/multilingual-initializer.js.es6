@@ -37,9 +37,10 @@ export default {
 
     I18n.translate_tag = function (tag) {
       if (
-        I18n.tag_translations !== undefined &&
-        I18n.tag_translations[I18n.default.currentLocale()] !== undefined &&
-        I18n.tag_translations[I18n.default.currentLocale()][tag] !== undefined
+        typeof I18n.tag_translations !== "undefined" &&
+        I18n.tag_translations !== null &&
+        typeof I18n.tag_translations[I18n.default.currentLocale()] !== "undefined" &&
+        typeof I18n.tag_translations[I18n.default.currentLocale()][tag] !== "undefined"
       ) {
         return I18n.tag_translations[I18n.default.currentLocale()][tag];
       } else {
