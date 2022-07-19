@@ -39,8 +39,10 @@ export default {
       if (
         typeof I18n.tag_translations !== "undefined" &&
         I18n.tag_translations !== null &&
-        typeof I18n.tag_translations[I18n.default.currentLocale()] !== "undefined" &&
-        typeof I18n.tag_translations[I18n.default.currentLocale()][tag] !== "undefined"
+        typeof I18n.tag_translations[I18n.default.currentLocale()] !==
+          "undefined" &&
+        typeof I18n.tag_translations[I18n.default.currentLocale()][tag] !==
+          "undefined"
       ) {
         return I18n.tag_translations[I18n.default.currentLocale()][tag];
       } else {
@@ -212,8 +214,8 @@ export default {
           },
 
           toggleLangugeSwitcherMenu() {
-            this.state.languageSwitcherMenuVisible = !this.state
-              .languageSwitcherMenuVisible;
+            this.state.languageSwitcherMenuVisible =
+              !this.state.languageSwitcherMenuVisible;
           },
         });
 
