@@ -5,20 +5,20 @@ describe Multilingual::AdminLanguagesController do
   fab!(:admin_user) { Fabricate(:user, admin: true) }
   let(:custom_languages) { File.open("#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/custom_languages.yml") }
 
-  sign_in(admin_user)
   SiteSetting.multilingual_enabled = true
   SiteSetting.multilingual_content_languages_enabled = true
   Multilingual::Language.setup
   Multilingual::ContentTag.update_all
 
   before(:each) do
+    sign_in(admin_user)
     Multilingual::Cache.refresh!
   end
 
   it "lists languages" do
     get "/admin/multilingual/languages.json"
     expect(response.status).to eq(200)
-    expect(response.parsed_body.length).to eq(187)
+    expect(response.parsed_body.length).to eq(188)
   end
 
   it "removes custom languages" do

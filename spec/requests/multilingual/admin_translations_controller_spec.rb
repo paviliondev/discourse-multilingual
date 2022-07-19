@@ -12,7 +12,6 @@ describe Multilingual::AdminTranslationsController do
   let(:client_locale) { "#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/client.fr.yml" }
   let(:tag_translation) { "#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/tag.wbp.yml" }
 
-  sign_in(admin_user)
   SiteSetting.multilingual_enabled = true
   SiteSetting.multilingual_content_languages_enabled = true
   Multilingual::CustomLanguage.create("wbp", name: "Warlpiri", run_hooks: true)
@@ -20,6 +19,7 @@ describe Multilingual::AdminTranslationsController do
   Multilingual::ContentTag.update_all
 
   before(:each) do
+    sign_in(admin_user)
     Multilingual::Cache.refresh!
   end
 
