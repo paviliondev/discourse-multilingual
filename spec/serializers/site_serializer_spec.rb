@@ -5,7 +5,6 @@ describe SiteSerializer do
   fab!(:user) { Fabricate(:user, admin: false) }
   let(:guardian) { Guardian.new(user) }
 
-
   before_all do
     Site.clear_cache
   end
