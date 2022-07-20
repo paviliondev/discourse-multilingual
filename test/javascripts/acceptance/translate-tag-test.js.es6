@@ -8,25 +8,13 @@ acceptance("Translated tags", function () {
 
   test("translates included data correctly", async (assert) => {
     I18n.locale = "fr";
-    assert.equal(
-      I18n.default.currentLocale(),
-      "fr"
-    );
-    assert.equal(
-      I18n.translate_tag("motor-car"),
-      "voiture"
-    );
+    assert.equal(I18n.default.currentLocale(), "fr");
+    assert.equal(I18n.translate_tag("motor-car"), "voiture");
   });
 
   test("translates included data correctly", async (assert) => {
     I18n.locale = "en";
-    assert.equal(
-      I18n.default.currentLocale(),
-      "en"
-    );
-    assert.equal(
-      I18n.translate_tag("motor-car"),
-      "motor-car"
-    );
+    assert.equal(I18n.default.currentLocale(), "en");
+    assert.equal(I18n.translate_tag("motor-car"), "motor-car");
   });
 });

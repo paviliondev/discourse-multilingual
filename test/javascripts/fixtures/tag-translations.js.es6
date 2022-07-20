@@ -1,8 +1,8 @@
 export const tag_translations = {
-  "fr": {
+  fr: {
     "motor-car": "voiture",
     "bubble-gum": "gomme-à-bulles",
-    "music": "musique",
-    "compliment": "féliciter"
-  }
+    music: "musique",
+    compliment: "féliciter",
+  },
 };
