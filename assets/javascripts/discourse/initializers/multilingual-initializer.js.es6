@@ -1,6 +1,6 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { default as discourseComputed } from "discourse-common/utils/decorators";
-import { multilingualTagRenderer } from "../lib/multilingual-tag";
+import { multilingualTagRenderer, multilingualTagTranslator } from "../lib/multilingual-tag";
 import {
   discoveryParams,
   localeParam,
@@ -12,7 +12,6 @@ import { iconHTML } from "discourse-common/lib/icon-library";
 import renderTag from "discourse/lib/render-tag";
 import { computed, set } from "@ember/object";
 import { scheduleOnce } from "@ember/runloop";
-import I18n from "I18n";
 import jQuery from "jquery";
 
 export default {
@@ -35,21 +34,6 @@ export default {
         "topic.content_language_tags"
       );
     }
-
-    I18n.translate_tag = function (tag) {
-      if (
-        typeof I18n.tag_translations !== "undefined" &&
-        I18n.tag_translations !== null &&
-        typeof I18n.tag_translations[I18n.default.currentLocale()] !==
-          "undefined" &&
-        typeof I18n.tag_translations[I18n.default.currentLocale()][tag] !==
-          "undefined"
-      ) {
-        return I18n.tag_translations[I18n.default.currentLocale()][tag];
-      } else {
-        return tag;
-      }
-    };
 
     withPluginApi("0.8.36", (api) => {
       api.replaceTagRenderer(multilingualTagRenderer);
@@ -136,7 +120,7 @@ export default {
       });
 
       function tagDropCallback(item) {
-        set(item, "label", I18n.translate_tag(item.name));
+        set(item, "label", multilingualTagTranslator(item.name));
         return item;
       }
 

@@ -1,6 +1,7 @@
 import { acceptance } from "discourse/tests/helpers/qunit-helpers";
 import { test } from "qunit";
 import { tag_translations } from "../fixtures/tag-translations";
+import { multilingualTagTranslator } from "discourse/plugins/discourse-multilingual/discourse/lib/multilingual-tag";
 import I18n from "I18n";
 
 acceptance("Translated tags", function () {
@@ -9,12 +10,12 @@ acceptance("Translated tags", function () {
   test("translates included data correctly", async (assert) => {
     I18n.locale = "fr";
     assert.equal(I18n.default.currentLocale(), "fr");
-    assert.equal(I18n.translate_tag("motor-car"), "voiture");
+    assert.equal(multilingualTagTranslator("motor-car"), "voiture");
   });
 
-  test("translates included data correctly", async (assert) => {
+  test("doesn't translate tag when data does not include translation", async (assert) => {
     I18n.locale = "en";
     assert.equal(I18n.default.currentLocale(), "en");
-    assert.equal(I18n.translate_tag("motor-car"), "motor-car");
+    assert.equal(multilingualTagTranslator("motor-car"), "motor-car");
   });
 });
