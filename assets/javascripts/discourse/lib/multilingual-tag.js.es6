@@ -58,9 +58,9 @@ function multilingualTagRenderer(tag, params) {
   }
 
   return val;
-};
+}
 
-function multilingualTagTranslator (tag) {
+function multilingualTagTranslator(tag) {
   if (
     typeof I18n.tag_translations !== "undefined" &&
     I18n.tag_translations !== null &&
@@ -73,6 +73,6 @@ function multilingualTagTranslator (tag) {
   } else {
     return tag;
   }
-};
+}
 
 export { multilingualTagRenderer, multilingualTagTranslator };
