@@ -1,6 +1,7 @@
 import TagGroupsForm from "discourse/components/tag-groups-form";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
+import bootbox from "bootbox";
 import I18n from "I18n";
 
 export default TagGroupsForm.extend({

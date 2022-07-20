@@ -13,6 +13,7 @@ import renderTag from "discourse/lib/render-tag";
 import { computed, set } from "@ember/object";
 import { scheduleOnce } from "@ember/runloop";
 import I18n from "I18n";
+import jQuery from "jquery";
 
 export default {
   name: "multilingual",
