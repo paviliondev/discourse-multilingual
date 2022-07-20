@@ -21,7 +21,7 @@ describe Multilingual::AdminLanguagesController do
   it "lists languages" do
     get "/admin/multilingual/languages.json"
     expect(response.status).to eq(200)
-    expect(response.parsed_body.length).to eq(188)
+    expect(response.parsed_body.length).to eq(187)
   end
 
   it "removes custom languages" do
