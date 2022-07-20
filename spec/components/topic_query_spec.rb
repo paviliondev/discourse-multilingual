@@ -3,12 +3,14 @@
 require_relative '../plugin_helper'
 
 describe TopicQuery do
-  SiteSetting.tagging_enabled = true
-  SiteSetting.multilingual_enabled = true
-  SiteSetting.multilingual_content_languages_enabled = true
+  before(:all) do
+    SiteSetting.tagging_enabled = true
+    SiteSetting.multilingual_enabled = true
+    SiteSetting.multilingual_content_languages_enabled = true
 
-  Multilingual::Cache.new(Multilingual::ContentTag::KEY).delete
-  Multilingual::ContentTag.update_all
+    Multilingual::Cache.new(Multilingual::ContentTag::KEY).delete
+    Multilingual::ContentTag.update_all
+  end
 
   context "user has content languages" do
     fab!(:user1) { Fabricate(:user) }

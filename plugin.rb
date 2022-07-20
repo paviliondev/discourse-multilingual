@@ -246,7 +246,7 @@ after_initialize do
       if c[:slug] == "uncategorized"
         c[:name] = I18n.t('uncategorized_category_name', locale: SiteSetting.default_locale)
       elsif !(scope && scope.current_user && scope.current_user.locale && c[:slug_path] && Multilingual::Translation.get("category_name", c[:slug_path])).blank?
-        c[:name] = Multilingual::Translation.get("category_name", c[:slug_path])[scope.current_user.locale.to_sym] || c[:name]
+        c[:name] = Multilingual::Translation.get("category_name", c[:slug_path])[scope.current_user.locale.to_sym]  || c[:name]
       end
       c.to_h
     end

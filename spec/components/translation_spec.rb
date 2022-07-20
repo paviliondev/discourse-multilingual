@@ -5,11 +5,13 @@ describe Multilingual::Translation do
   fab!(:tag1) { Fabricate(:tag, name: "pavilion") }
   fab!(:tag2) { Fabricate(:tag, name: "follow") }
 
-  SiteSetting.multilingual_enabled = true
-  SiteSetting.multilingual_content_languages_enabled = true
-  Multilingual::CustomLanguage.create("wbp", name: "Warlpiri", run_hooks: true)
-  Multilingual::Language.setup
-  Multilingual::ContentTag.update_all
+  before(:all) do
+    SiteSetting.multilingual_enabled = true
+    SiteSetting.multilingual_content_languages_enabled = true
+    Multilingual::CustomLanguage.create("wbp", name: "Warlpiri", run_hooks: true)
+    Multilingual::Language.setup
+    Multilingual::ContentTag.update_all
+  end
 
   it "category names are available as a translation" do
     Multilingual::CustomTranslation.create(

@@ -5,10 +5,13 @@ describe Multilingual::AdminLanguagesController do
   fab!(:admin_user) { Fabricate(:user, admin: true) }
   let(:custom_languages) { File.open("#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/custom_languages.yml") }
 
-  SiteSetting.multilingual_enabled = true
-  SiteSetting.multilingual_content_languages_enabled = true
-  Multilingual::Language.setup
-  Multilingual::ContentTag.update_all
+  before(:all) do
+    sign_in(admin_user)
+    SiteSetting.multilingual_enabled = true
+    SiteSetting.multilingual_content_languages_enabled = true
+    Multilingual::Language.setup
+    Multilingual::ContentTag.update_all
+  end
 
   before(:each) do
     sign_in(admin_user)
