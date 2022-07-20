@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe SiteSerializer do
+describe BasicCategorySerializer do
   fab!(:category) { Fabricate(:category) }
   fab!(:user) { Fabricate(:user, admin: false) }
   let(:guardian) { Guardian.new(user) }
@@ -15,16 +15,14 @@ describe SiteSerializer do
 
   it "serializes without error when there are no translations but a set locale" do
     user.locale = "en_GB"
-    serialized = described_class.new(Site.new(guardian), scope: guardian, root: false).as_json
-    c1 = serialized[:categories].find { |c| c[:id] == category.id }
-    expect(c1[:name]).to eq(category.name)
+    serialized = described_class.new(category, scope: guardian, root: false).as_json
+    expect(serialized[:name]).to eq(category.name)
   end
 
   it "serializes without error when there are no translations and a nil locale" do
     user.locale = nil
-    serialized = described_class.new(Site.new(guardian), scope: guardian, root: false).as_json
-    c1 = serialized[:categories].find { |c| c[:id] == category.id }
-    expect(c1[:name]).to eq(category.name)
+    serialized = described_class.new(category, scope: guardian, root: false).as_json
+    expect(serialized[:name]).to eq(category.name)
   end
 
   it "serializes names as translations" do
@@ -36,10 +34,8 @@ describe SiteSerializer do
       translation_data: { category.slug => "pardu-pardu-mani" }
     )
     user.locale = "wbp"
-    serialized = described_class.new(Site.new(guardian), scope: guardian, root: false).as_json
-    c1 = serialized[:categories].find { |c| c[:id] == category.id }
-
-    expect(c1[:name]).to eq("pardu-pardu-mani")
+    serialized = described_class.new(category, scope: guardian, root: false).as_json
+    expect(serialized[:name]).to eq("pardu-pardu-mani")
   end
 
   it "doesn't explode when user locale is nil" do
@@ -51,9 +47,7 @@ describe SiteSerializer do
       translation_data: { category.slug => "pardu-pardu-mani" }
     )
     user.locale = nil
-    serialized = described_class.new(Site.new(guardian), scope: guardian, root: false).as_json
-    c1 = serialized[:categories].find { |c| c[:id] == category.id }
-
-    expect(c1[:name]).to eq(category.name)
+    serialized = described_class.new(category, scope: guardian, root: false).as_json
+    expect(serialized[:name]).to eq(category.name)
   end
 end

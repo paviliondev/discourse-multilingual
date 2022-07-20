@@ -202,34 +202,52 @@ after_initialize do
   end
 
   add_to_serializer(:basic_category, :name) do
-    object.uncategorized? ? I18n.t('uncategorized_category_name', locale: SiteSetting.default_locale) :
-    ((scope && scope.current_user && scope.current_user.locale && object.slug_path ? Multilingual::Translation.get("category_name", object.slug_path)[scope.current_user.locale.to_sym] :
-    object.name) || object.name)
+    if object.uncategorized?
+      I18n.t('uncategorized_category_name', locale: SiteSetting.default_locale)
+    elsif !(scope && scope.current_user && scope.current_user.locale && object.slug_path && Multilingual::Translation.get("category_name", object.slug_path)).blank?
+      Multilingual::Translation.get("category_name", object.slug_path)[scope.current_user.locale.to_sym] || object.name
+    else
+      object.name
+    end
   end
 
   add_to_serializer(:basic_category, :description_text) do
-    object.uncategorized? ? I18n.t('category.uncategorized_description', locale: SiteSetting.default_locale) :
-    ((scope && scope.current_user && scope.current_user.locale && object.slug_path ? Multilingual::Translation.get("category_description", object.slug_path)[scope.current_user.locale.to_sym] :
-    object.description_text) || object.description_text)
+    if object.uncategorized?
+      I18n.t('category.uncategorized_description', locale: SiteSetting.default_locale)
+    elsif !(scope && scope.current_user && scope.current_user.locale && object.slug_path && Multilingual::Translation.get("category_description", object.slug_path)).blank?
+      Multilingual::Translation.get("category_description", object.slug_path)[scope.current_user.locale.to_sym] || object.description_text
+    else
+      object.description_text
+    end
   end
 
   add_to_serializer(:basic_category, :description) do
-    object.uncategorized? ? I18n.t('category.uncategorized_description', locale: SiteSetting.default_locale) :
-    ((scope && scope.current_user && scope.current_user.locale && object.slug_path ? Multilingual::Translation.get("category_description", object.slug_path)[scope.current_user.locale.to_sym] :
-    object.description) || object.description)
+    if object.uncategorized?
+      I18n.t('category.uncategorized_description', locale: SiteSetting.default_locale)
+    elsif !(scope && scope.current_user && scope.current_user.locale && object.slug_path && Multilingual::Translation.get("category_description", object.slug_path)).blank?
+      Multilingual::Translation.get("category_description", object.slug_path)[scope.current_user.locale.to_sym] || object.description
+    else
+      object.description
+    end
   end
 
   add_to_serializer(:basic_category, :description_excerpt) do
-    object.uncategorized? ? I18n.t('category.uncategorized_description', locale: SiteSetting.default_locale) :
-    ((scope && scope.current_user && scope.current_user.locale && object.slug_path ? Multilingual::Translation.get("category_description", object.slug_path)[scope.current_user.locale.to_sym] :
-    object.description_excerpt) || object.description_excerpt)
+    if object.uncategorized?
+      I18n.t('category.uncategorized_description', locale: SiteSetting.default_locale)
+    elsif !(scope && scope.current_user && scope.current_user.locale && object.slug_path && Multilingual::Translation.get("category_description", object.slug_path)).blank?
+      Multilingual::Translation.get("category_description", object.slug_path)[scope.current_user.locale.to_sym] || object.description_excerpt
+    else
+      object.description_excerpt
+    end
   end
 
   add_to_serializer(:site, :categories) do
     object.categories.map do |c|
-      c[:name] = c[:slug] == "uncategorized" ? I18n.t('uncategorized_category_name', locale: SiteSetting.default_locale) :
-      ((scope && scope.current_user && scope.current_user.locale && c[:slug_path] ? Multilingual::Translation.get("category_name", c[:slug_path])[scope.current_user.locale.to_sym] :
-      c[:name]) || c[:name])
+      if c[:slug] == "uncategorized"
+        c[:name] = I18n.t('uncategorized_category_name', locale: SiteSetting.default_locale)
+      elsif !(scope && scope.current_user && scope.current_user.locale && c[:slug_path] && Multilingual::Translation.get("category_name", c[:slug_path])).blank?
+        c[:name] = Multilingual::Translation.get("category_name", c[:slug_path])[scope.current_user.locale.to_sym] || c[:name]
+      end
       c.to_h
     end
   end

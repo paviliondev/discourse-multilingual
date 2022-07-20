@@ -9,6 +9,7 @@ describe Multilingual::AdminController do
   end
 
   it "returns the content_language_tag_group_id" do
+    sign_in(admin_user)
     get "/admin/multilingual.json"
     expect(response.status).to eq(200)
     expect(response.parsed_body['content_language_tag_group_id']).to be_present

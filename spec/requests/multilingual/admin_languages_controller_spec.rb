@@ -14,6 +14,7 @@ describe Multilingual::AdminLanguagesController do
   end
 
   before(:each) do
+    sign_in(admin_user)
     Multilingual::Cache.refresh!
   end
 

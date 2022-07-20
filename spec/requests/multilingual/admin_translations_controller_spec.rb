@@ -22,6 +22,7 @@ describe Multilingual::AdminTranslationsController do
   end
 
   before(:each) do
+    sign_in(admin_user)
     Multilingual::Cache.refresh!
   end
 

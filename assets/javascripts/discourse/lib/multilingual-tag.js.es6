@@ -15,7 +15,7 @@ function multilingualTagRenderer(tag, params) {
   }
 
   tag = escapeExpression(tag).toLowerCase();
-  const translatedTag = I18n.translate_tag(tag);
+  const translatedTag = multilingualTagTranslator(tag);
   const visibleName = clt ? clt.name : translatedTag;
 
   const classes = ["discourse-tag"];
@@ -60,4 +60,19 @@ function multilingualTagRenderer(tag, params) {
   return val;
 }
 
-export { multilingualTagRenderer };
+function multilingualTagTranslator(tag) {
+  if (
+    typeof I18n.tag_translations !== "undefined" &&
+    I18n.tag_translations !== null &&
+    typeof I18n.tag_translations[I18n.default.currentLocale()] !==
+      "undefined" &&
+    typeof I18n.tag_translations[I18n.default.currentLocale()][tag] !==
+      "undefined"
+  ) {
+    return I18n.tag_translations[I18n.default.currentLocale()][tag];
+  } else {
+    return tag;
+  }
+}
+
+export { multilingualTagRenderer, multilingualTagTranslator };

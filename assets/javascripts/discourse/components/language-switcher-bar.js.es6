@@ -15,9 +15,10 @@ export default Component.extend({
   setup() {
     const availableLanguages = this.availableLanguages();
     const currentLanguage = I18n.currentLocale();
-    let visibleList = this.siteSettings.multilingual_guest_language_switcher_footer_visible.split(
-      "|"
-    );
+    let visibleList =
+      this.siteSettings.multilingual_guest_language_switcher_footer_visible.split(
+        "|"
+      );
 
     availableLanguages.forEach((l) => {
       if (l.locale === currentLanguage) {
