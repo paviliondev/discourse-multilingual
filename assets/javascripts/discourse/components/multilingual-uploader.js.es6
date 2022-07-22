@@ -9,6 +9,7 @@ export default Component.extend(UppyUploadMixin, {
   type: "yml",
   addDisabled: alias("uploading"),
   elementId: "multilingual-uploader",
+  preventDirectS3Uploads: true,
   classNameBindings: [":multilingual-uploader", "uploadType"],
   locale: null,
   message: null,

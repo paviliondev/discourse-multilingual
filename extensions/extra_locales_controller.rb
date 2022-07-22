@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 module ExtraLocalesControllerMultilingualClassExtension
+
+  OVERRIDES_BUNDLE ||= 'overrides'
+
   def current_locale
     I18n.locale.to_s
   end
@@ -13,6 +16,14 @@ module ExtraLocalesControllerMultilingualClassExtension
       JsLocaleHelper.output_locale(current_locale)
     elsif bundle === 'tags'
       JsLocaleHelper.output_locale_tags(current_locale)
+    else
+      super(bundle)
+    end
+  end
+
+  def bundle_js_hash(bundle)
+    if bundle == "tags"
+      Digest::MD5.hexdigest(bundle_js(bundle))
     else
       super(bundle)
     end
