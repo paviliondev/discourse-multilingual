@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 module ExtraLocalesControllerMultilingualClassExtension
-
-  OVERRIDES_BUNDLE ||= 'overrides'
-
   def current_locale
     I18n.locale.to_s
   end
