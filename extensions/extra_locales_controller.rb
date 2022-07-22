@@ -22,20 +22,10 @@ module ExtraLocalesControllerMultilingualClassExtension
   end
 
   def bundle_js_hash(bundle)
-    if bundle == OVERRIDES_BUNDLE
-      site = RailsMultisite::ConnectionManagement.current_db
-
-      @by_site ||= {}
-      @by_site[site] ||= {}
-      @by_site[site][I18n.locale] ||= begin
-        js = bundle_js(bundle)
-        js.present? ? Digest::MD5.hexdigest(js) : nil
-      end
-    elsif bundle == "tags"
+    if bundle == "tags"
       Digest::MD5.hexdigest(bundle_js(bundle))
     else
-      @bundle_js_hash ||= {}
-      @bundle_js_hash["#{bundle}_#{I18n.locale}"] ||= Digest::MD5.hexdigest(bundle_js(bundle))
+      super(bundle)
     end
   end
 end
