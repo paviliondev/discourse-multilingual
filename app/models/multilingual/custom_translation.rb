@@ -30,8 +30,8 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   end
 
   def after_save
-    Discourse.cache.clear
     add_locale
+    Multilingual::Cache.refresh_clients([self.locale])
   end
 
   def remove
@@ -45,7 +45,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
   def after_remove
     self.destroy!
-    Discourse.cache.clear
+    Multilingual::Cache.refresh_clients([self.locale])
   end
 
   def process(translations)
