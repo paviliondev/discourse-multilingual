@@ -327,6 +327,8 @@ after_initialize do
       combined = (tags + content_languages).uniq
       tc.check_result(DiscourseTagging.validate_require_language_tag(tc.guardian, tc.topic, combined))
       tags_cb.call(tc, combined)
+    else
+      tags_cb.call(tc, tags)
     end
   end
 
