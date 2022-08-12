@@ -4,6 +4,7 @@
 # version: 0.2.3
 # url: https://github.com/paviliondev/discourse-multilingual
 # authors: Angus McLeod, Robert Barrow
+# contact_emails: development@pavilion.tech
 
 enabled_site_setting :multilingual_enabled
 
