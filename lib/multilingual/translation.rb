@@ -23,7 +23,7 @@ class Multilingual::Translation
     if is_custom(type)
       data = get_custom(type)
 
-      return nil if data == {}
+      return {} if data == {}
 
       result = {}
       data.each do |d|

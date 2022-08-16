@@ -52,7 +52,11 @@ describe Multilingual::Translation do
     expect(Multilingual::Translation.get("category_description", ["knowledge"])).to eq({ wbp: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Neque aliquam vestibulum morbi blandit. Libero id faucibus nisl tincidunt eget nullam non nisi. Ac odio tempor orci dapibus ultrices in. Vitae justo eget magna fermentum iaculis eu non." })
   end
 
-  it "tags  are available as a translation" do
+  it "when there are no uploaded tag translations, return empty hash" do
+    expect(Multilingual::Translation.get("tag")).to eq({})
+  end
+
+  it "tags are available as a translation" do
     Multilingual::CustomTranslation.create(
       file_name: "tag.wbp.yml",
       file_type: "tag",
