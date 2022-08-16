@@ -86,7 +86,7 @@ describe SiteSerializer do
       serialized = described_class.new(Site.new(guardian), scope: guardian, root: false).as_json
       c1 = serialized[:categories].find { |c| c[:id] == category.id }
 
-      expect(c1[:name]).to eq("Amazing Category 0")
+      expect(c1[:name]).to eq(category.name)
     end
   end
 end
