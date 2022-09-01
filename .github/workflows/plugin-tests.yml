@@ -3,7 +3,6 @@ name: Plugin Tests
 on:
   push:
     branches:
-      - master
       - main
   pull_request:
   schedule:
@@ -13,7 +12,8 @@ jobs:
   build:
     name: ${{ matrix.build_type }}
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    container: discourse/discourse_test:slim${{ startsWith(matrix.build_type, 'frontend') && '-browsers' || '' }}
+    timeout-minutes: 30
 
     env:
       DISCOURSE_HOSTNAME: www.example.com
@@ -28,9 +28,6 @@ jobs:
 
       matrix:
         build_type: ["backend", "frontend"]
-        ruby: ["2.7"]
-        postgres: ["12"]
-        redis: ["6.x"]
 
     services:
       postgres:
@@ -48,25 +45,99 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: haya14busa/action-cond@v1
-        id: discourse_branch
-        with:
-          cond: ${{  github.base_ref == 'stable' }}
-          if_true: "stable"
-          if_false: "tests-passed"
-
       - uses: actions/checkout@v3
         with:
           repository: discourse/discourse
-          ref: ${{ steps.discourse_branch.outputs.value }}
           fetch-depth: 1
 
       - name: Install plugin
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: plugins/${{ github.event.repository.name }}
-          ref: "${{ github.head_ref }}"
           fetch-depth: 1
+
+      - name: Setup Git
+        run: |
+          git config --global user.email "ci@ci.invalid"
+          git config --global user.name "Discourse CI"
+
+      - name: Start redis
+        run: |
+          redis-server /etc/redis/redis.conf &
+
+      - name: Start Postgres
+        run: |
+          chown -R postgres /var/run/postgresql
+          sudo -E -u postgres script/start_test_db.rb
+          sudo -u postgres psql -c "CREATE ROLE $PGUSER LOGIN SUPERUSER PASSWORD '$PGPASSWORD';"
+
+      - name: Bundler cache
+        uses: actions/cache@v3
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gem-
+
+      - name: Setup gems
+        run: |
+          gem install bundler --conservative -v $(awk '/BUNDLED WITH/ { getline; gsub(/ /,""); print $0 }' Gemfile.lock)
+          bundle config --local path vendor/bundle
+          bundle config --local deployment true
+          bundle config --local without development
+          bundle install --jobs 4
+          bundle clean
+
+      - name: Lint English locale
+        if: matrix.build_type == 'backend'
+        run: bundle exec ruby script/i18n_lint.rb "plugins/${{ github.event.repository.name }}/locales/{client,server}.en.yml"
+
+      - name: Get yarn cache directory
+        id: yarn-cache-dir
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Yarn cache
+        uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Yarn install
+        run: yarn install
+
+      - name: Fetch app state cache
+        uses: actions/cache@v3
+        id: app-cache
+        with:
+          path: tmp/app-cache
+          key: >-
+            ${{ hashFiles('.github/workflows/tests.yml') }}-
+            ${{ hashFiles('db/**/*', 'plugins/**/db/**/*') }}-
+
+      - name: Restore database from cache
+        if: steps.app-cache.outputs.cache-hit == 'true'
+        run: psql -f tmp/app-cache/cache.sql postgres
+
+      - name: Restore uploads from cache
+        if: steps.app-cache.outputs.cache-hit == 'true'
+        run: rm -rf public/uploads && cp -r tmp/app-cache/uploads public/uploads
+
+      - name: Create and migrate database
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: |
+          bin/rake db:create
+          bin/rake db:migrate
+
+      - name: Dump database for cache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: mkdir -p tmp/app-cache && pg_dumpall > tmp/app-cache/cache.sql
+
+      - name: Dump uploads for cache
+        if: steps.app-cache.outputs.cache-hit != 'true'
+        run: rm -rf tmp/app-cache/uploads && cp -r public/uploads tmp/app-cache/uploads
 
       - name: Check spec existence
         id: check_spec
@@ -79,60 +150,6 @@ jobs:
         uses: andstor/file-existence-action@v1
         with:
           files: "plugins/${{ github.event.repository.name }}/test/javascripts"
-
-      - name: Setup Git
-        run: |
-          git config --global user.email "ci@ci.invalid"
-          git config --global user.name "Discourse CI"
-
-      - name: Setup packages
-        run: |
-          sudo apt-get update
-          sudo apt-get -yqq install postgresql-client libpq-dev gifsicle jpegoptim optipng jhead
-          wget -qO- https://raw.githubusercontent.com/discourse/discourse_docker/master/image/base/install-pngquant | sudo sh
-
-      - name: Update imagemagick
-        if: matrix.build_type == 'backend'
-        run: |
-          wget https://raw.githubusercontent.com/discourse/discourse_docker/master/image/base/install-imagemagick
-          chmod +x install-imagemagick
-          sudo ./install-imagemagick
-
-      - name: Setup redis
-        uses: shogo82148/actions-setup-redis@v1
-        with:
-          redis-version: ${{ matrix.redis }}
-
-      - name: Setup ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-
-      - name: Lint English locale
-        if: matrix.build_type == 'backend'
-        run: bundle exec ruby script/i18n_lint.rb "plugins/${{ github.event.repository.name }}/locales/{client,server}.en.yml"
-
-      - name: Get yarn cache directory
-        id: yarn-cache-dir
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Yarn cache
-        uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.os }}-yarn-
-
-      - name: Yarn install
-        run: yarn install --dev
-
-      - name: Migrate database
-        run: |
-          bin/rake db:create
-          bin/rake db:migrate
 
       - name: Plugin RSpec with Coverage
         if: matrix.build_type == 'backend'
