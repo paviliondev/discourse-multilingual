@@ -17,7 +17,6 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
 
     Scheduler::Defer.later("Upload translation file") do
       data = {}
-      tempfile =
 
       begin
         yml = YAML.safe_load(raw_file.tempfile)
