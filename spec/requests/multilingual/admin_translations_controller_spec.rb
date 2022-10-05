@@ -81,7 +81,7 @@ describe Multilingual::AdminTranslationsController do
   end
 
   it "errors if file contains a locale that is not supported" do
-    Multilingual::CustomLanguage.destroy("wbp", run_hooks:true)
+    Multilingual::CustomLanguage.destroy("wbp", run_hooks: true)
     message = MessageBus.track_publish("/uploads/yml") do
       post '/admin/multilingual/translations.json', params: {
         file: Rack::Test::UploadedFile.new(custom_client_locale),
