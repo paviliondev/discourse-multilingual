@@ -19,6 +19,7 @@ class Multilingual::TranslationLocale
 
   def self.deregister(file)
     DiscoursePluginRegistry.locales.delete(file.locale.to_s)
+    LocaleSiteSetting.reset!
   end
 
   def self.load

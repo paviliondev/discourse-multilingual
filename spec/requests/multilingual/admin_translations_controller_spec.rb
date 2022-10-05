@@ -17,17 +17,17 @@ describe Multilingual::AdminTranslationsController do
     sign_in(admin_user)
     SiteSetting.multilingual_enabled = true
     SiteSetting.multilingual_content_languages_enabled = true
-    Multilingual::CustomLanguage.create("wbp", name: "Warlpiri", run_hooks: true)
-    Multilingual::Language.setup
-    Multilingual::ContentTag.update_all
   end
 
   before(:each) do
     sign_in(admin_user)
-    Multilingual::Cache.refresh!
+    DiscoursePluginRegistry.locales.delete("wbp")
+    LocaleSiteSetting.reset!
+    Multilingual::Cache.reset
   end
 
   it "uploads category name translation" do
+    Multilingual::CustomLanguage.create("wbp", name: "Warlpiri", run_hooks: true)
     post '/admin/multilingual/translations.json', params: {
       file: Rack::Test::UploadedFile.new(category_name_translation)
     }
@@ -41,6 +41,7 @@ describe Multilingual::AdminTranslationsController do
   end
 
   it "uploads category description translation" do
+    Multilingual::CustomLanguage.create("wbp", name: "Warlpiri", run_hooks: true)
     post '/admin/multilingual/translations.json', params: {
       file: Rack::Test::UploadedFile.new(category_description_translation)
     }
@@ -54,6 +55,7 @@ describe Multilingual::AdminTranslationsController do
   end
 
   it "uploads server locale" do
+    Multilingual::CustomLanguage.create("wbp", name: "Warlpiri", run_hooks: true)
     post '/admin/multilingual/translations.json', params: {
       file: Rack::Test::UploadedFile.new(server_locale)
     }
@@ -81,7 +83,6 @@ describe Multilingual::AdminTranslationsController do
   end
 
   it "errors if file contains a locale that is not supported" do
-    Multilingual::CustomLanguage.destroy("wbp", run_hooks: true)
     message = MessageBus.track_publish("/uploads/yml") do
       post '/admin/multilingual/translations.json', params: {
         file: Rack::Test::UploadedFile.new(custom_client_locale),
@@ -113,6 +114,7 @@ describe Multilingual::AdminTranslationsController do
   end
 
   it "uploads tag translation" do
+    Multilingual::CustomLanguage.create("wbp", name: "Warlpiri", run_hooks: true)
     post '/admin/multilingual/translations.json', params: {
       file: Rack::Test::UploadedFile.new(tag_translation)
     }
