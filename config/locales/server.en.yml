@@ -25,3 +25,7 @@ en:
 
     languages:
       upload_format_incorrect: "Incorrect format. Use format of [Discourse names.yml](https://github.com/discourse/discourse/blob/master/config/locales/names.yml)."
+    translations:
+      locale_not_recognised: "Locale not recognised, please upload to Languages first"
+      incorrect_format: "Incorrect format"
+      invalid_type: "Invalid file type"

@@ -91,15 +91,15 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
     }
 
     if !Multilingual::Translation.validate_type(result[:file_type])
-      result[:error] = 'invalid type'
+      result[:error] = I18n.t('multilingual.translations.invalid_type')
     end
 
     if result[:ext] != 'yml'
-      result[:error] = "incorrect format"
+      result[:error] = I18n.t('multilingual.translations.incorrect_format')
     end
 
     if !Multilingual::Language.exists?(result[:locale])
-      result[:error] = "Locale not recognised, please upload to supported Languages as required"
+      result[:error] = I18n.t('multilingual.translations.locale_not_recognised')
     end
 
     result
