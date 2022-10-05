@@ -33,6 +33,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
     add_locale
     Discourse.cache.delete("discourse-multilingual_translation_#{self.file_type}")
     Multilingual::Cache.refresh_clients([self.locale])
+    Multilingual::Cache.reset
   end
 
   def remove
@@ -48,6 +49,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
     self.destroy!
     Discourse.cache.delete("discourse-multilingual_translation_#{self.file_type}")
     Multilingual::Cache.refresh_clients([self.locale])
+    Multilingual::Cache.reset
   end
 
   def process(translations)
@@ -133,6 +135,9 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   def add_locale
     existing_locales = I18n.config.available_locales
     new_locales      = existing_locales.push(self.locale.to_sym)
+    unless ::LocaleSiteSetting.supported_locales.include?(self.locale)
+      Multilingual::TranslationLocale.register(self)
+    end
     I18n.config.available_locales = new_locales
   end
 

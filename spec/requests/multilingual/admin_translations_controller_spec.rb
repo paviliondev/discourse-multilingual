@@ -10,6 +10,7 @@ describe Multilingual::AdminTranslationsController do
   let(:category_description_translation) { "#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/category_description.wbp.yml" }
   let(:server_locale) { "#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/server.wbp.yml" }
   let(:client_locale) { "#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/client.fr.yml" }
+  let(:custom_client_locale) { "#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/client.wbp.yml" }
   let(:tag_translation) { "#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/tag.wbp.yml" }
 
   before(:all) do
@@ -77,6 +78,38 @@ describe Multilingual::AdminTranslationsController do
     }
     expect(response.status).to eq(200)
     expect(I18n.t ("js.filters.latest.title")).to eq("Récents")
+  end
+
+  it "errors if file contains a locale that is not supported" do
+    Multilingual::CustomLanguage.destroy("wbp", run_hooks:true)
+    message = MessageBus.track_publish("/uploads/yml") do
+      post '/admin/multilingual/translations.json', params: {
+        file: Rack::Test::UploadedFile.new(custom_client_locale),
+        client_id: "foo"
+      }
+      expect(response.status).to eq(200)
+    end.first
+
+    expect(message.data["failed"]).to eq("FAILED")
+  end
+
+  it "uploads client locale for custom locale" do
+    post '/admin/multilingual/languages.json', params: {
+      file: fixture_file_upload(custom_languages)
+    }
+    expect(response.status).to eq(200)
+    expect(Multilingual::Language.exists?('wbp')).to eq(true)
+    expect(Multilingual::InterfaceLanguage.supported?('wbp')).to eq(false)
+
+    post '/admin/multilingual/translations.json', params: {
+      file: Rack::Test::UploadedFile.new(custom_client_locale)
+    }
+    expect(response.status).to eq(200)
+    expect(Multilingual::CustomTranslation.by_type(["client"]).count).to eq(1)
+    expect(Multilingual::InterfaceLanguage.supported?('wbp')).to eq(true)
+
+    I18n.locale = "wbp"
+    expect(I18n.t ("js.filters.categories.title")).to eq("karlirr-kari")
   end
 
   it "uploads tag translation" do

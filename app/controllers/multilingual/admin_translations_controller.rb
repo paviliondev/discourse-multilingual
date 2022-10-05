@@ -98,6 +98,10 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
       result[:error] = "incorrect format"
     end
 
+    if !Multilingual::Language.exists?(result[:locale])
+      result[:error] = "Locale not recognised, please upload to supported Languages as required"
+    end
+
     result
   end
 end
