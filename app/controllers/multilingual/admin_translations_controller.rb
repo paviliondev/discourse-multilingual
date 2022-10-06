@@ -17,7 +17,6 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
 
     Scheduler::Defer.later("Upload translation file") do
       data = {}
-      tempfile =
 
       begin
         yml = YAML.safe_load(raw_file.tempfile)
@@ -92,11 +91,15 @@ class Multilingual::AdminTranslationsController < Admin::AdminController
     }
 
     if !Multilingual::Translation.validate_type(result[:file_type])
-      result[:error] = 'invalid type'
+      result[:error] = I18n.t('multilingual.translations.invalid_type')
     end
 
     if result[:ext] != 'yml'
-      result[:error] = "incorrect format"
+      result[:error] = I18n.t('multilingual.translations.incorrect_format')
+    end
+
+    if !Multilingual::Language.exists?(result[:locale])
+      result[:error] = I18n.t('multilingual.translations.locale_not_recognised')
     end
 
     result
