@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # name: discourse-multilingual
 # about: Features to support multilingual forums
-# version: 0.2.5
+# version: 0.2.6
 # url: https://github.com/paviliondev/discourse-multilingual
 # authors: Angus McLeod, Robert Barrow
 # contact_emails: development@pavilion.tech
@@ -86,8 +86,7 @@ after_initialize do
     result
   end
 
-  register_editable_user_custom_field :content_languages
-  register_editable_user_custom_field content_languages: []
+  register_editable_user_custom_field [:content_languages, content_languages: []]
   allow_public_user_custom_field :content_languages
 
   add_to_class(:site, :interface_languages) { Multilingual::InterfaceLanguage.list }
