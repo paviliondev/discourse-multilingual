@@ -30,7 +30,7 @@
   }
 
   .content-language-tag {
-    @extend .discourse-tag.simple;
+    @extend .discourse-tag, .simple;
   }
 }
 
