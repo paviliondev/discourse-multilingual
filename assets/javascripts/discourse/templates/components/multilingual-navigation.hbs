@@ -1,13 +1,13 @@
 <ul class="nav nav-pills">
-  {{nav-item
-    route="adminMultilingualLanguages"
-    label="multilingual.languages.title"}}
-  {{nav-item
-    route="adminMultilingualTranslations"
-    label="multilingual.translations.title"}}
-  {{nav-item
-    route="tagGroups"
-    routeParam=contentLanguageTagGroupId
-    label="multilingual.content_languages.tags.title"
-    icon="tag"}}
+  <NavItem
+    @route="adminMultilingualLanguages"
+    @label="multilingual.languages.title"/>
+  <NavItem
+    @route="adminMultilingualTranslations"
+    @label="multilingual.translations.title"/>
+  <NavItem
+    @route="tagGroups"
+    @routeParam={{this.contentLanguageTagGroupId}}
+    @label="multilingual.content_languages.tags.title"
+    @icon="tag"/>
 </ul>

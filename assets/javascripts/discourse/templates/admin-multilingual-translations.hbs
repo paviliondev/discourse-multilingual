@@ -1,10 +1,10 @@
 <div class="controls">
   <div class="buttons">
-    {{multilingual-uploader
-      id="multilingual-translations-uploader"
-      uploading=uploading
-      done=(action "refresh")
-      uploadType="translation"}}
+    <MultilingualUploader
+      @id="multilingual-translations-uploader"
+      @uploading={{this.uploading}}
+      @done=(action "refresh")
+      @uploadType="translation"/>
   </div>
 </div>
 
@@ -14,13 +14,13 @@
   {{#if translations}}
     <table class="table translations-list grid">
       <thead>
-        {{table-header-toggle field="locale" labelKey="multilingual.locale" automatic=true}}
-        {{table-header-toggle field="file_type" labelKey="multilingual.translations.type" automatic=true}}
+        <TableHeaderToggle @field="locale" @labelKey="multilingual.locale" @automatic={{true}}/>
+        <TableHeaderToggle @field="file_type" @labelKey="multilingual.translations.type" @automatic={{true}}/>
         <th>Actions</th>
       </thead>
       <tbody>
         {{#each translations as |translation|}}
-          {{admin-translation translation=translation removed=(action "refresh")}}
+          <AdminTranslation @translation={{translation}} @removed=(action "refresh")/>
         {{/each}}
       </tbody>
     </table>

@@ -1,26 +1,26 @@
 <div class="admin-controls">
   <nav>
     <ul class="nav nav-pills">
-      {{nav-item
-        route="adminMultilingualLanguages"
-        label="multilingual.languages.title"}}
-      {{nav-item
-        route="adminMultilingualTranslations"
-        label="multilingual.translations.title"}}
-      {{nav-item
-        route="tagGroups.edit"
-        routeParam=tagGroupId
-        label="tagging.tags"
-        icon="tag"}}
+      <NavItem
+        @route="adminMultilingualLanguages"
+        @label="multilingual.languages.title"/>
+      <NavItem
+        @route="adminMultilingualTranslations"
+        @label="multilingual.translations.title"/>
+      <NavItem
+        @route="tagGroups.edit"
+        @routeParam={{this.tagGroupId}}
+        @label="tagging.tags"
+        @icon="tag"/>
       <a href={{documentationUrl}} target="_blank" class="right btn btn-icon-text" rel="noreferrer noopener">
         {{d-icon "file-alt"}}
         <span class="d-button-label">{{i18n "multilingual.documentation"}}</span>
       </a>
       <li>
-        {{d-button
-          action="showSettings"
-          label="admin.plugins.change_settings_short"
-          icon="cog"}}
+        <DButton
+          @action=(action "showSettings")
+          @label="admin.plugins.change_settings_short"
+          @icon="cog"/>
       </li>
     </ul>
   </nav>

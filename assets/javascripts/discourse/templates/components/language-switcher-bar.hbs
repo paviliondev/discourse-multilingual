@@ -1,7 +1,7 @@
 {{#each visibleLanguages as |l|}}<div class="{{l.class}} ls-language" {{action "change" l.locale}} role="button">{{l.name}}</div>{{/each}}
 
 {{#if showHiddenToggle}}
-  {{d-button icon="plus" action="toggleHidden" class="toggle-hidden"}}
+  <DButton @icon="plus" @action=(action "toggleHidden") @class="toggle-hidden"/>
 
   {{#if showHidden}}
     <div class="hidden-languages">
