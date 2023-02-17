@@ -1,9 +1,9 @@
 <div class="controls">
   <div class="query">
-    <TextField @value={{this.query}} @placeholder={{this.queryPlaceholder}}/>
+    <TextField @value={{this.query}} @placeholder={{this.queryPlaceholder}} />
 
     <div class="custom-only">
-      <Input @type="checkbox" @checked={{this.customOnly}}/>
+      <Input @type="checkbox" @checked={{this.customOnly}} />
       <span>{{i18n "multilingual.languages.custom_only"}}</span>
     </div>
   </div>
@@ -13,14 +13,16 @@
       @id="multilingual-languages-uploader"
       @uploading={{this.uploading}}
       @uploadType="language"
-      @done=(action "languagesUploaded")/>
+      @done={{action "languagesUploaded"}}
+    />
 
     <DButton
-      @action=(action "update")
+      @action={{action "update"}}
       @class="btn-primary"
       @icon="save"
       @label={{this.updateState}}
-      @disabled={{this.updateLanguagesDisabled}}/>
+      @disabled={{this.updateLanguagesDisabled}}
+    />
   </div>
 </div>
 
@@ -34,7 +36,8 @@
       @order={{this.order}}
       @ascending={{this.ascending}}
       @updatedLanguages={{this.updatedLanguages}}
-      @updateLanguages=(action "updateLanguages")/>
+      @updateLanguages={{action "updateLanguages"}}
+    />
   {{else}}
     <p>{{i18n "search.no_results"}}</p>
   {{/if}}

@@ -3,24 +3,35 @@
     <ul class="nav nav-pills">
       <NavItem
         @route="adminMultilingualLanguages"
-        @label="multilingual.languages.title"/>
+        @label="multilingual.languages.title"
+      />
       <NavItem
         @route="adminMultilingualTranslations"
-        @label="multilingual.translations.title"/>
+        @label="multilingual.translations.title"
+      />
       <NavItem
         @route="tagGroups.edit"
         @routeParam={{this.tagGroupId}}
         @label="tagging.tags"
-        @icon="tag"/>
-      <a href={{documentationUrl}} target="_blank" class="right btn btn-icon-text" rel="noreferrer noopener">
+        @icon="tag"
+      />
+      <a
+        href={{documentationUrl}}
+        target="_blank"
+        class="right btn btn-icon-text"
+        rel="noreferrer noopener"
+      >
         {{d-icon "file-alt"}}
-        <span class="d-button-label">{{i18n "multilingual.documentation"}}</span>
+        <span class="d-button-label">{{i18n
+            "multilingual.documentation"
+          }}</span>
       </a>
       <li>
         <DButton
-          @action=(action "showSettings")
+          @action={{action "showSettings"}}
           @label="admin.plugins.change_settings_short"
-          @icon="cog"/>
+          @icon="cog"
+        />
       </li>
     </ul>
   </nav>

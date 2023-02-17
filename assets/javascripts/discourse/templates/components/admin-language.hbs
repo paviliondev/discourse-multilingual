@@ -15,13 +15,16 @@
     {{#if this.language.content_tag_conflict}}
       {{#link-to "tag.show" language.locale}}
         {{d-icon "warning"}}
-        <span>{{i18n "multilingual.languages.content_tag_conflict" tagName=language.locale}}</span>
+        <span>{{i18n
+            "multilingual.languages.content_tag_conflict"
+            tagName=language.locale
+          }}</span>
       {{/link-to}}
     {{else}}
       {{i18n "multilingual.languages.disabled"}}
     {{/if}}
   {{else}}
-    <Input @type="checkbox" @checked={{this.language.content_enabled}}/>
+    <Input @type="checkbox" @checked={{this.language.content_enabled}} />
   {{/if}}
 </td>
 
@@ -30,7 +33,11 @@
     {{i18n "multilingual.languages.disabled"}}
   {{else}}
     {{#if this.language.interface_supported}}
-      <Input @type="checkbox" @checked={{this.language.interface_enabled}} @disabled={{this.interfaceToggleDisabled}}/>
+      <Input
+        @type="checkbox"
+        @checked={{this.language.interface_enabled}}
+        @disabled={{this.interfaceToggleDisabled}}
+      />
     {{else}}
       <i>{{i18n "multilingual.languages.interface_not_supported"}}</i>
     {{/if}}
@@ -41,7 +48,7 @@
   {{#if actionsDisabled}}
     {{i18n "multilingual.languages.disabled"}}
   {{else}}
-    <DButton @action=(action "remove") @disabled={{this.removing}}>
+    <DButton @action={{action "remove"}} @disabled={{this.removing}}>
       {{#if this.removing}}
         {{loading-spinner size="small"}}
       {{else}}

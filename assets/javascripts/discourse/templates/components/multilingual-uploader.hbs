@@ -7,8 +7,13 @@
   <span>{{i18n "uploading"}}</span>
 {{/if}}
 
-<label class="btn btn-default {{if addDisabled "disabled"}}">
+<label class="btn btn-default {{if addDisabled 'disabled'}}">
   {{d-icon "upload"}}
   {{i18n "upload"}}
-  <Input @class="hidden-upload-field" @disabled={{this.addDisabled}} @type="file" @accept="text/x-yaml"/>
+  <Input
+    @class="hidden-upload-field"
+    @disabled={{this.addDisabled}}
+    @type="file"
+    @accept="text/x-yaml"
+  />
 </label>

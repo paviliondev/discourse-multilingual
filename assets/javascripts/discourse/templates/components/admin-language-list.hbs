@@ -1,16 +1,54 @@
 <table class="table languages-list grid">
   <thead>
-    <TableHeaderToggle @field="locale" @labelKey="multilingual.locale" @order={{this.order}} @asc={{this.ascending}} @automatic={{true}}/>
-    <TableHeaderToggle @field="name" @labelKey="multilingual.languages.name" @order={{this.order}} @asc={{this.ascending}} @automatic={{true}}/>
-    <TableHeaderToggle @field="nativeName" @labelKey="multilingual.languages.native_name" @order={{this.order}} @asc={{this.ascending}} @automatic={{true}}/>
-    <TableHeaderToggle @field="content_enabled" @labelKey="multilingual.languages.content" @order={{this.order}} @asc={{this.ascending}} @classNames={{this.controlColumnClassNames}} @automatic={{true}}>
+    <TableHeaderToggle
+      @field="locale"
+      @labelKey="multilingual.locale"
+      @order={{this.order}}
+      @asc={{this.ascending}}
+      @automatic={{true}}
+    />
+    <TableHeaderToggle
+      @field="name"
+      @labelKey="multilingual.languages.name"
+      @order={{this.order}}
+      @asc={{this.ascending}}
+      @automatic={{true}}
+    />
+    <TableHeaderToggle
+      @field="nativeName"
+      @labelKey="multilingual.languages.native_name"
+      @order={{this.order}}
+      @asc={{this.ascending}}
+      @automatic={{true}}
+    />
+    <TableHeaderToggle
+      @field="content_enabled"
+      @labelKey="multilingual.languages.content"
+      @order={{this.order}}
+      @asc={{this.ascending}}
+      @classNames={{this.controlColumnClassNames}}
+      @automatic={{true}}
+    >
       <span class="toggle-all">
-        (<span>{{i18n "multilingual.languages.toggle_all"}}</span><Input @type="checkbox" @checked={{this.allContentEnabled}}/>)
+        (<span>{{i18n "multilingual.languages.toggle_all"}}</span><Input
+          @type="checkbox"
+          @checked={{this.allContentEnabled}}
+        />)
       </span>
     </TableHeaderToggle>
-    <TableHeaderToggle @field="interface_enabled" @labelKey="multilingual.languages.interface" @order={{this.order}} @asc={{this.ascending}} @classNames={{this.controlColumnClassNames}} @automatic={{true}}>
+    <TableHeaderToggle
+      @field="interface_enabled"
+      @labelKey="multilingual.languages.interface"
+      @order={{this.order}}
+      @asc={{this.ascending}}
+      @classNames={{this.controlColumnClassNames}}
+      @automatic={{true}}
+    >
       <span class="toggle-all">
-        (<span>{{i18n "multilingual.languages.toggle_all"}}</span><Input @type="checkbox" @checked={{this.allInterfaceEnabled}}/>)
+        (<span>{{i18n "multilingual.languages.toggle_all"}}</span><Input
+          @type="checkbox"
+          @checked={{this.allInterfaceEnabled}}
+        />)
       </span>
     </TableHeaderToggle>
     <th class="language-control">Actions</th>
@@ -20,7 +58,8 @@
       <AdminLanguage
         @language={{language}}
         @updatedLanguages={{this.updatedLanguages}}
-        @removed={{this.updateLanguages}}/>
+        @removed={{this.updateLanguages}}
+      />
     {{/each}}
   </tbody>
 </table>

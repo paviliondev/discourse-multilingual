@@ -1,8 +1,9 @@
 {{#if this.model.content_language_group}}
   <ContentTagGroupsForm
     @model={{this.model}}
-    @onDestroy=(action "onDestroy")
-    @tagsChanged=(route-action "tagsChanged")/>
+    @onDestroy={{action "onDestroy"}}
+    @tagsChanged={{route-action "tagsChanged"}}
+  />
 {{else}}
-  <TagGroupsForm @model={{this.model}} @onDestroy=(action "onDestroy")/>
+  <TagGroupsForm @model={{this.model}} @onDestroy={{action "onDestroy"}} />
 {{/if}}

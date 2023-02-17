@@ -1,13 +1,16 @@
 <ul class="nav nav-pills">
   <NavItem
     @route="adminMultilingualLanguages"
-    @label="multilingual.languages.title"/>
+    @label="multilingual.languages.title"
+  />
   <NavItem
     @route="adminMultilingualTranslations"
-    @label="multilingual.translations.title"/>
+    @label="multilingual.translations.title"
+  />
   <NavItem
     @route="tagGroups"
     @routeParam={{this.contentLanguageTagGroupId}}
     @label="multilingual.content_languages.tags.title"
-    @icon="tag"/>
+    @icon="tag"
+  />
 </ul>

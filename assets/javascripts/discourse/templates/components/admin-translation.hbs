@@ -7,7 +7,7 @@
 </td>
 
 <td class="actions">
-  <DButton @action=(action "remove")>
+  <DButton @action={{action "remove"}}>
     {{#if removing}}
       {{loading-spinner size="small"}}
     {{else}}

@@ -1,6 +1,6 @@
 <div class="tag-group-content">
   <h1>{{model.name}}</h1>
-  <br>
+  <br />
 
   <section class="group-tags-list">
     <ul>
@@ -15,10 +15,11 @@
 
   <DButton
     @class="btn-danger"
-    @action=(action "destroy")
+    @action={{action "destroy"}}
     @disabled={{this.changingContentTags}}
     @icon="far-trash-alt"
-    @label="tagging.groups.delete"/>
+    @label="tagging.groups.delete"
+  />
 
   <div class="content-tag-controls">
     {{#if changingContentTags}}
@@ -28,16 +29,17 @@
 
     <DButton
       @class="btn-default"
-      @action=(action "updateContentTags")
+      @action={{action "updateContentTags"}}
       @disabled={{this.changingContentTags}}
-      @label="tagging.groups.content_tags.update.btn"/>
+      @label="tagging.groups.content_tags.update.btn"
+    />
 
     <DButton
       @class="btn-danger"
-      @action=(action "destroyContentTags")
+      @action={{action "destroyContentTags"}}
       @icon="far-trash-alt"
       @disabled={{this.changingContentTags}}
-      @label="tagging.groups.content_tags.delete.btn"/>
+      @label="tagging.groups.content_tags.delete.btn"
+    />
   </div>
 </div>
-
