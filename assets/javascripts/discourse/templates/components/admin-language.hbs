@@ -1,25 +1,25 @@
 <td class="locale">
-  {{language.locale}}
+  {{this.language.locale}}
 </td>
 
 <td class="name">
-  {{language.name}}
+  {{this.language.name}}
 </td>
 
 <td class="native-name">
-  {{language.nativeName}}
+  {{this.language.nativeName}}
 </td>
 
-<td class={{contentClass}}>
+<td class={{this.contentClass}}>
   {{#if this.contentDisabled}}
     {{#if this.language.content_tag_conflict}}
-      {{#link-to "tag.show" language.locale}}
+      <LinkTo @route="tag.show" @model={{this.language.locale}}>
         {{d-icon "warning"}}
         <span>{{i18n
             "multilingual.languages.content_tag_conflict"
-            tagName=language.locale
+            tagName=this.language.locale
           }}</span>
-      {{/link-to}}
+      </LinkTo>
     {{else}}
       {{i18n "multilingual.languages.disabled"}}
     {{/if}}
@@ -28,15 +28,15 @@
   {{/if}}
 </td>
 
-<td class={{interfaceClass}}>
-  {{#if interfaceDisabled}}
+<td class={{this.interfaceClass}}>
+  {{#if this.interfaceDisabled}}
     {{i18n "multilingual.languages.disabled"}}
   {{else}}
     {{#if this.language.interface_supported}}
       <Input
         @type="checkbox"
         @checked={{this.language.interface_enabled}}
-        @disabled={{this.interfaceToggleDisabled}}
+        disabled={{this.interfaceToggleDisabled}}
       />
     {{else}}
       <i>{{i18n "multilingual.languages.interface_not_supported"}}</i>
@@ -44,8 +44,8 @@
   {{/if}}
 </td>
 
-<td class={{actionsClass}}>
-  {{#if actionsDisabled}}
+<td class={{this.actionsClass}}>
+  {{#if this.actionsDisabled}}
     {{i18n "multilingual.languages.disabled"}}
   {{else}}
     <DButton @action={{action "remove"}} @disabled={{this.removing}}>

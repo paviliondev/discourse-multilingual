@@ -9,10 +9,10 @@
   </div>
 </div>
 
-{{#if refreshing}}
+{{#if this.refreshing}}
   {{loading-spinner}}
 {{else}}
-  {{#if translations}}
+  {{#if this.translations}}
     <table class="table translations-list grid">
       <thead>
         <TableHeaderToggle
@@ -28,7 +28,7 @@
         <th>Actions</th>
       </thead>
       <tbody>
-        {{#each translations as |translation|}}
+        {{#each this.translations as |translation|}}
           <AdminTranslation
             @translation={{translation}}
             @removed={{action "refresh"}}

@@ -26,10 +26,10 @@
   </div>
 </div>
 
-{{#if refreshing}}
+{{#if this.refreshing}}
   {{loading-spinner}}
 {{else}}
-  {{#if anyLanguages}}
+  {{#if this.anyLanguages}}
     <AdminLanguageList
       @type="custom"
       @languages={{this.filteredLanguages}}

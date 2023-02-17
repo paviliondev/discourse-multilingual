@@ -1,5 +1,6 @@
-{{content-languages-dropdown
-  content=contentLanguages
-  options=(hash
-    hasLanguages=hasLanguages
-  )}}
+<ContentLanguagesDropdown
+  @content={{this.contentLanguages}}
+  @options={{hash
+    hasLanguages=this.hasLanguages
+  }}
+/>

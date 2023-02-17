@@ -1,14 +1,14 @@
 <td class="locale">
-  {{translation.locale}}
+  {{this.translation.locale}}
 </td>
 
 <td class="types">
-  {{translation.file_type}}
+  {{this.translation.file_type}}
 </td>
 
 <td class="actions">
   <DButton @action={{action "remove"}}>
-    {{#if removing}}
+    {{#if this.removing}}
       {{loading-spinner size="small"}}
     {{else}}
       {{d-icon "times"}}

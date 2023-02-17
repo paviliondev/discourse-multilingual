@@ -1,22 +1,22 @@
-{{#each visibleLanguages as |l|}}<div
+{{#each this.visibleLanguages as |l|}}<div
     class="{{l.class}} ls-language"
-    {{action "change" l.locale}}
+    {{on "change" l.locale}}
     role="button"
   >{{l.name}}</div>{{/each}}
 
-{{#if showHiddenToggle}}
+{{#if this.showHiddenToggle}}
   <DButton
     @icon="plus"
     @action={{action "toggleHidden"}}
     @class="toggle-hidden"
   />
 
-  {{#if showHidden}}
+  {{#if this.showHidden}}
     <div class="hidden-languages">
       <ul>
-        {{#each hiddenLanguages as |l|}}<li><div
+        {{#each this.hiddenLanguages as |l|}}<li><div
               class="ls-language"
-              {{action "change" l.locale}}
+              {{on "change" l.locale}}
               role="button"
             >{{l.name}}</div></li>{{/each}}
       </ul>

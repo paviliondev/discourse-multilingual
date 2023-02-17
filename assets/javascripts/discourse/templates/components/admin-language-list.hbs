@@ -54,7 +54,7 @@
     <th class="language-control">Actions</th>
   </thead>
   <tbody>
-    {{#each languages as |language|}}
+    {{#each this.languages as |language|}}
       <AdminLanguage
         @language={{language}}
         @updatedLanguages={{this.updatedLanguages}}

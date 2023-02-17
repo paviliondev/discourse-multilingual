@@ -1,5 +1,5 @@
 {{#if this.message}}
-  <span>{{message}}</span>
+  <span>{{this.message}}</span>
 {{/if}}
 
 {{#if this.uploading}}
@@ -7,13 +7,13 @@
   <span>{{i18n "uploading"}}</span>
 {{/if}}
 
-<label class="btn btn-default {{if addDisabled 'disabled'}}">
+<label class="btn btn-default {{if this.addDisabled 'disabled'}}">
   {{d-icon "upload"}}
   {{i18n "upload"}}
   <Input
-    @class="hidden-upload-field"
-    @disabled={{this.addDisabled}}
+    class="hidden-upload-field"
+    disabled={{this.addDisabled}}
     @type="file"
-    @accept="text/x-yaml"
+    accept="text/x-yaml"
   />
 </label>
