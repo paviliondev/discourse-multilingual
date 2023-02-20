@@ -7,8 +7,6 @@ import {
   getRouter,
 } from "../lib/multilingual-route";
 import I18n from "I18n";
-// import { on } from "@ember/object/evented";
-// import { scheduleOnce } from "@ember/runloop";
 
 export default class ContentLanguageDiscovery extends Component {
   @service siteSettings;
@@ -61,30 +59,4 @@ export default class ContentLanguageDiscovery extends Component {
     }
     return hasLangs;
   }
-
-  // if (this.contentLanguages) {
-  //   if (this.currentUser) {
-  //     hasLanguages =
-  //       this.contentLanguages.filter((l) =>
-  //         isContentLanguage(l.locale, this.siteSettings)
-  //       ).length > 0;
-
-  //     if (!this.contentLanguages.some((l) => l.locale === "set_content_language")) {
-  //       contentLanguages.push({
-  //         icon: "plus",
-  //         locale: "set_content_language",
-  //         name: I18n.t("user.content_languages.set"),
-  //       });
-  //     }
-  //   } else {
-  //     hasLanguages = getDiscoveryParam(this, contentLanguageParam);
-
-  //     contentLanguages.forEach((l) => {
-  //       set(l, "classNames", "guest-content-language");
-  //     });
-  //   }
-  //   debugger;
-
-    // ctx.setProperties({ contentLanguages, hasLanguages });
-  
 };
