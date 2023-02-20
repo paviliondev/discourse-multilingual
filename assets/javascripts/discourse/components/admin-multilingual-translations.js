@@ -17,7 +17,7 @@ export default class AdminMultilingualTranslations extends Component {
 
     MultilingualTranslation.list()
       .then((result) => {
-       this.translations = result;
+        this.translations = result;
       })
       .finally(() => {
         this.refreshing = false;

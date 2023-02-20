@@ -18,19 +18,19 @@ export default class ContentLanguageDiscovery extends Component {
       this.siteSettings.multilingual_content_languages_enabled &&
       this.siteSettings.multilingual_content_languages_topic_filtering_enabled &&
       (this.currentUser ||
-         this.router.currentRouteName.indexOf("categories") === -1)
+        this.router.currentRouteName.indexOf("categories") === -1)
     );
   };
 
   get contentLanguages() {
     let contentLangs = this.currentUser
-    ? this.currentUser.content_languages
-    : this.site.content_languages;
+      ? this.currentUser.content_languages
+      : this.site.content_languages;
 
     if (contentLangs) {
       if (this.currentUser) {
-          if (!contentLangs.some((l) => l.locale === "set_content_language")) {
-            contentLangs.push({
+        if (!contentLangs.some((l) => l.locale === "set_content_language")) {
+          contentLangs.push({
             icon: "plus",
             locale: "set_content_language",
             name: I18n.t("user.content_languages.set"),
