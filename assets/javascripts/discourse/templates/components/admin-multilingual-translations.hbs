@@ -1,0 +1,31 @@
+<div class="controls">
+  <div class="buttons">
+    {{multilingual-uploader
+      id="multilingual-translations-uploader"
+      uploading=uploading
+      done=(action "refresh")
+      uploadType="translation"}}
+  </div>
+</div>
+
+{{#if refreshing}}
+blah
+  {{loading-spinner}}
+{{else}}
+  {{#if this.translations}}
+    <table class="table translations-list grid">
+      <thead>
+        {{table-header-toggle field="locale" labelKey="multilingual.locale" automatic=true}}
+        {{table-header-toggle field="file_type" labelKey="multilingual.translations.type" automatic=true}}
+        <th>Actions</th>
+      </thead>
+      <tbody>
+        {{#each this.translations as |translation|}}
+          {{admin-translation translation=translation removed=(action this.refresh)}}
+        {{/each}}
+      </tbody>
+    </table>
+  {{else}}
+    <p>{{i18n "search.no_results"}}</p>
+  {{/if}}
+{{/if}}

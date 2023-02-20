@@ -1,18 +1,20 @@
-<td class="locale">
-  {{translation.locale}}
-</td>
+<tr class="language">
+  <td class="locale">
+    {{this.args.translation.locale}}
+  </td>
 
-<td class="types">
-  {{translation.file_type}}
-</td>
+  <td class="types">
+    {{this.args.translation.file_type}}
+  </td>
 
-<td class="actions">
-  {{#d-button click=(action "remove")}}
-    {{#if removing}}
-      {{loading-spinner size="small"}}
-    {{else}}
-      {{d-icon "times"}}
-      {{i18n "multilingual.translations.remove"}}
-    {{/if}}
-  {{/d-button}}
-</td>
+  <td class="actions">
+    <DButton @action={{this.remove}}>
+      {{#if removing}}
+        {{loading-spinner size="small"}}
+      {{else}}
+        {{d-icon "times"}}
+        {{i18n "multilingual.translations.remove"}}
+      {{/if}}
+    </DButton>
+  </td>
+</tr>
