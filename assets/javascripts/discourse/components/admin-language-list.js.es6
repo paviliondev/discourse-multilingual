@@ -10,6 +10,7 @@ export default Component.extend({
 
   @observes("allContentEnabled")
   updateAllContent() {
+    debugger;
     this.languages.forEach((l) => {
       set(l, "content_enabled", this.allContentEnabled);
     });
@@ -17,6 +18,7 @@ export default Component.extend({
 
   @observes("allInterfaceEnabled")
   updateAllInterface() {
+    debugger;
     this.languages.forEach((l) => {
       if (l.locale !== "en") {
         set(l, "interface_enabled", this.allInterfaceEnabled);

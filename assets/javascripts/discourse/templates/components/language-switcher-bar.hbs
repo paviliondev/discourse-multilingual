@@ -1,6 +1,6 @@
 {{#each this.visibleLanguages as |l|}}<div
     class="{{l.class}} ls-language"
-    {{on "change" l.locale}}
+   {{action "change" l.locale}}
     role="button"
   >{{l.name}}</div>{{/each}}
 
@@ -16,7 +16,7 @@
       <ul>
         {{#each this.hiddenLanguages as |l|}}<li><div
               class="ls-language"
-              {{on "change" l.locale}}
+              {{action "change" l.locale}}
               role="button"
             >{{l.name}}</div></li>{{/each}}
       </ul>

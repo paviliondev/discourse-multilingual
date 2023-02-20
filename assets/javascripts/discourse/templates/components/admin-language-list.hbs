@@ -4,10 +4,10 @@
       @field="locale"
       @labelKey="multilingual.locale"
       @order={{this.order}}
-      @asc={{this.ascending}}
+      @asc={{this.asc}}
       @automatic={{true}}
     />
-    <TableHeaderToggle
+    {{!-- <TableHeaderToggle
       @field="name"
       @labelKey="multilingual.languages.name"
       @order={{this.order}}
@@ -33,6 +33,7 @@
         (<span>{{i18n "multilingual.languages.toggle_all"}}</span><Input
           @type="checkbox"
           @checked={{this.allContentEnabled}}
+          {{on "change" this.selectAllContentEnabled}}
         />)
       </span>
     </TableHeaderToggle>
@@ -47,10 +48,12 @@
       <span class="toggle-all">
         (<span>{{i18n "multilingual.languages.toggle_all"}}</span><Input
           @type="checkbox"
+          class="bulk-select"
           @checked={{this.allInterfaceEnabled}}
+          {{on "change" this.selectAllInterfaceEnabled}}
         />)
       </span>
-    </TableHeaderToggle>
+    </TableHeaderToggle> --}}
     <th class="language-control">Actions</th>
   </thead>
   <tbody>
