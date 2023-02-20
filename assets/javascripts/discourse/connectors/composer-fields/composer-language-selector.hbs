@@ -1,7 +1,8 @@
-{{#if showSelector}}
-  {{content-languages-selector
-    content=site.content_languages
-    value=model.content_language_tags
-    filterPlaceholder="topic.content_languages.placeholder"
-    onChange=(action (mut model.content_language_tags))}}
+{{#if this.showSelector}}
+  <ContentLanguagesSelector
+    @content={{this.site.content_languages}}
+    @value={{this.model.content_language_tags}}
+    @filterPlaceholder="topic.content_languages.placeholder"
+    @onChange={{action (mut this.model.content_language_tags)}}
+  />
 {{/if}}

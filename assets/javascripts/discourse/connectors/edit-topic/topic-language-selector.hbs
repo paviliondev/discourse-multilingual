@@ -1,6 +1,5 @@
-{{
-  content-languages-selector
-  content=site.content_languages
-  value=buffered.content_language_tags
-  filterPlaceholder="topic.content_languages.placeholder"
-}}
+<ContentLanguagesSelector
+  @content={{this.site.content_languages}}
+  @value={{this.buffered.content_language_tags}}
+  @filterPlaceholder="topic.content_languages.placeholder"
+/>

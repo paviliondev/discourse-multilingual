@@ -1,0 +1,19 @@
+{{#if this.shouldRender}}
+<div class="control-group content-languages">
+  <label class="control-label">
+    {{i18n "user.content_languages.title"}}
+  </label>
+  <div class="controls content-languages-selector-container">
+    <ContentLanguagesSelector
+      @content={{this.site.content_languages}}
+      @value={{this.model.custom_fields.content_languages}}
+      @noneLabel="user.content_languages.placeholder"
+      @onChange={{action (mut this.model.custom_fields.content_languages)}}
+      @initializeContentLanguges={{false}}
+    />
+  </div>
+  <div class="instructions">
+    {{i18n "user.content_languages.instructions"}}
+  </div>
+</div>
+{{/if}}
