@@ -3,8 +3,7 @@ import { inject as service } from "@ember/service";
 import { isContentLanguage } from "../lib/multilingual";
 import {
   contentLanguageParam,
-  getDiscoveryParam,
-  getRouter,
+  getDiscoveryParam
 } from "../lib/multilingual-route";
 import I18n from "I18n";
 
