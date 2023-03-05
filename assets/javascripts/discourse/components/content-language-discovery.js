@@ -1,4 +1,5 @@
 import Component from '@glimmer/component';
+import { set } from "@ember/object";
 import { inject as service } from "@ember/service";
 import { isContentLanguage } from "../lib/multilingual";
 import {
@@ -11,6 +12,7 @@ export default class ContentLanguageDiscovery extends Component {
   @service siteSettings;
   @service currentUser;
   @service router;
+  @service site;
 
   get shouldRender() {
     return (
