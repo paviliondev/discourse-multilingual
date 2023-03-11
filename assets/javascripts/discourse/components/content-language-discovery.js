@@ -1,10 +1,10 @@
-import Component from '@glimmer/component';
+import Component from "@glimmer/component";
 import { set } from "@ember/object";
 import { inject as service } from "@ember/service";
 import { isContentLanguage } from "../lib/multilingual";
 import {
   contentLanguageParam,
-  getDiscoveryParam
+  getDiscoveryParam,
 } from "../lib/multilingual-route";
 import I18n from "I18n";
 
@@ -18,11 +18,12 @@ export default class ContentLanguageDiscovery extends Component {
     return (
       this.siteSettings.multilingual_enabled &&
       this.siteSettings.multilingual_content_languages_enabled &&
-      this.siteSettings.multilingual_content_languages_topic_filtering_enabled &&
+      this.siteSettings
+        .multilingual_content_languages_topic_filtering_enabled &&
       (this.currentUser ||
         this.router.currentRouteName.indexOf("categories") === -1)
     );
-  };
+  }
 
   get contentLanguages() {
     let contentLangs = this.currentUser
@@ -44,8 +45,8 @@ export default class ContentLanguageDiscovery extends Component {
         });
       }
     }
-    return contentLangs
-  };
+    return contentLangs;
+  }
 
   get hasLanguages() {
     let hasLangs;
@@ -60,4 +61,4 @@ export default class ContentLanguageDiscovery extends Component {
     }
     return hasLangs;
   }
-};
+}

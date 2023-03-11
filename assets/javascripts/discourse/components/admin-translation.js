@@ -1,7 +1,7 @@
 import MultilingualTranslation from "../models/multilingual-translation";
-import Component from '@glimmer/component';
-import { action } from '@ember/object';
-import { tracked } from '@glimmer/tracking';
+import Component from "@glimmer/component";
+import { action } from "@ember/object";
+import { tracked } from "@glimmer/tracking";
 
 export default class AdminTranslation extends Component {
   @tracked removing = false;
@@ -13,11 +13,11 @@ export default class AdminTranslation extends Component {
     MultilingualTranslation.remove(
       this.args.translation.locale,
       this.args.translation.file_type
-    ).then((result) => {
+    ).then(() => {
       this.removing = false;
       this.args.removed();
     });
-  };
+  }
 
   @action
   download() {
@@ -25,5 +25,5 @@ export default class AdminTranslation extends Component {
       this.args.translation.locale,
       this.args.translation.file_type
     );
-  };
-};
+  }
+}

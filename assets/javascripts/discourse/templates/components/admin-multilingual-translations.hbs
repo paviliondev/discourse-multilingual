@@ -14,13 +14,13 @@
   {{#if this.translations}}
     <table class="table translations-list grid">
       <thead>
-        {{table-header-toggle field="locale" labelKey="multilingual.locale" automatic=true}}
-        {{table-header-toggle field="file_type" labelKey="multilingual.translations.type" automatic=true}}
+        {{legacy-table-header-toggle field="locale" labelKey="multilingual.locale" order=order asc=ascending automatic=true}}
+        {{legacy-table-header-toggle field="file_type" labelKey="multilingual.translations.type" order=order asc=ascending automatic=true}}
         <th>Actions</th>
       </thead>
       <tbody>
         {{#each this.translations as |translation|}}
-          {{admin-translation translation=translation removed=(action this.refresh)}}
+          <AdminTranslation @translation={{translation}} @removed={{action this.refresh}}/>
         {{/each}}
       </tbody>
     </table>
