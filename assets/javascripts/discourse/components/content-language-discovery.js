@@ -44,7 +44,7 @@ export default class ContentLanguageDiscovery extends Component {
         });
       }
     }
-    return contentLangs
+    return contentLangs;
   };
 
   get hasLanguages() {

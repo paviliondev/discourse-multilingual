@@ -13,7 +13,7 @@ export default class AdminTranslation extends Component {
     MultilingualTranslation.remove(
       this.args.translation.locale,
       this.args.translation.file_type
-    ).then((result) => {
+    ).then(() => {
       this.removing = false;
       this.args.removed();
     });
