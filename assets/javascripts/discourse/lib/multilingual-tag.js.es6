@@ -64,10 +64,8 @@ function multilingualTagTranslator(tag) {
   if (
     typeof I18n.tag_translations !== "undefined" &&
     I18n.tag_translations !== null &&
-    typeof I18n.tag_translations[I18n.currentLocale()] !==
-      "undefined" &&
-    typeof I18n.tag_translations[I18n.currentLocale()][tag] !==
-      "undefined"
+    typeof I18n.tag_translations[I18n.currentLocale()] !== "undefined" &&
+    typeof I18n.tag_translations[I18n.currentLocale()][tag] !== "undefined"
   ) {
     return I18n.tag_translations[I18n.currentLocale()][tag];
   } else {
