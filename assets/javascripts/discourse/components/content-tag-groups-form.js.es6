@@ -1,10 +1,11 @@
 import TagGroupsForm from "discourse/components/tag-groups-form";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
-import bootbox from "bootbox";
+import { inject as service } from "@ember/service";
 import I18n from "I18n";
 
 export default TagGroupsForm.extend({
+  dialog: service(),
   updateContentTags() {
     this.set(
       "changingContentTags",
@@ -35,12 +36,10 @@ export default TagGroupsForm.extend({
 
   actions: {
     destroyContentTags() {
-      bootbox.confirm(
-        I18n.t("tagging.groups.content_tags.delete.confirm"),
-        I18n.t("no_value"),
-        I18n.t("yes_value"),
-        (confirmed) => (confirmed ? this.destroyContentTags() : null)
-      );
+      this.dialog.deleteConfirm({
+        title: I18n.t("tagging.groups.content_tags.delete.confirm"),
+        didConfirm: () => this.destroyContentTags(),
+      });
     },
 
     updateContentTags() {
