@@ -178,13 +178,10 @@ after_initialize do
     ActiveModel::ArraySerializer.new(languages, each_serializer: Multilingual::BasicLanguageSerializer, root: false).as_json
   end
 
-  add_to_serializer(:site, :content_languages) { serialize_languages(object.content_languages) }
-  add_to_serializer(:site, :include_content_languages?) { Multilingual::ContentLanguage.enabled }
+  add_to_serializer(:site, :content_languages, include_condition: -> { Multilingual::ContentLanguage.enabled }) { serialize_languages(object.content_languages) }
   add_to_serializer(:site, :interface_languages) { serialize_languages(object.interface_languages) }
-  add_to_serializer(:topic_view, :content_language_tags) { Multilingual::ContentTag.filter(topic.tags).map(&:name) }
-  add_to_serializer(:topic_view, :include_content_language_tags?) { Multilingual::ContentLanguage.enabled }
-  add_to_serializer(:topic_list_item, :content_language_tags) { Multilingual::ContentTag.filter(topic.tags).map(&:name) }
-  add_to_serializer(:topic_list_item, :include_content_language_tags?) { Multilingual::ContentLanguage.enabled }
+  add_to_serializer(:topic_view, :content_language_tags, include_condition: -> { Multilingual::ContentLanguage.enabled }) { Multilingual::ContentTag.filter(topic.tags).map(&:name) }
+  add_to_serializer(:topic_list_item, :content_language_tags, include_condition: -> { Multilingual::ContentLanguage.enabled }) { Multilingual::ContentTag.filter(topic.tags).map(&:name) }
 
   add_to_serializer(:current_user, :content_languages) do
     if user_content_languages = object.content_languages
