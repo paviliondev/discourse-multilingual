@@ -249,10 +249,6 @@ after_initialize do
     end
   end
 
-  add_to_serializer(:basic_category, :include_name_translations?) { name_translations.present? }
-
-  add_to_serializer(:basic_category, :include_description_translations?) { description_translations.present? }
-
   add_to_serializer(:tag_group, :content_language_group) do
     content_language_group_enabled || content_language_group_disabled
   end
