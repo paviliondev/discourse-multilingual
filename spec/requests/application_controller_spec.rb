@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require_relative '../plugin_helper'
+require_relative "../plugin_helper"
 
 describe ApplicationController do
   before do
@@ -9,25 +9,30 @@ describe ApplicationController do
     Multilingual::Language.setup
   end
 
+  def locale_scripts(body)
+    Nokogiri::HTML5
+      .parse(body)
+      .css('script[src*="assets/locales/"]')
+      .map { |script| script.attributes["src"].value }
+  end
+
   # Using /bootstrap.json because discourse/spec/requests/application_controller_spec.rb does
   it "allows locale to be set via query params" do
-    get "/bootstrap.json?locale=fr"
+    get "/latest?locale=fr"
     expect(response.status).to eq(200)
-    expect(response.parsed_body['bootstrap']['locale_script']).to end_with("fr.js")
+    expect(locale_scripts(response.body)).to include("/assets/locales/fr.js")
   end
 
   it "allows locale to be set via a cookie" do
-    cookies[:discourse_locale] = "fr"
-    get "/bootstrap.json"
+    get "/latest", headers: { Cookie: "discourse_locale=fr" }
     expect(response.status).to eq(200)
-    expect(response.parsed_body['bootstrap']['locale_script']).to end_with("fr.js")
+    expect(locale_scripts(response.body)).to include("/assets/locales/fr.js")
   end
 
   it "doesnt leak after requests" do
-    cookies[:discourse_locale] = "fr"
-    get "/bootstrap.json"
+    get "/latest", headers: { Cookie: "discourse_locale=fr" }
     expect(response.status).to eq(200)
-    expect(response.parsed_body['bootstrap']['locale_script']).to end_with("fr.js")
+    expect(locale_scripts(response.body)).to include("/assets/locales/fr.js")
     expect(I18n.locale.to_s).to eq(SiteSettings::DefaultsProvider::DEFAULT_LOCALE)
   end
 end
