@@ -3,7 +3,7 @@
 require_relative "../plugin_helper"
 
 describe TopicCreator do
-  fab!(:staff) { Fabricate(:moderator) }
+  fab!(:staff) { Fabricate(:moderator, refresh_auto_groups: true) }
   fab!(:user) { Fabricate(:user, refresh_auto_groups: true) }
   fab!(:tag) { Fabricate(:tag) }
 
