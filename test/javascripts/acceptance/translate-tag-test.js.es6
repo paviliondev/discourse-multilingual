@@ -9,13 +9,13 @@ acceptance("Translated tags", function () {
 
   test("translates included data correctly", async (assert) => {
     I18n.locale = "fr";
-    assert.equal(I18n.default.currentLocale(), "fr");
+    assert.equal(I18n.currentLocale(), "fr");
     assert.equal(multilingualTagTranslator("motor-car"), "voiture");
   });
 
   test("doesn't translate tag when data does not include translation", async (assert) => {
     I18n.locale = "en";
-    assert.equal(I18n.default.currentLocale(), "en");
+    assert.equal(I18n.currentLocale(), "en");
     assert.equal(multilingualTagTranslator("motor-car"), "motor-car");
   });
 });
