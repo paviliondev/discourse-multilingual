@@ -87,6 +87,7 @@ after_initialize do
   end
 
   register_editable_user_custom_field [:content_languages, content_languages: []]
+  register_user_custom_field_type :content_languages, :string, max_length: 20
   allow_public_user_custom_field :content_languages
 
   add_to_class(:site, :interface_languages) { Multilingual::InterfaceLanguage.list }
