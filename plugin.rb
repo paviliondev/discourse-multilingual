@@ -206,13 +206,16 @@ after_initialize do
     if (scope && scope.current_user && scope.current_user.locale)
       scope.current_user.locale
     else
-      I18n.locale
+      I18n.locale_available?(I18n.locale) ? I18n.locale : SiteSetting.default_locale
     end
   }
 
   add_to_serializer(:basic_category, :name, respect_plugin_enabled: false) do
     if object.uncategorized?
-      I18n.t('uncategorized_category_name', locale: I18n.locale)
+      I18n.t(
+        'uncategorized_category_name',
+        locale: I18n.locale_available?(I18n.locale) ? I18n.locale : SiteSetting.default_locale
+      )
     elsif !(object.slug_path && Multilingual::Translation.get("category_name", object.slug_path)).blank?
       Multilingual::Translation.get("category_name", object.slug_path)[find_locale.call(scope).to_sym] || object.name
     else
@@ -222,7 +225,10 @@ after_initialize do
 
   add_to_serializer(:basic_category, :description_text, respect_plugin_enabled: false) do
     if object.uncategorized?
-      I18n.t('category.uncategorized_description', locale: I18n.locale)
+      I18n.t(
+        'category.uncategorized_description',
+        locale: I18n.locale_available?(I18n.locale) ? I18n.locale : SiteSetting.default_locale
+      )
     elsif !(object.slug_path && Multilingual::Translation.get("category_description", object.slug_path)).blank?
       Multilingual::Translation.get("category_description", object.slug_path)[find_locale.call(scope).to_sym] || object.description_text
     else
@@ -232,7 +238,10 @@ after_initialize do
 
   add_to_serializer(:basic_category, :description, respect_plugin_enabled: false) do
     if object.uncategorized?
-      I18n.t('category.uncategorized_description', locale: I18n.locale)
+      I18n.t(
+        'category.uncategorized_description',
+        locale: I18n.locale_available?(I18n.locale) ? I18n.locale : SiteSetting.default_locale
+      )
     elsif !(object.slug_path && Multilingual::Translation.get("category_description", object.slug_path)).blank?
       Multilingual::Translation.get("category_description", object.slug_path)[find_locale.call(scope).to_sym] || object.description
     else
@@ -242,7 +251,10 @@ after_initialize do
 
   add_to_serializer(:basic_category, :description_excerpt, respect_plugin_enabled: false) do
     if object.uncategorized?
-      I18n.t('category.uncategorized_description', locale: I18n.locale)
+      I18n.t(
+        'category.uncategorized_description',
+        locale: I18n.locale_available?(I18n.locale) ? I18n.locale : SiteSetting.default_locale
+      )
     elsif !(object.slug_path && Multilingual::Translation.get("category_description", object.slug_path)).blank?
       Multilingual::Translation.get("category_description", object.slug_path)[find_locale.call(scope).to_sym] || object.description_excerpt
     else
@@ -253,7 +265,10 @@ after_initialize do
   add_to_serializer(:site, :categories, respect_plugin_enabled: false) do
     object.categories.map do |c|
       if c[:slug] == "uncategorized"
-        c[:name] = I18n.t('uncategorized_category_name', locale: I18n.locale)
+        c[:name] = I18n.t(
+          'uncategorized_category_name',
+          locale: I18n.locale_available?(I18n.locale) ? I18n.locale : SiteSetting.default_locale
+        )
       elsif SiteSetting.multilingual_enabled && !(c[:slug_path] && Multilingual::Translation.get("category_name", c[:slug_path])).blank?
         c[:name] = Multilingual::Translation.get("category_name", c[:slug_path])[find_locale.call(scope).to_sym] || c[:name]
       end
