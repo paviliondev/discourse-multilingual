@@ -44,19 +44,18 @@ acceptance(
 
       assert.ok(exists(".content-languages-dropdown"), "displays");
 
-      assert.equal(
-        find(".content-languages-dropdown summary").hasClass("has-languages"),
-        true,
-        "has content languages"
-      );
+      assert.dom(".content-languages-dropdown summary.has-languages").exists();
 
       await click(".content-languages-dropdown summary");
 
-      assert.equal(
-        find(".content-languages-dropdown .select-kit-collection li").length,
-        2,
-        "should render content languages and the set languages link"
-      );
+      assert
+        .dom(".content-languages-dropdown .select-kit-collection li")
+        .exists(
+          {
+            count: 2,
+          },
+          "displays content languages and Set languages link"
+        );
     });
   }
 );
