@@ -1,19 +1,19 @@
+import Route from "@ember/routing/route";
 import { ajax } from "discourse/lib/ajax";
-import DiscourseRoute from "discourse/routes/discourse";
+import { action } from "@ember/object";
+import { inject as service } from "@ember/service";
 
-export default DiscourseRoute.extend({
+export default class AdminMultilingualRoute extends Route {
+  @service router;
+
   beforeModel(transition) {
     if (
       transition.intent.url === "/admin/multilingual" ||
       transition.intent.name === "adminMultilingual"
     ) {
-      this.transitionTo("adminMultilingualLanguages");
+      this.router.transitionTo("adminMultilingualLanguages");
     }
-  },
-
-  model() {
-    return ajax("/admin/multilingual");
-  },
+  }
 
   setupController(controller, model) {
     controller.setProperties({
@@ -21,16 +21,21 @@ export default DiscourseRoute.extend({
       documentationUrl:
         "https://thepavilion.io/c/knowledge/discourse/multilingual",
     });
-  },
+  }
 
-  actions: {
-    showSettings() {
-      const controller = this.controllerFor("adminSiteSettings");
-      this.transitionTo("adminSiteSettingsCategory", "plugins").then(() => {
+  @action
+  showSettings() {
+    const controller = this.controllerFor("adminSiteSettings");
+    this.router
+      .transitionTo("adminSiteSettingsCategory", "plugins")
+      .then(() => {
         controller.set("filter", "multilingual");
         controller.set("_skipBounce", true);
         controller.filterContentNow("plugins");
       });
-    },
-  },
-});
+  }
+
+  model() {
+    return ajax("/admin/multilingual");
+  }
+}

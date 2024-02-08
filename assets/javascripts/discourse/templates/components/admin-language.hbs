@@ -13,7 +13,7 @@
 <td class={{contentClass}}>
   {{#if contentDisabled}}
     {{#if language.content_tag_conflict}}
-      {{#link-to "tag.show" language.locale}}
+      {{#link-to route="tag.show" model=language.locale}}
         {{d-icon "warning"}}
         <span>{{i18n "multilingual.languages.content_tag_conflict" tagName=language.locale}}</span>
       {{/link-to}}
