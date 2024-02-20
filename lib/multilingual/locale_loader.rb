@@ -1,19 +1,13 @@
 # frozen_string_literal: true
 class ::Multilingual::LocaleLoader
-  include ::ApplicationHelper
+  attr_reader :controller
 
-  attr_reader :ctx
+  delegate :request, to: :controller
+  delegate :helpers, to: :controller, private: true
+  delegate :asset_path, to: :helpers
 
-  def initialize(ctx)
-    @ctx = ctx
-  end
-
-  def request
-    @ctx && @ctx.request ? @ctx.request : ActionDispatch::Request.new
-  end
-
-  def asset_path(url)
-    ActionController::Base.helpers.asset_path(url)
+  def initialize(controller)
+    @controller = controller
   end
 
   def current_locale
@@ -25,14 +19,14 @@ class ::Multilingual::LocaleLoader
   end
 
   def preload_i18n
-    preload_script("locales/i18n")
+    helpers.preload_script("locales/i18n")
   end
 
   def preload_custom_locale
-    preload_script_url(ExtraLocalesController.url('custom-language'))
+    helpers.preload_script_url(ExtraLocalesController.url("custom-language"))
   end
 
   def preload_tag_translations
-    preload_script_url(ExtraLocalesController.url('tags'))
+    helpers.preload_script_url(ExtraLocalesController.url("tags"))
   end
 end
