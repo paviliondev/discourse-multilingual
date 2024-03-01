@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # name: discourse-multilingual
 # about: Features to support multilingual forums
-# version: 0.2.9
+# version: 0.2.10
 # url: https://github.com/paviliondev/discourse-multilingual
 # authors: Angus McLeod, Robert Barrow
 # contact_emails: development@pavilion.tech
@@ -179,13 +179,10 @@ after_initialize do
     ActiveModel::ArraySerializer.new(languages, each_serializer: Multilingual::BasicLanguageSerializer, root: false).as_json
   end
 
-  add_to_serializer(:site, :content_languages) { serialize_languages(object.content_languages) }
-  add_to_serializer(:site, :include_content_languages?) { Multilingual::ContentLanguage.enabled }
+  add_to_serializer(:site, :content_languages, include_condition: -> { Multilingual::ContentLanguage.enabled }) { serialize_languages(object.content_languages) }
   add_to_serializer(:site, :interface_languages) { serialize_languages(object.interface_languages) }
-  add_to_serializer(:topic_view, :content_language_tags) { Multilingual::ContentTag.filter(topic.tags).map(&:name) }
-  add_to_serializer(:topic_view, :include_content_language_tags?) { Multilingual::ContentLanguage.enabled }
-  add_to_serializer(:topic_list_item, :content_language_tags) { Multilingual::ContentTag.filter(topic.tags).map(&:name) }
-  add_to_serializer(:topic_list_item, :include_content_language_tags?) { Multilingual::ContentLanguage.enabled }
+  add_to_serializer(:topic_view, :content_language_tags, include_condition: -> { Multilingual::ContentLanguage.enabled }) { Multilingual::ContentTag.filter(topic.tags).map(&:name) }
+  add_to_serializer(:topic_list_item, :content_language_tags, include_condition: -> { Multilingual::ContentLanguage.enabled }) { Multilingual::ContentTag.filter(topic.tags).map(&:name) }
 
   add_to_serializer(:current_user, :content_languages) do
     if user_content_languages = object.content_languages
@@ -252,10 +249,6 @@ after_initialize do
       c.to_h
     end
   end
-
-  add_to_serializer(:basic_category, :include_name_translations?) { name_translations.present? }
-
-  add_to_serializer(:basic_category, :include_description_translations?) { description_translations.present? }
 
   add_to_serializer(:tag_group, :content_language_group) do
     content_language_group_enabled || content_language_group_disabled
