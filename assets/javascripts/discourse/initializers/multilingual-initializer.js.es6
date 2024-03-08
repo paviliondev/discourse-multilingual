@@ -15,7 +15,7 @@ import { iconHTML } from "discourse-common/lib/icon-library";
 import renderTag from "discourse/lib/render-tag";
 import { computed, set } from "@ember/object";
 import { scheduleOnce } from "@ember/runloop";
-import jQuery from "jquery";
+import LanguageSwitcher from "../components/language-switcher";
 
 export default {
   name: "multilingual",
@@ -38,7 +38,7 @@ export default {
       );
     }
 
-    withPluginApi("0.8.36", (api) => {
+    withPluginApi("1.28.0", (api) => {
       api.replaceTagRenderer(multilingualTagRenderer);
 
       discoveryParams.forEach((param) => {
@@ -76,7 +76,6 @@ export default {
               return this._super();
             }
 
-            // jQuery ajax removes empty arrays. This is a workaround
             let cl = this.model.custom_fields.content_languages;
             if (!cl || !cl.length) {
               this.set("model.custom_fields.content_languages", [""]);
@@ -194,35 +193,7 @@ export default {
         !currentUser &&
         siteSettings.multilingual_guest_language_switcher === "header"
       ) {
-        api.reopenWidget("header", {
-          defaultState() {
-            return jQuery.extend(this._super(...arguments), {
-              languageSwitcherMenuVisible: false,
-            });
-          },
-
-          toggleLangugeSwitcherMenu() {
-            this.state.languageSwitcherMenuVisible =
-              !this.state.languageSwitcherMenuVisible;
-          },
-        });
-
-        api.decorateWidget("header-icons:before", (helper) => {
-          return helper.attach("header-dropdown", {
-            title: "user.locale.title",
-            icon: "translate",
-            iconId: "language-switcher-menu-button",
-            action: "toggleLangugeSwitcherMenu",
-            active:
-              helper.widget.parentWidget.state.languageSwitcherMenuVisible,
-          });
-        });
-
-        api.addHeaderPanel(
-          "language-switcher-menu",
-          "languageSwitcherMenuVisible",
-          (attrs, state) => ({ attrs, state })
-        );
+        api.headerIcons.add("multilingual-language-switcher", LanguageSwitcher);
       }
 
       api.modifyClass("route:tag-groups-edit", {
