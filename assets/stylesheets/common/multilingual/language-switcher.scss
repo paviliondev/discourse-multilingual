@@ -12,6 +12,7 @@
 
   &:hover {
     background-color: var(--tertiary-low) !important;
+    color: var(--primary);
   }
 
   &.current {
@@ -94,10 +95,7 @@ html.rtl {
 }
 
 .language-switcher-menu {
-  .panel-body-contents {
-    overflow-y: scroll;
-  }
-
+  padding: 0.4em;
   ul {
     list-style: none;
     margin: 0;
@@ -107,8 +105,13 @@ html.rtl {
 
     li {
       margin: 5px 0;
-      display: inline-block;
       width: 100%;
+      a {
+        display: block;
+      }
+      a:visited {
+        color: var(--primary);
+      }
     }
   }
 }
