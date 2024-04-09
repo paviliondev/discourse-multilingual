@@ -19,6 +19,8 @@ export default DropdownSelectBox.extend({
   },
 
   didInsertElement() {
+    this._super(...arguments);
+
     if (!this.currentUser) {
       this.selectKit.options.set("filterable", true);
     }
