@@ -4,12 +4,11 @@
 require 'webmock/rspec'
 
 RSpec.configure do |config|
-  config.around(:each) do |example|
-    ActiveRecord::Base.transaction do
-      example.run
-      raise ActiveRecord::Rollback
-    end
-  end
+  config.before(:each) { ActiveRecord::Base.connection.begin_transaction(joinable: false) }
+
+  config.after(:each) { ActiveRecord::Base.connection.rollback_transaction }
+
+  config.around(:each) { |example| allow_missing_translations { example.run } }
 end
 
 require 'rails_helper'
