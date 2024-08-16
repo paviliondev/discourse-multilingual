@@ -6,7 +6,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
   KEY ||= 'file'.freeze
 
   validates :file_name, :locale, :file_type, :file_ext, :translation_data, presence: true
-  serialize :translation_data
+  serialize :translation_data, type: Hash, coder: YAML
   before_save :process_file
   after_save :after_save
 
