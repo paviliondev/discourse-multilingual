@@ -145,3 +145,17 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
     all.select { |f| [*types].map(&:to_sym).include?(f[:file_type].to_sym) }
   end
 end
+
+# == Schema Information
+#
+# Table name: custom_translations
+#
+#  id               :bigint           not null, primary key
+#  file_name        :string           not null
+#  file_type        :string           not null
+#  locale           :string           not null
+#  file_ext         :string           not null
+#  translation_data :text             not null
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#
