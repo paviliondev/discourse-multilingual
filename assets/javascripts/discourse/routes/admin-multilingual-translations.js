@@ -1,5 +1,5 @@
-import MultilingualTranslation from "../models/multilingual-translation";
 import DiscourseRoute from "discourse/routes/discourse";
+import MultilingualTranslation from "../models/multilingual-translation";
 
 export default DiscourseRoute.extend({
   model(params) {

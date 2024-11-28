@@ -1,6 +1,6 @@
+import Component from "@ember/component";
 import { set } from "@ember/object";
 import { observes } from "discourse-common/utils/decorators";
-import Component from "@ember/component";
 
 export default Component.extend({
   classNames: "admin-language-list",

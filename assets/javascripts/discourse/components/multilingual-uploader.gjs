@@ -1,13 +1,13 @@
 import Component from "@glimmer/component";
-import UppyUpload from "discourse/lib/uppy/uppy-upload";
+import { tracked } from "@glimmer/tracking";
 import { getOwner } from "@ember/owner";
-import i18n from "discourse-common/helpers/i18n";
+import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 import { service } from "@ember/service";
 import loadingSpinner from "discourse/helpers/loading-spinner";
+import UppyUpload from "discourse/lib/uppy/uppy-upload";
 import icon from "discourse-common/helpers/d-icon";
-import didInsert from "@ember/render-modifiers/modifiers/did-insert";
+import i18n from "discourse-common/helpers/i18n";
 import { bind } from "discourse-common/utils/decorators";
-import { tracked } from "@glimmer/tracking";
 
 export default class MultilingualUploader extends Component {
   @service messageBus;
@@ -59,7 +59,7 @@ export default class MultilingualUploader extends Component {
     }, 10000);
   }
 
-   <template>
+  <template>
     <div
       id="multilingual-uploader"
       class="multilingual-uploader {{@uploadType}}"

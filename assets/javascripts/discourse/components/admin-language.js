@@ -1,16 +1,17 @@
+import Component from "@ember/component";
+import { deepEqual } from "discourse-common/lib/object";
 import {
   default as discourseComputed,
   observes,
 } from "discourse-common/utils/decorators";
 import MultilingualLanguage from "../models/multilingual-language";
-import Component from "@ember/component";
-import { deepEqual } from "discourse-common/lib/object";
 
 export default Component.extend({
   tagName: "tr",
   classNames: "language",
 
   didInsertElement() {
+    this._super(...arguments);
     this.currentLanguage = JSON.parse(JSON.stringify(this.language));
   },
 

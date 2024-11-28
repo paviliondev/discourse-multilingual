@@ -1,7 +1,6 @@
 {{#if this.shouldRender}}
-{{content-languages-dropdown
-  content=this.contentLanguages
-  options=(hash
-    hasLanguages=this.hasLanguages
-  )}}
+  {{content-languages-dropdown
+    content=this.contentLanguages
+    options=(hash hasLanguages=this.hasLanguages)
+  }}
 {{/if}}

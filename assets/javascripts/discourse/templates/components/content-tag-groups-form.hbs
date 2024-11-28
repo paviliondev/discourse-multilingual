@@ -1,10 +1,10 @@
 <div class="tag-group-content">
-  <h1>{{model.name}}</h1>
-  <br>
+  <h1>{{this.model.name}}</h1>
+  <br />
 
   <section class="group-tags-list">
     <ul>
-      {{#each buffered.tag_names as |name|}}
+      {{#each this.buffered.tag_names as |name|}}
         <li>
           <span>{{name}}</span>
           <span>({{discourse-tag name contentLanguageTag=true}})</span>
@@ -16,27 +16,30 @@
   {{d-button
     class="btn-danger"
     action=(action "destroy")
-    disabled=changingContentTags
+    disabled=this.changingContentTags
     icon="far-trash-alt"
-    label="tagging.groups.delete"}}
+    label="tagging.groups.delete"
+  }}
 
   <div class="content-tag-controls">
-    {{#if changingContentTags}}
+    {{#if this.changingContentTags}}
       {{loading-spinner size="small"}}
-      <span>{{changingContentTags}}</span>
+      <span>{{this.changingContentTags}}</span>
     {{/if}}
 
     {{d-button
       class="btn-default"
       action=(action "updateContentTags")
-      disabled=changingContentTags
-      label="tagging.groups.content_tags.update.btn"}}
+      disabled=this.changingContentTags
+      label="tagging.groups.content_tags.update.btn"
+    }}
 
     {{d-button
       class="btn-danger"
       action=(action "destroyContentTags")
       icon="far-trash-alt"
-      disabled=changingContentTags
-      label="tagging.groups.content_tags.delete.btn"}}
+      disabled=this.changingContentTags
+      label="tagging.groups.content_tags.delete.btn"
+    }}
   </div>
 </div>

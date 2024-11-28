@@ -1,11 +1,12 @@
+import { schedule } from "@ember/runloop";
+import $ from "jquery";
 import { getOwner } from "discourse-common/lib/get-owner";
-import { scheduleOnce } from "@ember/runloop";
 
 function setupSelector(isFirstPost, ctx) {
   ctx.set("showSelector", isFirstPost);
 
   if (isFirstPost) {
-    scheduleOnce("afterRender", () => {
+    schedule("afterRender", () => {
       $(".content-languages-selector").appendTo(".title-and-category");
     });
   }
@@ -22,7 +23,7 @@ export default {
   setupComponent(attrs, ctx) {
     setupSelector(attrs.model.topicFirstPost, ctx);
 
-    const controller = getOwner(this).lookup("controller:composer");
+    const controller = getOwner(this).lookup("service:composer");
     if (controller) {
       controller.addObserver("model.topicFirstPost", this, function () {
         if (this._state === "destroying") {

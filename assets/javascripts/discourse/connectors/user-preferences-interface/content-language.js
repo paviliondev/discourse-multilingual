@@ -1,4 +1,5 @@
-import { scheduleOnce } from "@ember/runloop";
+import { schedule } from "@ember/runloop";
+import $ from "jquery";
 
 export default {
   shouldRender(_, ctx) {
@@ -10,7 +11,7 @@ export default {
   },
 
   setupComponent() {
-    scheduleOnce("afterRender", () => {
+    schedule("afterRender", () => {
       const content = ".control-group.content-languages";
       const int = ".control-group.pref-locale";
       const text = ".control-group.text-size";
