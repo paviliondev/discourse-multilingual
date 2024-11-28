@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class ContentLanguagesValidator
-
   def initialize(opts = {})
     @opts = opts
   end
@@ -11,8 +10,6 @@ class ContentLanguagesValidator
   end
 
   def error_message
-    if !SiteSetting.multilingual_enabled
-      I18n.t("site_settings.errors.multilingual_disabled")
-    end
+    I18n.t("site_settings.errors.multilingual_disabled") if !SiteSetting.multilingual_enabled
   end
 end

@@ -14,7 +14,6 @@ module ApplicationControllerMultilingualExtension
   end
 
   def guest_locale_switcher_enabled
-    SiteSetting.multilingual_enabled &&
-    SiteSetting.multilingual_guest_language_switcher != "off"
+    SiteSetting.multilingual_enabled && SiteSetting.multilingual_guest_language_switcher != "off"
   end
 end

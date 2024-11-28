@@ -11,7 +11,7 @@ module ExtraLocalesControllerMultilingualClassExtension
   def bundle_js(bundle)
     if bundle === "custom-language" && custom_language?
       JsLocaleHelper.output_locale(current_locale)
-    elsif bundle === 'tags'
+    elsif bundle === "tags"
       JsLocaleHelper.output_locale_tags(current_locale)
     else
       super(bundle)
@@ -29,11 +29,15 @@ end
 
 module ExtraLocalesControllerMultilingualExtension
   private def valid_bundle?(bundle)
-    super || (
-      SiteSetting.multilingual_enabled &&
-      ((bundle === 'custom-language' &&
-        Multilingual::CustomLanguage.is_custom?(I18n.locale.to_s)) ||
-       bundle === 'tags')
-    )
+    super ||
+      (
+        SiteSetting.multilingual_enabled &&
+          (
+            (
+              bundle === "custom-language" &&
+                Multilingual::CustomLanguage.is_custom?(I18n.locale.to_s)
+            ) || bundle === "tags"
+          )
+      )
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class Multilingual::Language
-  KEY ||= 'language'.freeze
+  KEY = "language".freeze
 
   include ActiveModel::Serialization
 
@@ -14,7 +14,6 @@ class Multilingual::Language
                 :custom
 
   def initialize(locale, opts = {})
-
     @locale = locale.to_s
 
     opts = opts.with_indifferent_access
@@ -43,13 +42,11 @@ class Multilingual::Language
 
     ::LocaleSiteSetting.supported_locales.each do |locale|
       if !::LocaleSiteSetting.language_names[locale]
-        parts = locale.split('_')
+        parts = locale.split("_")
         primary_locale = parts.first
         region = parts.second
 
-        if region && result[primary_locale]
-          result[locale] = result.delete(primary_locale)
-        end
+        result[locale] = result.delete(primary_locale) if region && result[primary_locale]
       end
     end
 
@@ -70,25 +67,24 @@ class Multilingual::Language
     if params[:query].present?
       q = params[:query].downcase
 
-      languages = languages.select do |l|
-        l.locale.downcase.include?(q) ||
-        l.name.downcase.include?(q)
-      end
+      languages =
+        languages.select { |l| l.locale.downcase.include?(q) || l.name.downcase.include?(q) }
     end
 
     type = params[:order].present? ? params[:order].to_sym : :locale
 
-    languages = languages.sort_by do |l|
-      val = l.send(type)
+    languages =
+      languages.sort_by do |l|
+        val = l.send(type)
 
-      if [:locale, :name, :nativeName].include?(type)
-        val
-      elsif [:content_enabled, :custom].include?(type)
-        (val ? 0 : 1)
-      elsif type == :interface_enabled
-        [ (val ? 0 : 1), (l.interface_supported ? 0 : 1) ]
+        if %i[locale name nativeName].include?(type)
+          val
+        elsif %i[content_enabled custom].include?(type)
+          (val ? 0 : 1)
+        elsif type == :interface_enabled
+          [(val ? 0 : 1), (l.interface_supported ? 0 : 1)]
+        end
       end
-    end
 
     if params[:order].present? && !ActiveModel::Type::Boolean.new.cast(params[:ascending])
       languages = languages.reverse
@@ -101,16 +97,17 @@ class Multilingual::Language
     language = language.with_indifferent_access
     updated = false
 
-    ['interface', 'content'].each do |type|
+    %w[interface content].each do |type|
       exclusion_prop = "#{type}_enabled".to_sym
       exclusion_key = "#{type}_language"
 
       if language[exclusion_prop].in? ["true", "false", true, false]
-        updated = Multilingual::LanguageExclusion.set(
-          language[:locale],
-          exclusion_key,
-          enabled: language[exclusion_prop]
-        )
+        updated =
+          Multilingual::LanguageExclusion.set(
+            language[:locale],
+            exclusion_key,
+            enabled: language[exclusion_prop],
+          )
       end
     end
 
@@ -125,7 +122,7 @@ class Multilingual::Language
   end
 
   def self.before_change
-    Multilingual::Cache.state = 'changing'
+    Multilingual::Cache.state = "changing"
   end
 
   def self.after_change(locales = [])
@@ -139,11 +136,7 @@ class Multilingual::Language
     before_change
 
     PluginStoreRow.transaction do
-      [*languages].each do |l|
-        if update(l)
-          updated.push(l['locale'])
-        end
-      end
+      [*languages].each { |l| updated.push(l["locale"]) if update(l) }
 
       after_update(updated)
     end

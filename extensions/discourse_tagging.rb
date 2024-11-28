@@ -5,7 +5,8 @@ module DiscourseTaggingMultilingualExtension
 
     if opts[:for_input] && Multilingual::ContentLanguage.enabled
       tags_with_counts = opts[:with_context] ? result.first : result
-      tags_with_counts = tags_with_counts.select { |tag| Multilingual::ContentTag.all.exclude? tag.name }
+      tags_with_counts =
+        tags_with_counts.select { |tag| Multilingual::ContentTag.all.exclude? tag.name }
       result = opts[:with_context] ? [tags_with_counts, result.second] : tags_with_counts
     end
 

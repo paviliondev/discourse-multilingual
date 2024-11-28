@@ -1,23 +1,27 @@
 # frozen_string_literal: true
 class Multilingual::CustomLanguage
-  KEY ||= 'custom_language'.freeze
-  ATTRS ||= [:name, :nativeName]
+  KEY = "custom_language".freeze
+  ATTRS = %i[name nativeName]
 
   def self.all
     Multilingual::Cache.wrap(KEY) do
       result = {}
 
-      PluginStoreRow.where("
+      PluginStoreRow
+        .where(
+          "
         plugin_name = '#{Multilingual::PLUGIN_NAME}' AND
         key LIKE '#{Multilingual::CustomLanguage::KEY}_%'
-      ").each do |record|
-        begin
-          locale = record.key.split("#{Multilingual::CustomLanguage::KEY}_").last
-          result[locale] = JSON.parse(record.value)
-        rescue JSON::ParserError => e
-          puts e.message
+      ",
+        )
+        .each do |record|
+          begin
+            locale = record.key.split("#{Multilingual::CustomLanguage::KEY}_").last
+            result[locale] = JSON.parse(record.value)
+          rescue JSON::ParserError => e
+            puts e.message
+          end
         end
-      end
 
       result
     end
@@ -27,10 +31,10 @@ class Multilingual::CustomLanguage
     Multilingual::Language.before_change if opts[:run_hooks]
 
     if PluginStore.set(
-      Multilingual::PLUGIN_NAME,
-      "#{KEY}_#{locale.to_s}",
-      opts.with_indifferent_access.slice(*ATTRS)
-    )
+         Multilingual::PLUGIN_NAME,
+         "#{KEY}_#{locale}",
+         opts.with_indifferent_access.slice(*ATTRS),
+       )
       after_create([locale]) if opts[:run_hooks]
       true
     end
@@ -42,7 +46,7 @@ class Multilingual::CustomLanguage
     Multilingual::LanguageExclusion.set(locale, Multilingual::InterfaceLanguage::KEY, enabled: true)
     Multilingual::LanguageExclusion.set(locale, Multilingual::ContentLanguage::KEY, enabled: true)
 
-    if PluginStore.remove(Multilingual::PLUGIN_NAME, "#{KEY}_#{locale.to_s}")
+    if PluginStore.remove(Multilingual::PLUGIN_NAME, "#{KEY}_#{locale}")
       after_destroy([locale]) if opts[:run_hooks]
       true
     end
@@ -68,11 +72,7 @@ class Multilingual::CustomLanguage
     Multilingual::Language.before_change
 
     PluginStoreRow.transaction do
-      languages.each do |k, v|
-        if create(k, v)
-          created.push(k)
-        end
-      end
+      languages.each { |k, v| created.push(k) if create(k, v) }
 
       after_create(created)
     end
@@ -86,11 +86,7 @@ class Multilingual::CustomLanguage
     Multilingual::Language.before_change
 
     PluginStoreRow.transaction do
-      [*locales].each do |c|
-        if destroy(c)
-          destroyed.push(c)
-        end
-      end
+      [*locales].each { |c| destroyed.push(c) if destroy(c) }
 
       after_destroy(destroyed)
     end

@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 module MultilingualTranslatorPostExtension
   def get_old_lang
-    @custom_fields_orig.present? ?
-    @custom_fields_orig[Multilingual::Translator.lang_field] :
-    nil
+    @custom_fields_orig.present? ? @custom_fields_orig[Multilingual::Translator.lang_field] : nil
   end
 
   def get_new_lang
@@ -18,9 +16,7 @@ module MultilingualTranslatorPostExtension
   end
 
   def save_custom_fields(force = false)
-    if Multilingual::Translator.content_tag_sync_enabled
-      old_lang = get_old_lang
-    end
+    old_lang = get_old_lang if Multilingual::Translator.content_tag_sync_enabled
 
     super(force)
 

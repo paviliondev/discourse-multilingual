@@ -53,7 +53,7 @@ class Multilingual::Cache
   def self.wrap(key, &block)
     c = Multilingual::Cache.new(key)
 
-    if (@state != 'changing') && (cached = c.read)
+    if (@state != "changing") && (cached = c.read)
       cached
     else
       result = block.call()
@@ -103,12 +103,12 @@ class Multilingual::Cache
   def self.instantiate
     @listable_classes.each do |klass|
       if klass.respond_to?(:add_locale_to_cache)
-      # klass.send(:add_locale_to_cache)
+        # klass.send(:add_locale_to_cache)
       else
         klass.send(:all) if klass.respond_to?(:all)
       end
     end
-    @state = 'cached'
+    @state = "cached"
   end
 
   def self.refresh!(opts = {})
@@ -126,8 +126,6 @@ class Multilingual::Cache
     if !changing_default && SiteSetting.allow_user_locale
       user_ids = User.where(locale: locales).pluck(:id)
     end
-    if changing_default || user_ids.present?
-      Discourse.request_refresh!(user_ids: user_ids)
-    end
+    Discourse.request_refresh!(user_ids: user_ids) if changing_default || user_ids.present?
   end
 end

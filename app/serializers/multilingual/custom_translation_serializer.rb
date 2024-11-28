@@ -9,5 +9,4 @@ class Multilingual::CustomTranslationSerializer < ::ApplicationSerializer
   def file_type
     object[:file_type]
   end
-
 end

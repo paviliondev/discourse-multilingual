@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
-require_relative '../plugin_helper'
+require_relative "../plugin_helper"
 
 describe TagGroup do
-
-  before(:all) do
+  before do
     SiteSetting.tagging_enabled = true
     SiteSetting.multilingual_enabled = true
     SiteSetting.multilingual_content_languages_enabled = true
   end
 
-  it 'when enabled dont include special Tag Groups in list of visible Tag Groups' do
+  it "when enabled dont include special Tag Groups in list of visible Tag Groups" do
     anon_guardian = Guardian.new
     user_guardian = Guardian.new(Fabricate(:user))
 

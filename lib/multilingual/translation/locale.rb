@@ -7,7 +7,7 @@ class Multilingual::TranslationLocale
     opts = {}
     opts["#{type}_locale_file".to_sym] = file.file_name
 
-    locale_chain = locale.split('_')
+    locale_chain = locale.split("_")
     opts[:fallbackLocale] = locale_chain.first if locale_chain.length === 2
 
     current_locale = DiscoursePluginRegistry.locales[locale] || {}
@@ -27,6 +27,6 @@ class Multilingual::TranslationLocale
   end
 
   def self.files
-    Multilingual::CustomTranslation.by_type([:client, :server])
+    Multilingual::CustomTranslation.by_type(%i[client server])
   end
 end
