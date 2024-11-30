@@ -1,14 +1,14 @@
-import { getOwner } from "discourse-common/lib/get-owner";
 import { next } from "@ember/runloop";
-import DiscourseURL from "discourse/lib/url";
 import cookie from "discourse/lib/cookie";
+import DiscourseURL from "discourse/lib/url";
+import { getOwner } from "discourse-common/lib/get-owner";
 
 const contentLanguageParam = "content_languages";
 const localeParam = "locale";
 const discoveryParams = [contentLanguageParam];
 
 function getRouter(ctx) {
-  const router = getOwner(ctx).lookup("router:main");
+  const router = getOwner(ctx).lookup("service:router");
   return router;
 }
 

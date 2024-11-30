@@ -1,10 +1,10 @@
+import { click, visit } from "@ember/test-helpers";
+import { test } from "qunit";
 import {
   acceptance,
   exists,
   updateCurrentUser,
 } from "discourse/tests/helpers/qunit-helpers";
-import { test } from "qunit";
-import { click, visit } from "@ember/test-helpers";
 
 const content_languages = [{ locale: "aa", name: "Qafár af" }];
 
@@ -21,7 +21,7 @@ acceptance(
     test("content languages dropdown", async (assert) => {
       await visit("/");
 
-      assert.ok(!exists(".content-languages-dropdown"), "does not display");
+      assert.notOk(exists(".content-languages-dropdown"), "does not display");
     });
   }
 );

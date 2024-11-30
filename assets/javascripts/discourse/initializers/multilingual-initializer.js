@@ -1,27 +1,28 @@
+import { computed, set } from "@ember/object";
+import { schedule } from "@ember/runloop";
+import $ from "jquery";
 import { withPluginApi } from "discourse/lib/plugin-api";
+import renderTag from "discourse/lib/render-tag";
+import Composer from "discourse/models/composer";
+import { iconHTML } from "discourse-common/lib/icon-library";
 import { default as discourseComputed } from "discourse-common/utils/decorators";
-import {
-  multilingualTagRenderer,
-  multilingualTagTranslator,
-} from "../lib/multilingual-tag";
+import LanguageSwitcher from "../components/language-switcher";
+import { isContentLanguage } from "../lib/multilingual";
 import {
   discoveryParams,
   localeParam,
   removeParam,
 } from "../lib/multilingual-route";
-import { isContentLanguage } from "../lib/multilingual";
-import Composer from "discourse/models/composer";
-import { iconHTML } from "discourse-common/lib/icon-library";
-import renderTag from "discourse/lib/render-tag";
-import { computed, set } from "@ember/object";
-import { scheduleOnce } from "@ember/runloop";
-import LanguageSwitcher from "../components/language-switcher";
+import {
+  multilingualTagRenderer,
+  multilingualTagTranslator,
+} from "../lib/multilingual-tag";
 
 export default {
   name: "multilingual",
   initialize(container) {
-    const siteSettings = container.lookup("site-settings:main");
-    const currentUser = container.lookup("current-user:main");
+    const siteSettings = container.lookup("service:site-settings");
+    const currentUser = container.lookup("service:current-user");
 
     if (!siteSettings.multilingual_enabled) {
       return;
@@ -218,7 +219,7 @@ export default {
         pluginId: "discourse-multilingual",
 
         setupContentTagControls() {
-          scheduleOnce("afterRender", () => {
+          schedule("afterRender", () => {
             $(".tag-groups-container").addClass("content-tags");
             $(".tag-group-content h1 input").prop("disabled", true);
             $(".content-tag-controls").appendTo(".tag-group-content");

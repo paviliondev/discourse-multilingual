@@ -4,7 +4,7 @@ class Multilingual::InterfaceLanguage
 
   attr_reader :locale, :name
 
-  KEY ||= 'interface_language'.freeze
+  KEY = "interface_language".freeze
 
   def initialize(locale, name)
     @locale = locale
@@ -28,8 +28,10 @@ class Multilingual::InterfaceLanguage
   end
 
   def self.list
-    self.all.select { |locale| self.enabled?(locale) }
-      .map { |locale|self.new(locale, Multilingual::Language.all[locale]['nativeName']) }
+    self
+      .all
+      .select { |locale| self.enabled?(locale) }
+      .map { |locale| self.new(locale, Multilingual::Language.all[locale]["nativeName"]) }
       .sort_by(&:locale)
   end
 end

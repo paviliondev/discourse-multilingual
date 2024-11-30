@@ -1,12 +1,22 @@
 <section class="field">
-  {{#unless category.isUncategorizedCategory}}
+  {{#unless this.category.isUncategorizedCategory}}
     <section class="field-item category-name">
-      <label>{{i18n "category.name"}}</label>{{#if category.name_translations}}<span>{{d-icon "translate"}}</span>{{/if}}
-      {{text-field value=category.name placeholderKey="category.name_placeholder" maxlength="50"}}
+      <label>{{i18n "category.name"}}</label>{{#if
+        this.category.name_translations
+      }}<span>{{d-icon "translate"}}</span>{{/if}}
+      {{text-field
+        value=this.category.name
+        placeholderKey="category.name_placeholder"
+        maxlength="50"
+      }}
     </section>
   {{/unless}}
   <section class="field-item">
     <label>{{i18n "category.slug"}}</label>
-    {{text-field value=category.slug placeholderKey="category.slug_placeholder" maxlength="255"}}
+    {{text-field
+      value=this.category.slug
+      placeholderKey="category.slug_placeholder"
+      maxlength="255"
+    }}
   </section>
 </section>

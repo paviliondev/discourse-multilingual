@@ -2,25 +2,41 @@
   <div class="buttons">
     {{multilingual-uploader
       id="multilingual-translations-uploader"
-      uploading=uploading
+      uploading=this.uploading
       done=(action "refresh")
-      uploadType="translation"}}
+      uploadType="translation"
+    }}
   </div>
 </div>
 
-{{#if refreshing}}
+{{#if this.refreshing}}
   {{loading-spinner}}
 {{else}}
   {{#if this.translations}}
     <table class="table translations-list grid">
       <thead>
-        {{legacy-table-header-toggle field="locale" labelKey="multilingual.locale" order=order asc=ascending automatic=true}}
-        {{legacy-table-header-toggle field="file_type" labelKey="multilingual.translations.type" order=order asc=ascending automatic=true}}
+        {{legacy-table-header-toggle
+          field="locale"
+          labelKey="multilingual.locale"
+          order=this.order
+          asc=this.ascending
+          automatic=true
+        }}
+        {{legacy-table-header-toggle
+          field="file_type"
+          labelKey="multilingual.translations.type"
+          order=this.order
+          asc=this.ascending
+          automatic=true
+        }}
         <th>Actions</th>
       </thead>
       <tbody>
         {{#each this.translations as |translation|}}
-          <AdminTranslation @translation={{translation}} @removed={{action this.refresh}}/>
+          <AdminTranslation
+            @translation={{translation}}
+            @removed={{action this.refresh}}
+          />
         {{/each}}
       </tbody>
     </table>

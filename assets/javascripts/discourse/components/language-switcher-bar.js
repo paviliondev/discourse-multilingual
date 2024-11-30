@@ -1,10 +1,11 @@
-import { on } from "discourse-common/utils/decorators";
-import EmberObject from "@ember/object";
-import { addParam, localeParam } from "../lib/multilingual-route";
-import { notEmpty } from "@ember/object/computed";
 import Component from "@ember/component";
+import EmberObject from "@ember/object";
+import { notEmpty } from "@ember/object/computed";
 import { bind } from "@ember/runloop";
+import $ from "jquery";
+import { on } from "discourse-common/utils/decorators";
 import I18n from "I18n";
+import { addParam, localeParam } from "../lib/multilingual-route";
 
 export default Component.extend({
   classNames: "language-switcher-bar",
@@ -55,11 +56,13 @@ export default Component.extend({
   },
 
   didInsertElement() {
+    this._super(...arguments);
     this.set("clickOutsideHandler", bind(this, this.clickOutside));
     $(document).on("click", this.clickOutsideHandler);
   },
 
   willDestroyElement() {
+    this._super(...arguments);
     $(document).off("click", this.clickOutsideHandler);
   },
 

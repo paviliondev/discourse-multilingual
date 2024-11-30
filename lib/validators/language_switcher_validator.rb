@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 class LanguageSwitcherValidator
-
   def initialize(opts = {})
     @opts = opts
   end
 
   def valid_value?(val)
-    val == "off" || (["footer", "header"].include?(val) && SiteSetting.allow_user_locale)
+    val == "off" || (%w[footer header].include?(val) && SiteSetting.allow_user_locale)
   end
 
   def error_message

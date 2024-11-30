@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 class Multilingual::CustomTranslation < ActiveRecord::Base
-  self.table_name = 'custom_translations'
+  self.table_name = "custom_translations"
 
-  PATH ||= "#{Multilingual::PLUGIN_PATH}/config/translations".freeze
-  KEY ||= 'file'.freeze
+  PATH = "#{Multilingual::PLUGIN_PATH}/config/translations".freeze
+  KEY = "file".freeze
 
   validates :file_name, :locale, :file_type, :file_ext, :translation_data, presence: true
   serialize :translation_data, type: Hash, coder: YAML
@@ -38,9 +38,7 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
   def remove
     if exists?
-      if interface_file
-        process_data(self.translation_data, true)
-      end
+      process_data(self.translation_data, true) if interface_file
       after_remove
     end
   end
@@ -56,17 +54,14 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
     result = Hash.new
 
     if interface_file
-      if translations.keys.length != 1
-        result[:error] = "file format error"
-      end
+      result[:error] = "file format error" if translations.keys.length != 1
 
       if Multilingual::Language.all[translations.keys.first].blank?
         result[:error] = "language not supported"
       end
 
       if self.file_type === :client &&
-        (translations.values.first.keys + ['js', 'admin_js', 'wizard_js']).uniq.length != 3
-
+           (translations.values.first.keys + %w[js admin_js wizard_js]).uniq.length != 3
         result[:error] = "file format error"
       end
     end
@@ -91,9 +86,18 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
             key_values = dot_it(value, key)
             key_values.each do |dotted_key, dotted_value|
               if !unload
-                TranslationOverride.create!(locale: self.locale, translation_key: dotted_key, value: dotted_value)
+                TranslationOverride.create!(
+                  locale: self.locale,
+                  translation_key: dotted_key,
+                  value: dotted_value,
+                )
               else
-                override = TranslationOverride.find_by(locale: self.locale, translation_key: dotted_key, value: dotted_value)
+                override =
+                  TranslationOverride.find_by(
+                    locale: self.locale,
+                    translation_key: dotted_key,
+                    value: dotted_value,
+                  )
                 override.destroy! if override
               end
             end
@@ -101,7 +105,8 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
             if !unload
               TranslationOverride.create!(locale: self.locale, translation_key: key, value: value)
             else
-              override = TranslationOverride.find_by(locale: self.locale, translation_key: key, value: value)
+              override =
+                TranslationOverride.find_by(locale: self.locale, translation_key: key, value: value)
               override.destroy! if override
             end
           end
@@ -113,13 +118,15 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
   def dot_it(object, prefix = nil)
     if object.is_a? Hash
-      object.map do |key, value|
-        if prefix
-          dot_it value, "#{prefix}.#{key}"
-        else
-          dot_it value, "#{key}"
+      object
+        .map do |key, value|
+          if prefix
+            dot_it value, "#{prefix}.#{key}"
+          else
+            dot_it value, "#{key}"
+          end
         end
-      end.reduce(&:merge)
+        .reduce(&:merge)
     else
       { prefix => object }
     end
@@ -134,8 +141,8 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
 
   def add_locale
     existing_locales = I18n.config.available_locales
-    new_locales      = existing_locales.push(self.locale.to_sym)
-    unless ::LocaleSiteSetting.supported_locales.include?(self.locale)
+    new_locales = existing_locales.push(self.locale.to_sym)
+    if ::LocaleSiteSetting.supported_locales.exclude?(self.locale)
       Multilingual::TranslationLocale.register(self)
     end
     I18n.config.available_locales = new_locales
@@ -145,3 +152,17 @@ class Multilingual::CustomTranslation < ActiveRecord::Base
     all.select { |f| [*types].map(&:to_sym).include?(f[:file_type].to_sym) }
   end
 end
+
+# == Schema Information
+#
+# Table name: custom_translations
+#
+#  id               :bigint           not null, primary key
+#  file_name        :string           not null
+#  file_type        :string           not null
+#  locale           :string           not null
+#  file_ext         :string           not null
+#  translation_data :text             not null
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#

@@ -1,12 +1,12 @@
 import Component from "@glimmer/component";
 import { set } from "@ember/object";
-import { inject as service } from "@ember/service";
+import { service } from "@ember/service";
+import I18n from "I18n";
 import { isContentLanguage } from "../lib/multilingual";
 import {
   contentLanguageParam,
   getDiscoveryParam,
 } from "../lib/multilingual-route";
-import I18n from "I18n";
 
 export default class ContentLanguageDiscovery extends Component {
   @service siteSettings;

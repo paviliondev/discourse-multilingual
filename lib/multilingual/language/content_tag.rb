@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 class Multilingual::ContentTag
-  KEY = 'content_tag'.freeze
-  GROUP = 'content_languages'.freeze
-  GROUP_DISABLED = 'content_languages_disabled'.freeze
-  QUERY = "#{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND tg.name IN ('#{GROUP}','#{GROUP_DISABLED}')"
+  KEY = "content_tag".freeze
+  GROUP = "content_languages".freeze
+  GROUP_DISABLED = "content_languages_disabled".freeze
+  QUERY =
+    "#{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL} AND tg.name IN ('#{GROUP}','#{GROUP_DISABLED}')"
 
   def self.all
-    Multilingual::Cache.wrap(KEY) do
-      Tag.where("id in (#{QUERY})").pluck(:name)
-    end
+    Multilingual::Cache.wrap(KEY) { Tag.where("id in (#{QUERY})").pluck(:name) }
   end
 
   def self.exists?(name)
@@ -24,52 +23,50 @@ class Multilingual::ContentTag
   end
 
   def self.enabled_group
-    @enabled_group ||= begin
-      group = TagGroup.find_by(name: Multilingual::ContentTag::GROUP)
+    @enabled_group ||=
+      begin
+        group = TagGroup.find_by(name: Multilingual::ContentTag::GROUP)
 
-      if group.blank?
-        group = TagGroup.new(
-          name: Multilingual::ContentTag::GROUP,
-          permissions: { everyone: 1 }
-        )
+        if group.blank?
+          group = TagGroup.new(name: Multilingual::ContentTag::GROUP, permissions: { everyone: 1 })
 
-        group.save!
-      else
-        group.permissions = { everyone: 1 }
-        group.save!
+          group.save!
+        else
+          group.permissions = { everyone: 1 }
+          group.save!
+        end
+
+        group
       end
-
-      group
-    end
   end
 
   def self.disabled_group
-    @disabled_group ||= begin
-      group = TagGroup.find_by(name: Multilingual::ContentTag::GROUP_DISABLED)
+    @disabled_group ||=
+      begin
+        group = TagGroup.find_by(name: Multilingual::ContentTag::GROUP_DISABLED)
 
-      if group.blank?
-        group = TagGroup.new(
-          name: Multilingual::ContentTag::GROUP_DISABLED,
-          permissions: { staff: 3 }
-        )
+        if group.blank?
+          group =
+            TagGroup.new(name: Multilingual::ContentTag::GROUP_DISABLED, permissions: { staff: 3 })
 
-        group.save!
-      else
-        group.permissions = { staff: 3 }
-        group.save!
+          group.save!
+        else
+          group.permissions = { staff: 3 }
+          group.save!
+        end
+
+        group
       end
-
-      group
-    end
   end
 
   def self.groups
     [GROUP, GROUP_DISABLED]
   end
 
-  QUERY_ALL = "
+  QUERY_ALL =
+    "
     #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL}
-    AND tg.name IN (#{groups.map { |g|"'#{g}'" }.join(',')})
+    AND tg.name IN (#{groups.map { |g| "'#{g}'" }.join(",")})
   "
 
   def self.destroy_all
@@ -118,14 +115,14 @@ class Multilingual::ContentTag
         Multilingual::Cache.new(Conflict::KEY).delete
       else
         tag_group = self.send("#{action}d_group")
-        tag_group.tags << tag unless tag_group.tags.include?(tag)
+        tag_group.tags << tag if tag_group.tags.exclude?(tag)
 
-        other_tag_group = self.send("#{action === 'enable' ? 'disable' : 'enable' }d_group")
+        other_tag_group = self.send("#{action === "enable" ? "disable" : "enable"}d_group")
         other_tag_group.tags.delete(tag) if other_tag_group.tags.include?(tag)
 
-        tags.push(tag) unless tags.include?(tag)
-        tag_groups.push(tag_group) unless tag_groups.include?(tag_group)
-        tag_groups.push(other_tag_group) unless tag_groups.include?(other_tag_group)
+        tags.push(tag) if tags.exclude?(tag)
+        tag_groups.push(tag_group) if tag_groups.exclude?(tag_group)
+        tag_groups.push(other_tag_group) if tag_groups.exclude?(other_tag_group)
       end
     end
 
@@ -141,18 +138,17 @@ class Multilingual::ContentTag
   end
 
   def self.load(ctag_names)
-    [*ctag_names]
-      .reduce([]) do |result, name|
+    [*ctag_names].reduce([]) do |result, name|
       result.push(Tag.find_by(name: name)) if self.exists?(name)
-       result
+      result
     end
   end
 
   def self.update_topic(topic, ctag_names = [])
-    ctags = ctag_names.any? ? load(ctag_names) : []
+    ctags = ctag_names.any? ? load(ctag_names) : [] # rubocop:disable Discourse/Plugins/UseRequireRelative
     tags = topic.tags.select { |t| self.all.exclude?(t.name) }
     topic.tags = (tags + ctags.select { |t| tags.map(&:id).exclude?(t.id) }).uniq { |t| t.id }
-    topic.custom_fields['content_languages'] = ctags.any? ? ctags.map(&:name) : []
+    topic.custom_fields["content_languages"] = ctags.any? ? ctags.map(&:name) : []
     topic
   end
 
@@ -165,10 +161,12 @@ class Multilingual::ContentTag
   end
 
   class Conflict
-    KEY = 'content_tag_conflict'
+    KEY = "content_tag_conflict"
 
     def self.all_uncached
-      Tag.where("id not in (#{QUERY}) and name in (?)", Multilingual::Language.all.keys).pluck(:name)
+      Tag.where("id not in (#{QUERY}) and name in (?)", Multilingual::Language.all.keys).pluck(
+        :name,
+      )
     end
 
     def self.all

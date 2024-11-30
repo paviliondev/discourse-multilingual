@@ -1,9 +1,9 @@
 <div class="controls">
   <div class="query">
-    {{text-field value=query placeholder=queryPlaceholder}}
+    {{text-field value=this.query placeholder=this.queryPlaceholder}}
 
     <div class="custom-only">
-      {{input type="checkbox" checked=customOnly}}
+      {{input type="checkbox" checked=this.customOnly}}
       <span>{{i18n "multilingual.languages.custom_only"}}</span>
     </div>
   </div>
@@ -11,30 +11,33 @@
   <div class="buttons">
     {{multilingual-uploader
       id="multilingual-languages-uploader"
-      uploading=uploading
+      uploading=this.uploading
       uploadType="language"
-      done=(action "languagesUploaded")}}
+      done=(action "languagesUploaded")
+    }}
 
     {{d-button
       action=(action "update")
       class="btn-primary"
       icon="save"
-      label=updateState
-      disabled=updateLanguagesDisabled}}
+      label=this.updateState
+      disabled=this.updateLanguagesDisabled
+    }}
   </div>
 </div>
 
-{{#if refreshing}}
+{{#if this.refreshing}}
   {{loading-spinner}}
 {{else}}
-  {{#if anyLanguages}}
+  {{#if this.anyLanguages}}
     {{admin-language-list
       type="custom"
-      languages=filteredLanguages
-      order=order
-      ascending=ascending
-      updatedLanguages=updatedLanguages
-      updateLanguages=(action "updateLanguages")}}
+      languages=this.filteredLanguages
+      order=this.order
+      ascending=this.ascending
+      updatedLanguages=this.updatedLanguages
+      updateLanguages=(action "updateLanguages")
+    }}
   {{else}}
     <p>{{i18n "search.no_results"}}</p>
   {{/if}}

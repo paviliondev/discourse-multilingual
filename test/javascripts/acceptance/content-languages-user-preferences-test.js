@@ -1,10 +1,10 @@
+import { click, visit } from "@ember/test-helpers";
+import { test } from "qunit";
 import {
   acceptance,
   exists,
   loggedInUser,
 } from "discourse/tests/helpers/qunit-helpers";
-import { click, visit } from "@ember/test-helpers";
-import { test } from "qunit";
 
 const content_languages = [
   { locale: "aa", name: "Qafár af" },
@@ -24,7 +24,7 @@ acceptance(
     test("content languages selector", async (assert) => {
       await visit(`/u/${loggedInUser().username}/preferences/interface`);
 
-      assert.ok(!exists(".content-languages-selector"), "does not display");
+      assert.notOk(exists(".content-languages-selector"), "does not display");
     });
   }
 );

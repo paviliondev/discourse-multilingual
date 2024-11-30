@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class Multilingual::LanguageExclusion
-  KEY ||= "language_exclusion".freeze
+  KEY = "language_exclusion".freeze
 
   def self.all
     Multilingual::Cache.wrap(KEY) { all_uncached }
@@ -28,7 +28,7 @@ class Multilingual::LanguageExclusion
     if enabled
       exclusions.delete(locale)
     else
-      exclusions.push(locale) unless (exclusions.include?(locale) || locale == 'en')
+      exclusions.push(locale) unless (exclusions.include?(locale) || locale == "en")
     end
 
     data = all_uncached

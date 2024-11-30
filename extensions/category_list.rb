@@ -12,14 +12,12 @@
 
 module CategoryListMultilingualExtension
   def trim_results
-
     if Multilingual::ContentLanguage.topic_filtering_enabled
       @categories.each do |c|
         next if c.displayable_topics.blank?
 
-        c.displayable_topics = c.displayable_topics.select do |topic|
-          Multilingual::ContentTag.filter(topic.tags).any?
-        end
+        c.displayable_topics =
+          c.displayable_topics.select { |topic| Multilingual::ContentTag.filter(topic.tags).any? }
       end
     end
 

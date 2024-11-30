@@ -1,6 +1,6 @@
+import EmberObject from "@ember/object";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
-import EmberObject from "@ember/object";
 
 const MultilingualLanguage = EmberObject.extend();
 const LanguagesPath = "/admin/multilingual/languages";

@@ -1,8 +1,8 @@
-import { acceptance } from "discourse/tests/helpers/qunit-helpers";
 import { test } from "qunit";
-import { tag_translations } from "../fixtures/tag-translations";
-import { multilingualTagTranslator } from "discourse/plugins/discourse-multilingual/discourse/lib/multilingual-tag";
+import { acceptance } from "discourse/tests/helpers/qunit-helpers";
 import I18n from "I18n";
+import { multilingualTagTranslator } from "discourse/plugins/discourse-multilingual/discourse/lib/multilingual-tag";
+import { tag_translations } from "../fixtures/tag-translations";
 
 acceptance("Translated tags", function () {
   I18n.tag_translations = tag_translations;

@@ -1,11 +1,13 @@
 # frozen_string_literal: true
-require_relative '../../plugin_helper'
+require_relative "../../plugin_helper"
 
 describe Multilingual::AdminLanguagesController do
   fab!(:admin_user) { Fabricate(:user, admin: true) }
-  let(:custom_languages) { File.open("#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/custom_languages.yml") }
+  let(:custom_languages) do
+    File.open("#{Rails.root}/plugins/discourse-multilingual/spec/fixtures/custom_languages.yml")
+  end
 
-  before(:all) do
+  before do
     sign_in(admin_user)
     SiteSetting.multilingual_enabled = true
     SiteSetting.multilingual_content_languages_enabled = true
@@ -25,29 +27,36 @@ describe Multilingual::AdminLanguagesController do
   end
 
   it "removes custom languages" do
-    Multilingual::CustomLanguage.create('abc', name: 'Custom Language', run_hooks: true)
+    Multilingual::CustomLanguage.create("abc", name: "Custom Language", run_hooks: true)
 
-    delete "/admin/multilingual/languages.json", params: { locales: ['abc'] }
+    delete "/admin/multilingual/languages.json", params: { locales: ["abc"] }
     expect(response.status).to eq(200)
-    expect(Multilingual::Language.exists?('abc')).to eq(false)
+    expect(Multilingual::Language.exists?("abc")).to eq(false)
   end
 
   it "updates languages" do
-    Multilingual::Language.update({ locale: 'fr', interface_enabled: false, content_enabled: false }, run_hooks: true)
+    Multilingual::Language.update(
+      { locale: "fr", interface_enabled: false, content_enabled: false },
+      run_hooks: true,
+    )
 
-    put "/admin/multilingual/languages.json", params: { languages: [ { locale: 'fr', content_enabled: true } ] }
+    put "/admin/multilingual/languages.json",
+        params: {
+          languages: [{ locale: "fr", content_enabled: true }],
+        }
     expect(response.status).to eq(200)
 
-    french = Multilingual::Language.get(['fr']).first
+    french = Multilingual::Language.get(["fr"]).first
     expect(french.interface_enabled).to eq(false)
     expect(french.content_enabled).to eq(true)
   end
 
   it "uploads custom languages" do
-    post '/admin/multilingual/languages.json', params: {
-      file: fixture_file_upload(custom_languages)
-    }
+    post "/admin/multilingual/languages.json",
+         params: {
+           file: fixture_file_upload(custom_languages),
+         }
     expect(response.status).to eq(200)
-    expect(Multilingual::Language.exists?('wbp')).to eq(true)
+    expect(Multilingual::Language.exists?("wbp")).to eq(true)
   end
 end

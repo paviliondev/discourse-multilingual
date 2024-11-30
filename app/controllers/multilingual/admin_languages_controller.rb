@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class Multilingual::AdminLanguagesController < Admin::AdminController
+  requires_plugin Multilingual::PLUGIN_NAME
+
   def list
     serialize_languages(Multilingual::Language.filter(filter_params.to_h))
   end
@@ -26,9 +28,7 @@ class Multilingual::AdminLanguagesController < Admin::AdminController
   def upload
     file = params[:file] || params[:files].first
 
-    unless file && file.respond_to?(:tempfile)
-      raise Discourse::InvalidParameters.new(:file)
-    end
+    raise Discourse::InvalidParameters.new(:file) unless file && file.respond_to?(:tempfile)
 
     Scheduler::Defer.later("Upload languages") do
       begin
@@ -42,10 +42,7 @@ class Multilingual::AdminLanguagesController < Admin::AdminController
       end
 
       if params[:client_id]
-        MessageBus.publish("/uploads/yml",
-          data.as_json,
-          client_ids: [params[:client_id]]
-        )
+        MessageBus.publish("/uploads/yml", data.as_json, client_ids: [params[:client_id]])
       end
     end
 
@@ -64,21 +61,25 @@ class Multilingual::AdminLanguagesController < Admin::AdminController
 
   def language_params
     params.permit(
-      languages: [
-        :locale,
-        :name,
-        :nativeName,
-        :custom,
-        :content_enabled,
-        :interface_enabled,
-        :interface_supported
-      ]
+      languages: %i[
+        locale
+        name
+        nativeName
+        custom
+        content_enabled
+        interface_enabled
+        interface_supported
+      ],
     )
   end
 
   def serialize_languages(languages)
-    render json: MultiJson.dump(ActiveModel::ArraySerializer.new(languages,
-      each_serializer: Multilingual::LanguageSerializer
-    ))
+    render json:
+             MultiJson.dump(
+               ActiveModel::ArraySerializer.new(
+                 languages,
+                 each_serializer: Multilingual::LanguageSerializer,
+               ),
+             )
   end
 end

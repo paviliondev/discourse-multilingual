@@ -9,7 +9,7 @@
 
   <td class="actions">
     <DButton @action={{this.remove}}>
-      {{#if removing}}
+      {{#if this.removing}}
         {{loading-spinner size="small"}}
       {{else}}
         {{d-icon "times"}}

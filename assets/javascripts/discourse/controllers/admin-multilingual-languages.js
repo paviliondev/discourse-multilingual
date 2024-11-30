@@ -1,12 +1,12 @@
-import { default as discourseComputed } from "discourse-common/utils/decorators";
+import { A } from "@ember/array";
 import Controller from "@ember/controller";
-import discourseDebounce from "discourse-common/lib/debounce";
+import { notEmpty } from "@ember/object/computed";
 import { debounce } from "@ember/runloop";
 import { i18n } from "discourse/lib/computed";
-import MultilingualLanguage from "../models/multilingual-language";
-import { notEmpty } from "@ember/object/computed";
-import { A } from "@ember/array";
+import discourseDebounce from "discourse-common/lib/debounce";
+import { default as discourseComputed } from "discourse-common/utils/decorators";
 import I18n from "I18n";
+import MultilingualLanguage from "../models/multilingual-language";
 
 export default Controller.extend({
   refreshing: false,

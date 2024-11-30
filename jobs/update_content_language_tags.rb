@@ -2,9 +2,7 @@
 module Jobs
   class UpdateContentLanguageTags < ::Jobs::Base
     def execute(args = {})
-      if defined?(Multilingual::ContentLanguage) == 'constant'
-        Multilingual::ContentTag.update_all
-      end
+      Multilingual::ContentTag.update_all if defined?(Multilingual::ContentLanguage) == "constant"
     end
   end
 end
