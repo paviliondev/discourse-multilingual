@@ -14,7 +14,7 @@ register_asset 'stylesheets/mobile/multilingual.scss', :mobile
 if respond_to?(:register_svg_icon)
   register_svg_icon "language"
   register_svg_icon "translate"
-  register_svg_icon "save"
+  register_svg_icon "floppy-disk"
 end
 
 %w[
