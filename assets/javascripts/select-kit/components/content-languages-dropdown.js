@@ -38,9 +38,9 @@ export default DropdownSelectBox.extend({
       content.forEach((l, i) => {
         if (l.locale === param) {
           set(l, "classNames", `${l.classNames} active`);
-          set(l, "icon", "times");
+          set(l, "icon", "xmark");
           activeIndex = i;
-        } else if (l.icon === "times") {
+        } else if (l.icon === "xmark") {
           set(l, "classNames", "guest-content-language");
           set(l, "icon", null);
         }
