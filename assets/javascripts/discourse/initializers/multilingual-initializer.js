@@ -5,7 +5,6 @@ import { withPluginApi } from "discourse/lib/plugin-api";
 import renderTag from "discourse/lib/render-tag";
 import Composer from "discourse/models/composer";
 import { iconHTML } from "discourse-common/lib/icon-library";
-import { default as discourseComputed } from "discourse-common/utils/decorators";
 import LanguageSwitcher from "../components/language-switcher";
 import { isContentLanguage } from "../lib/multilingual";
 import {
@@ -54,22 +53,11 @@ export default {
       api.modifyClass("controller:preferences/interface", {
         pluginId: "discourse-multilingual",
 
-        @discourseComputed()
-        availableLocales() {
-          return this.site.interface_languages.map((l) => {
-            return {
-              value: l.locale,
-              name: l.name,
-            };
-          });
-        },
-
-        @discourseComputed("makeThemeDefault")
-        saveAttrNames(makeDefault) {
-          let attrs = this._super(makeDefault);
+        saveAttrNames: computed("makeThemeDefault", function () {
+          let attrs = this._super();
           attrs.push("custom_fields");
           return attrs;
-        },
+        }),
 
         actions: {
           save() {

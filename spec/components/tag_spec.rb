@@ -5,7 +5,7 @@ require_relative "../plugin_helper"
 describe Tag do
   fab!(:tag1) { Fabricate(:tag, name: "fun") }
   fab!(:tag2) { Fabricate(:tag, name: "fun2") }
-  fab!(:public_category) { Fabricate(:category) }
+  fab!(:public_category, :category)
 
   before do
     SiteSetting.tagging_enabled = true

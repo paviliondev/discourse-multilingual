@@ -13,9 +13,9 @@ describe TopicQuery do
   end
 
   context "when user has content languages" do
-    fab!(:user1) { Fabricate(:user) }
-    fab!(:user2) { Fabricate(:user) }
-    fab!(:user3) { Fabricate(:user) }
+    fab!(:user1, :user)
+    fab!(:user2, :user)
+    fab!(:user3, :user)
     fab!(:tag1) { Fabricate(:tag, name: "tag1") }
     fab!(:tag2) { Fabricate(:tag, name: "tag2") }
 

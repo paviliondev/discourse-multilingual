@@ -227,9 +227,9 @@ after_initialize do
         "uncategorized_category_name",
         locale: I18n.locale_available?(I18n.locale) ? I18n.locale : SiteSetting.default_locale,
       )
-    elsif !(
+    elsif (
           object.slug_path && Multilingual::Translation.get("category_name", object.slug_path)
-        ).blank?
+        ).present?
       Multilingual::Translation.get("category_name", object.slug_path)[
         find_locale.call(scope).to_sym
       ] || object.name
@@ -244,10 +244,10 @@ after_initialize do
         "category.uncategorized_description",
         locale: I18n.locale_available?(I18n.locale) ? I18n.locale : SiteSetting.default_locale,
       )
-    elsif !(
+    elsif (
           object.slug_path &&
             Multilingual::Translation.get("category_description", object.slug_path)
-        ).blank?
+        ).present?
       Multilingual::Translation.get("category_description", object.slug_path)[
         find_locale.call(scope).to_sym
       ] || object.description_text
@@ -262,10 +262,10 @@ after_initialize do
         "category.uncategorized_description",
         locale: I18n.locale_available?(I18n.locale) ? I18n.locale : SiteSetting.default_locale,
       )
-    elsif !(
+    elsif (
           object.slug_path &&
             Multilingual::Translation.get("category_description", object.slug_path)
-        ).blank?
+        ).present?
       Multilingual::Translation.get("category_description", object.slug_path)[
         find_locale.call(scope).to_sym
       ] || object.description
@@ -280,10 +280,10 @@ after_initialize do
         "category.uncategorized_description",
         locale: I18n.locale_available?(I18n.locale) ? I18n.locale : SiteSetting.default_locale,
       )
-    elsif !(
+    elsif (
           object.slug_path &&
             Multilingual::Translation.get("category_description", object.slug_path)
-        ).blank?
+        ).present?
       Multilingual::Translation.get("category_description", object.slug_path)[
         find_locale.call(scope).to_sym
       ] || object.description_excerpt
@@ -300,7 +300,9 @@ after_initialize do
           locale: I18n.locale_available?(I18n.locale) ? I18n.locale : SiteSetting.default_locale,
         )
       elsif SiteSetting.multilingual_enabled &&
-            !(c[:slug_path] && Multilingual::Translation.get("category_name", c[:slug_path])).blank?
+            (
+              c[:slug_path] && Multilingual::Translation.get("category_name", c[:slug_path])
+            ).present?
         c[:name] = Multilingual::Translation.get("category_name", c[:slug_path])[
           find_locale.call(scope).to_sym
         ] || c[:name]
