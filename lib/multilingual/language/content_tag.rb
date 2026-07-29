@@ -63,6 +63,11 @@ class Multilingual::ContentTag
     [GROUP, GROUP_DISABLED]
   end
 
+  def self.reset_groups
+    @enabled_group = nil
+    @disabled_group = nil
+  end
+
   QUERY_ALL =
     "
     #{DiscourseTagging::TAG_GROUP_TAG_IDS_SQL}
