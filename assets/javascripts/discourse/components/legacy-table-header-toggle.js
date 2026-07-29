@@ -1,3 +1,4 @@
+/* eslint-disable discourse/deprecated-imports, discourse/discourse-common-imports, discourse/i18n-import-location, ember/no-classic-classes, ember/no-classic-components, ember/require-tagless-components, simple-import-sort/imports */
 import Component from "@ember/component";
 import { schedule } from "@ember/runloop";
 import { htmlSafe } from "@ember/template";

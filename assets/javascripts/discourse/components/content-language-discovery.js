@@ -1,3 +1,4 @@
+/* eslint-disable discourse/i18n-import-location */
 import Component from "@glimmer/component";
 import { set } from "@ember/object";
 import { service } from "@ember/service";

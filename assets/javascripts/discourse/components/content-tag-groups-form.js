@@ -1,3 +1,4 @@
+/* eslint-disable discourse/i18n-import-location, ember/no-actions-hash, simple-import-sort/imports */
 import { service } from "@ember/service";
 import TagGroupsForm from "discourse/components/tag-groups-form";
 import { ajax } from "discourse/lib/ajax";

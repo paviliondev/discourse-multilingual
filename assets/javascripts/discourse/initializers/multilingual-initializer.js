@@ -1,3 +1,4 @@
+/* eslint-disable discourse/discourse-common-imports, discourse/plugin-api-no-version, ember/no-jquery */
 import { computed, set } from "@ember/object";
 import { schedule } from "@ember/runloop";
 import $ from "jquery";

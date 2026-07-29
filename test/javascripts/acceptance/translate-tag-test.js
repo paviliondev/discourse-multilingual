@@ -1,3 +1,4 @@
+/* eslint-disable discourse/i18n-import-location, qunit/no-assert-equal, qunit/no-loose-assertions, simple-import-sort/imports */
 import { test } from "qunit";
 import { acceptance } from "discourse/tests/helpers/qunit-helpers";
 import I18n from "I18n";

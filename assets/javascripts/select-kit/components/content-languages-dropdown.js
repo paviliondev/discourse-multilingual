@@ -1,3 +1,4 @@
+/* eslint-disable discourse/moved-packages-import-paths, ember/avoid-leaking-state-in-ember-objects */
 import { set } from "@ember/object";
 import DropdownSelectBox from "select-kit/components/dropdown-select-box";
 import {

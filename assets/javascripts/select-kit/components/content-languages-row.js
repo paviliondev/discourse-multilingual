@@ -1,3 +1,4 @@
+/* eslint-disable discourse/moved-packages-import-paths, simple-import-sort/imports */
 import { default as DiscourseURL, userPath } from "discourse/lib/url";
 import SelectKitRowComponent from "select-kit/components/select-kit/select-kit-row";
 import {

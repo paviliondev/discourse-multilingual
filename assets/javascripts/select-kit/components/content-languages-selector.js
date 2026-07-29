@@ -1,3 +1,4 @@
+/* eslint-disable discourse/moved-packages-import-paths, ember/avoid-leaking-state-in-ember-objects */
 import MultiSelectComponent from "select-kit/components/multi-select";
 
 export default MultiSelectComponent.extend({

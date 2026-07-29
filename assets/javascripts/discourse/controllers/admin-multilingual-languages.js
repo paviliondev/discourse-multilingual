@@ -1,3 +1,4 @@
+/* eslint-disable discourse/deprecated-imports, discourse/discourse-common-imports, discourse/i18n-import-location, ember/avoid-leaking-state-in-ember-objects, ember/no-actions-hash, ember/no-classic-classes, ember/no-observers, simple-import-sort/imports */
 import { A } from "@ember/array";
 import Controller from "@ember/controller";
 import { notEmpty } from "@ember/object/computed";

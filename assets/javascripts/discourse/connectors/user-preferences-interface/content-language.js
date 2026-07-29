@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-jquery */
 import { schedule } from "@ember/runloop";
 import $ from "jquery";
 

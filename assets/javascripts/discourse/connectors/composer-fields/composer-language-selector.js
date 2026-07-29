@@ -1,3 +1,4 @@
+/* eslint-disable discourse/discourse-common-imports, ember/no-jquery, ember/no-observers */
 import { schedule } from "@ember/runloop";
 import $ from "jquery";
 import { getOwner } from "discourse-common/lib/get-owner";

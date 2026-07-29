@@ -1,3 +1,4 @@
+/* eslint-disable discourse/moved-packages-import-paths, discourse/truth-helpers-imports, discourse/ui-kit-imports, ember/template-no-invalid-interactive, ember/template-no-template-lint-directives, simple-import-sort/imports */
 import Component from "@glimmer/component";
 import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";

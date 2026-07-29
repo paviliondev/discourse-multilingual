@@ -1,3 +1,4 @@
+/* eslint-disable discourse/discourse-common-imports, discourse/moved-packages-import-paths, simple-import-sort/imports */
 import discourseComputed from "discourse-common/utils/decorators";
 import DropdownSelectBoxHeaderComponent from "select-kit/components/dropdown-select-box/dropdown-select-box-header";
 

@@ -1,3 +1,4 @@
+/* eslint-disable discourse/discourse-common-imports, discourse/i18n-import-location, simple-import-sort/imports */
 import { escapeExpression } from "discourse/lib/utilities";
 import User from "discourse/models/user";
 import getURL from "discourse-common/lib/get-url";

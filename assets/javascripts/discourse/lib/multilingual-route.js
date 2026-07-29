@@ -1,3 +1,4 @@
+/* eslint-disable discourse/discourse-common-imports */
 import { next } from "@ember/runloop";
 import cookie from "discourse/lib/cookie";
 import DiscourseURL from "discourse/lib/url";
