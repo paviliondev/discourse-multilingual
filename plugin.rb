@@ -153,7 +153,7 @@ after_initialize do
   end
 
   add_class_method(:locale_site_setting, :valid_value?) do |val|
-    Multilingual::InterfaceLanguage.supported?(val)
+    val.split("|").all? { |locale| Multilingual::InterfaceLanguage.supported?(locale) }
   end
 
   add_class_method(:locale_site_setting, :values) do
