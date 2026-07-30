@@ -1,8 +1,7 @@
-/* eslint-disable discourse/discourse-common-imports */
 import { next } from "@ember/runloop";
 import cookie from "discourse/lib/cookie";
+import { getOwner } from "discourse/lib/get-owner";
 import DiscourseURL from "discourse/lib/url";
-import { getOwner } from "discourse-common/lib/get-owner";
 
 const contentLanguageParam = "content_languages";
 const localeParam = "locale";

@@ -1,16 +1,17 @@
-/* eslint-disable discourse/i18n-import-location, ember/no-actions-hash, simple-import-sort/imports */
+import { action } from "@ember/object";
 import { service } from "@ember/service";
 import TagGroupsForm from "discourse/components/tag-groups-form";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
-import I18n from "I18n";
+import { i18n } from "discourse-i18n";
 
-export default TagGroupsForm.extend({
-  dialog: service(),
-  updateContentTags() {
+export default class ContentTagGroupsForm extends TagGroupsForm {
+  @service dialog;
+
+  _updateContentTags() {
     this.set(
       "changingContentTags",
-      I18n.t("tagging.groups.content_tags.update.message")
+      i18n("tagging.groups.content_tags.update.message")
     );
 
     ajax(`/tag_groups/${this.model.id}/content-tags`, {
@@ -19,12 +20,12 @@ export default TagGroupsForm.extend({
       .catch(popupAjaxError)
       .then(() => this.set("changingContentTags", null))
       .finally(() => this.tagsChanged());
-  },
+  }
 
-  destroyContentTags() {
+  _destroyContentTags() {
     this.set(
       "changingContentTags",
-      I18n.t("tagging.groups.content_tags.delete.message")
+      i18n("tagging.groups.content_tags.delete.message")
     );
 
     ajax(`/tag_groups/${this.model.id}/content-tags`, {
@@ -33,18 +34,18 @@ export default TagGroupsForm.extend({
       .catch(popupAjaxError)
       .then(() => this.set("changingContentTags", null))
       .finally(() => this.tagsChanged());
-  },
+  }
 
-  actions: {
-    destroyContentTags() {
-      this.dialog.deleteConfirm({
-        title: I18n.t("tagging.groups.content_tags.delete.confirm"),
-        didConfirm: () => this.destroyContentTags(),
-      });
-    },
+  @action
+  destroyContentTags() {
+    this.dialog.deleteConfirm({
+      title: i18n("tagging.groups.content_tags.delete.confirm"),
+      didConfirm: () => this._destroyContentTags(),
+    });
+  }
 
-    updateContentTags() {
-      this.updateContentTags();
-    },
-  },
-});
+  @action
+  updateContentTags() {
+    this._updateContentTags();
+  }
+}

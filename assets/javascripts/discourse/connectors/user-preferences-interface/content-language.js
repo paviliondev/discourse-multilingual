@@ -1,6 +1,4 @@
-/* eslint-disable ember/no-jquery */
 import { schedule } from "@ember/runloop";
-import $ from "jquery";
 
 export default {
   shouldRender(_, ctx) {
@@ -13,17 +11,25 @@ export default {
 
   setupComponent() {
     schedule("afterRender", () => {
-      const content = ".control-group.content-languages";
-      const int = ".control-group.pref-locale";
-      const text = ".control-group.text-size";
-      const form = ".user-preferences form";
+      const content = document.querySelector(
+        ".control-group.content-languages"
+      );
+      const interfaceLocale = document.querySelector(
+        ".control-group.pref-locale"
+      );
+      const textSize = document.querySelector(".control-group.text-size");
+      const form = document.querySelector(".user-preferences form");
 
-      if ($(text).length && !$(form).children(content).length) {
-        $(content).prependTo(form);
+      if (content && textSize && form && content.parentElement !== form) {
+        form.prepend(content);
       }
 
-      if (!$(content).next(int).length) {
-        $(int).insertAfter(content);
+      if (
+        content &&
+        interfaceLocale &&
+        content.nextElementSibling !== interfaceLocale
+      ) {
+        content.after(interfaceLocale);
       }
     });
   },

@@ -1,9 +1,7 @@
-/* eslint-disable qunit/no-loose-assertions */
 import { click, visit } from "@ember/test-helpers";
 import { test } from "qunit";
 import {
   acceptance,
-  exists,
   updateCurrentUser,
 } from "discourse/tests/helpers/qunit-helpers";
 
@@ -22,7 +20,9 @@ acceptance(
     test("content languages dropdown", async (assert) => {
       await visit("/");
 
-      assert.notOk(exists(".content-languages-dropdown"), "does not display");
+      assert
+        .dom(".content-languages-dropdown")
+        .doesNotExist("does not display");
     });
   }
 );
@@ -43,7 +43,7 @@ acceptance(
 
       await visit("/");
 
-      assert.ok(exists(".content-languages-dropdown"), "displays");
+      assert.dom(".content-languages-dropdown").exists("displays");
 
       assert.dom(".content-languages-dropdown summary.has-languages").exists();
 

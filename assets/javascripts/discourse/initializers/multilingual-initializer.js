@@ -1,11 +1,9 @@
-/* eslint-disable discourse/discourse-common-imports, discourse/plugin-api-no-version, ember/no-jquery */
 import { computed, set } from "@ember/object";
 import { schedule } from "@ember/runloop";
-import $ from "jquery";
+import { iconHTML } from "discourse/lib/icon-library";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import renderTag from "discourse/lib/render-tag";
 import Composer from "discourse/models/composer";
-import { iconHTML } from "discourse-common/lib/icon-library";
 import LanguageSwitcher from "../components/language-switcher";
 import { isContentLanguage } from "../lib/multilingual";
 import {
@@ -39,7 +37,7 @@ export default {
       );
     }
 
-    withPluginApi("1.28.0", (api) => {
+    withPluginApi((api) => {
       api.replaceTagRenderer(multilingualTagRenderer);
 
       discoveryParams.forEach((param) => {
@@ -209,9 +207,22 @@ export default {
 
         setupContentTagControls() {
           schedule("afterRender", () => {
-            $(".tag-groups-container").addClass("content-tags");
-            $(".tag-group-content h1 input").prop("disabled", true);
-            $(".content-tag-controls").appendTo(".tag-group-content");
+            document
+              .querySelector(".tag-groups-container")
+              ?.classList.add("content-tags");
+
+            const nameInput = document.querySelector(
+              ".tag-group-content h1 input"
+            );
+            if (nameInput) {
+              nameInput.disabled = true;
+            }
+
+            const controls = document.querySelector(".content-tag-controls");
+            const content = document.querySelector(".tag-group-content");
+            if (controls && content) {
+              content.append(controls);
+            }
           });
         },
       });
@@ -221,7 +232,7 @@ export default {
           pluginId: "discourse-multilingual",
 
           click(e) {
-            if ($(e.target).parents(".toggle-all").length) {
+            if (e.target.closest(".toggle-all")) {
               return true;
             } else {
               return this._super(e);

@@ -1,8 +1,7 @@
-/* eslint-disable discourse/i18n-import-location */
 import Component from "@glimmer/component";
 import { set } from "@ember/object";
 import { service } from "@ember/service";
-import I18n from "I18n";
+import { i18n } from "discourse-i18n";
 import { isContentLanguage } from "../lib/multilingual";
 import {
   contentLanguageParam,
@@ -37,7 +36,7 @@ export default class ContentLanguageDiscovery extends Component {
           contentLangs.push({
             icon: "plus",
             locale: "set_content_language",
-            name: I18n.t("user.content_languages.set"),
+            name: i18n("user.content_languages.set"),
           });
         }
       } else {

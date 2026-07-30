@@ -1,71 +1,79 @@
-/* eslint-disable discourse/discourse-common-imports, ember/no-actions-hash, ember/no-classic-classes, ember/no-classic-components, ember/require-tagless-components */
+/* eslint-disable ember/no-classic-components, ember/require-tagless-components */
+
 import Component from "@ember/component";
-import { deepEqual } from "discourse-common/lib/object";
-import {
-  default as discourseComputed,
-  observes,
-} from "discourse-common/utils/decorators";
+import { action, computed } from "@ember/object";
+import { classNames, tagName } from "@ember-decorators/component";
+import { observes } from "discourse/lib/decorators";
+import { deepEqual } from "discourse/lib/object";
 import MultilingualLanguage from "../models/multilingual-language";
 
-export default Component.extend({
-  tagName: "tr",
-  classNames: "language",
-
+@tagName("tr")
+@classNames("language")
+export default class AdminLanguage extends Component {
   didInsertElement() {
-    this._super(...arguments);
+    super.didInsertElement(...arguments);
     this.currentLanguage = JSON.parse(JSON.stringify(this.language));
-  },
+  }
 
   @observes("language.content_enabled", "language.interface_enabled")
   trackUpdates() {
     if (deepEqual(this.currentLanguage, this.language)) {
-      this.updatedLanguages.removeObject(this.language);
-    } else {
-      this.updatedLanguages.addObject(this.language);
+      const index = this.updatedLanguages.indexOf(this.language);
+      if (index !== -1) {
+        this.updatedLanguages.splice(index, 1);
+      }
+    } else if (!this.updatedLanguages.includes(this.language)) {
+      this.updatedLanguages.push(this.language);
     }
-  },
+  }
 
-  @discourseComputed("language.custom")
-  typeKey(custom) {
-    return `multilingual.languages.${custom ? "custom" : "base"}`;
-  },
+  @computed("language.custom")
+  get typeKey() {
+    return `multilingual.languages.${
+      this.language.custom ? "custom" : "base"
+    }`;
+  }
 
-  @discourseComputed("language.locale")
-  interfaceToggleDisabled(locale) {
-    return locale === "en";
-  },
+  @computed("language.locale")
+  get interfaceToggleDisabled() {
+    return this.language.locale === "en";
+  }
 
-  @discourseComputed("language.content_tag_conflict")
-  contentDisabled(tagConflict) {
+  @computed(
+    "language.content_tag_conflict",
+    "siteSettings.multilingual_content_languages_enabled"
+  )
+  get contentDisabled() {
     return (
-      !this.siteSettings.multilingual_content_languages_enabled || tagConflict
+      !this.siteSettings.multilingual_content_languages_enabled ||
+      this.language.content_tag_conflict
     );
-  },
+  }
 
-  @discourseComputed
-  interfaceDisabled() {
+  @computed("siteSettings.allow_user_locale")
+  get interfaceDisabled() {
     return !this.siteSettings.allow_user_locale;
-  },
+  }
 
-  @discourseComputed("language.custom")
-  actionsDisabled(custom) {
-    return !custom;
-  },
+  @computed("language.custom")
+  get actionsDisabled() {
+    return !this.language.custom;
+  }
 
-  @discourseComputed
-  contentClass() {
+  @computed("contentDisabled")
+  get contentClass() {
     return this.generateControlColumnClass("content");
-  },
+  }
 
-  @discourseComputed
-  interfaceClass() {
+  @computed("interfaceDisabled")
+  get interfaceClass() {
     return this.generateControlColumnClass("interface");
-  },
+  }
 
-  @discourseComputed
-  actionsClass() {
+  @computed("actionsDisabled")
+  get actionsClass() {
     return this.generateControlColumnClass("actions");
-  },
+  }
 
   generateControlColumnClass(type) {
     let columnClass = `language-control ${type}`;
@@ -73,16 +81,15 @@ export default Component.extend({
       columnClass += " disabled";
     }
     return columnClass;
-  },
+  }
 
-  actions: {
-    remove() {
-      this.set("removing", true);
-      let locales = [this.get("language.locale")];
-      MultilingualLanguage.remove(locales).then((result) => {
-        this.set("removing", false);
-        this.removed(result);
-      });
-    },
-  },
-});
+  @action
+  remove() {
+    this.set("removing", true);
+    const locales = [this.get("language.locale")];
+    MultilingualLanguage.remove(locales).then((result) => {
+      this.set("removing", false);
+      this.removed(result);
+    });
+  }
+}

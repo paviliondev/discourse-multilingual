@@ -1,17 +1,21 @@
-/* eslint-disable discourse/discourse-common-imports, discourse/i18n-import-location, ember/no-actions-hash, ember/no-classic-classes, ember/no-classic-components, ember/no-jquery, ember/require-tagless-components, simple-import-sort/imports */
+/* eslint-disable ember/no-classic-components, ember/require-tagless-components */
+
 import Component from "@ember/component";
-import EmberObject from "@ember/object";
-import { notEmpty } from "@ember/object/computed";
+import EmberObject, { action, computed } from "@ember/object";
 import { bind } from "@ember/runloop";
-import $ from "jquery";
-import { on } from "discourse-common/utils/decorators";
-import I18n from "I18n";
+import { classNames } from "@ember-decorators/component";
+import { on } from "discourse/lib/decorators";
+import I18n from "discourse-i18n";
 import { addParam, localeParam } from "../lib/multilingual-route";
 
-export default Component.extend({
-  classNames: "language-switcher-bar",
-  showHidden: false,
-  showHiddenToggle: notEmpty("hiddenLanguages"),
+@classNames("language-switcher-bar")
+export default class LanguageSwitcherBar extends Component {
+  showHidden = false;
+
+  @computed("hiddenLanguages.[]")
+  get showHiddenToggle() {
+    return this.hiddenLanguages?.length > 0;
+  }
 
   @on("init")
   setup() {
@@ -48,42 +52,43 @@ export default Component.extend({
     });
 
     this.setProperties({ visibleLanguages, hiddenLanguages });
-  },
+  }
 
   availableLanguages() {
     return this.site.interface_languages.map((l) => {
       return EmberObject.create(Object.assign({}, l, { class: "language" }));
     });
-  },
+  }
 
   didInsertElement() {
-    this._super(...arguments);
+    super.didInsertElement(...arguments);
     this.set("clickOutsideHandler", bind(this, this.clickOutside));
-    $(document).on("click", this.clickOutsideHandler);
-  },
+    document.addEventListener("click", this.clickOutsideHandler);
+  }
 
   willDestroyElement() {
-    this._super(...arguments);
-    $(document).off("click", this.clickOutsideHandler);
-  },
+    super.willDestroyElement(...arguments);
+    document.removeEventListener("click", this.clickOutsideHandler);
+  }
 
   clickOutside(e) {
-    const $hidden = $(".language-switcher-bar .hidden-languages");
-    const $target = $(e.target);
+    const hidden = document.querySelector(
+      ".language-switcher-bar .hidden-languages"
+    );
 
-    if (!$target.closest($hidden).length) {
+    if (!hidden?.contains(e.target)) {
       this.set("showHidden", false);
     }
-  },
+  }
 
-  actions: {
-    change(locale) {
-      this.set("showHidden", false);
-      addParam(localeParam, locale, { add_cookie: true, ctx: this });
-    },
+  @action
+  change(locale) {
+    this.set("showHidden", false);
+    addParam(localeParam, locale, { add_cookie: true, ctx: this });
+  }
 
-    toggleHidden() {
-      this.toggleProperty("showHidden");
-    },
-  },
-});
+  @action
+  toggleHidden() {
+    this.toggleProperty("showHidden");
+  }
+}

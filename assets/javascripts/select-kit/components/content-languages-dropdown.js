@@ -1,35 +1,35 @@
-/* eslint-disable discourse/moved-packages-import-paths, ember/avoid-leaking-state-in-ember-objects */
 import { set } from "@ember/object";
-import DropdownSelectBox from "select-kit/components/dropdown-select-box";
+import { classNames } from "@ember-decorators/component";
+import DropdownSelectBox from "discourse/select-kit/components/dropdown-select-box";
+import { selectKitOptions } from "discourse/select-kit/components/select-kit";
 import {
   contentLanguageParam,
   getDiscoveryParam,
 } from "../../discourse/lib/multilingual-route";
 
-export default DropdownSelectBox.extend({
-  classNames: "content-languages-dropdown",
-  valueProperty: "locale",
-  nameProperty: "name",
-
-  selectKitOptions: {
-    icon: "translate",
-    showFullTitle: false,
-    autoFilterable: false,
-    headerComponent: "content-languages-header",
-    hasLanguages: false,
-  },
+@classNames("content-languages-dropdown")
+@selectKitOptions({
+  icon: "translate",
+  showFullTitle: false,
+  autoFilterable: false,
+  headerComponent: "content-languages-header",
+  hasLanguages: false,
+})
+export default class ContentLanguagesDropdown extends DropdownSelectBox {
+  valueProperty = "locale";
+  nameProperty = "name";
 
   didInsertElement() {
-    this._super(...arguments);
+    super.didInsertElement(...arguments);
 
     if (!this.currentUser) {
       this.selectKit.options.set("filterable", true);
     }
-  },
+  }
 
   modifyComponentForRow() {
     return "content-languages-row";
-  },
+  }
 
   modifyContent(content) {
     if (!this.currentUser) {
@@ -52,5 +52,5 @@ export default DropdownSelectBox.extend({
     }
 
     return content;
-  },
-});
+  }
+}

@@ -1,6 +1,5 @@
-/* eslint-disable discourse/i18n-import-location, discourse/moved-packages-import-paths, simple-import-sort/imports */
-import i18n from "discourse-common/helpers/i18n";
-import DMenu from "float-kit/components/d-menu";
+import DMenu from "discourse/float-kit/components/d-menu";
+import { i18n } from "discourse-i18n";
 import LanguageSwitcherMenu from "./language-switcher-menu";
 
 export default <template>

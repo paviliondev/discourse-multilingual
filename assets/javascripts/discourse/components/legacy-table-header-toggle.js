@@ -1,77 +1,90 @@
-/* eslint-disable discourse/deprecated-imports, discourse/discourse-common-imports, discourse/i18n-import-location, ember/no-classic-classes, ember/no-classic-components, ember/require-tagless-components, simple-import-sort/imports */
+/* eslint-disable ember/no-classic-components, ember/require-tagless-components */
+
 import Component from "@ember/component";
+import { computed } from "@ember/object";
 import { schedule } from "@ember/runloop";
-import { htmlSafe } from "@ember/template";
-import { iconHTML } from "discourse-common/lib/icon-library";
-import discourseComputed from "discourse-common/utils/decorators";
-import I18n from "I18n";
+import { trustHTML } from "@ember/template";
+import {
+  attributeBindings,
+  classNames,
+  tagName,
+} from "@ember-decorators/component";
+import { iconHTML } from "discourse/lib/icon-library";
+import { i18n } from "discourse-i18n";
 
-export default Component.extend({
-  tagName: "th",
-  classNames: ["sortable"],
-  attributeBindings: ["title", "colspan", "ariaSort:aria-sort", "role"],
-  role: "columnheader",
-  labelKey: null,
-  chevronIcon: null,
-  columnIcon: null,
-  translated: false,
-  automatic: false,
-  onActiveRender: null,
-  pressedState: null,
-  ariaLabel: null,
+@tagName("th")
+@classNames("sortable")
+@attributeBindings("title", "colspan", "ariaSort:aria-sort", "role")
+export default class LegacyTableHeaderToggle extends Component {
+  role = "columnheader";
+  labelKey = null;
+  chevronIcon = null;
+  columnIcon = null;
+  translated = false;
+  automatic = false;
+  onActiveRender = null;
+  pressedState = null;
+  ariaLabel = null;
 
-  @discourseComputed("order", "field", "asc")
-  ariaSort() {
+  @computed("order", "field", "asc")
+  get ariaSort() {
     if (this.order === this.field) {
       return this.asc ? "ascending" : "descending";
     } else {
       return "none";
     }
-  },
+  }
+
   toggleProperties() {
     if (this.order === this.field) {
       this.set("asc", this.asc ? null : true);
     } else {
       this.setProperties({ order: this.field, asc: null });
     }
-  },
+  }
+
   toggleChevron() {
     if (this.order === this.field) {
-      let chevron = iconHTML(this.asc ? "chevron-up" : "chevron-down");
-      this.set("chevronIcon", htmlSafe(`${chevron}`));
+      const chevron = iconHTML(this.asc ? "chevron-up" : "chevron-down");
+      this.set("chevronIcon", trustHTML(`${chevron}`));
     } else {
       this.set("chevronIcon", null);
     }
-  },
+  }
+
   click() {
     this.toggleProperties();
-  },
+  }
+
   keyPress(e) {
     if (e.which === 13) {
       this.toggleProperties();
     }
-  },
+  }
+
   didReceiveAttrs() {
-    this._super(...arguments);
+    super.didReceiveAttrs(...arguments);
     if (!this.automatic && !this.translated) {
       this.set("labelKey", this.field);
     }
     this.set("id", `table-header-toggle-${this.field.replace(/\s/g, "")}`);
     this.toggleChevron();
     this._updateA11yAttributes();
-  },
+  }
+
   didRender() {
-    this._super(...arguments);
+    super.didRender(...arguments);
     if (this.onActiveRender && this.chevronIcon) {
       this.onActiveRender(this.element);
     }
-  },
+  }
+
   _updateA11yAttributes() {
     let criteria = "";
     const pressed = this.order === this.field;
 
     if (this.icon === "heart") {
-      criteria += `${I18n.t("likes_lowercase", { count: 2 })} `;
+      criteria += `${i18n("likes_lowercase", { count: 2 })} `;
     }
 
     if (this.translated) {
@@ -79,12 +92,12 @@ export default Component.extend({
     } else {
       const labelKey = this.labelKey || `directory.${this.field}`;
 
-      criteria += I18n.t(labelKey + "_long", {
-        defaultValue: I18n.t(labelKey),
+      criteria += i18n(labelKey + "_long", {
+        defaultValue: i18n(labelKey),
       });
     }
 
-    this.set("ariaLabel", I18n.t("directory.sort.label", { criteria }));
+    this.set("ariaLabel", i18n("directory.sort.label", { criteria }));
 
     if (pressed) {
       if (this.asc) {
@@ -97,10 +110,11 @@ export default Component.extend({
     } else {
       this.set("pressedState", "false");
     }
-  },
+  }
+
   _focusHeader() {
     schedule("afterRender", () => {
       document.getElementById(this.id)?.focus();
     });
-  },
-});
+  }
+}

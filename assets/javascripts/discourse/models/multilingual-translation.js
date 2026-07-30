@@ -1,17 +1,15 @@
-/* eslint-disable ember/no-classic-classes */
 import EmberObject from "@ember/object";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 
-const MultilingualTranslation = EmberObject.extend();
 const TranslationPath = "/admin/multilingual/translations";
 
-MultilingualTranslation.reopenClass({
-  list() {
+export default class MultilingualTranslation extends EmberObject {
+  static list() {
     return ajax(TranslationPath).catch(popupAjaxError);
-  },
+  }
 
-  remove(locale, file_type) {
+  static remove(locale, file_type) {
     return ajax(TranslationPath, {
       method: "DELETE",
       data: {
@@ -19,9 +17,9 @@ MultilingualTranslation.reopenClass({
         file_type,
       },
     }).catch(popupAjaxError);
-  },
+  }
 
-  download(locale, file_type) {
+  static download(locale, file_type) {
     return ajax(TranslationPath + "/download", {
       data: {
         locale,
@@ -31,7 +29,5 @@ MultilingualTranslation.reopenClass({
         responseType: "blob",
       },
     });
-  },
-});
-
-export default MultilingualTranslation;
+  }
+}

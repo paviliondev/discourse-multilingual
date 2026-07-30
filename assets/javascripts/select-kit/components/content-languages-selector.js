@@ -1,18 +1,19 @@
-/* eslint-disable discourse/moved-packages-import-paths, ember/avoid-leaking-state-in-ember-objects */
-import MultiSelectComponent from "select-kit/components/multi-select";
+import { classNames } from "@ember-decorators/component";
+import MultiSelectComponent from "discourse/select-kit/components/multi-select";
+import { selectKitOptions } from "discourse/select-kit/components/select-kit";
 
-export default MultiSelectComponent.extend({
-  classNames: ["content-languages-selector", "classNames"],
-  allowAny: false,
-  valueProperty: "locale",
-  nameProperty: "name",
-  options: {
-    filterable: true,
-  },
-  initializeContentLanguges: true,
+@classNames("content-languages-selector", "classNames")
+@selectKitOptions({
+  filterable: true,
+})
+export default class ContentLanguagesSelector extends MultiSelectComponent {
+  allowAny = false;
+  valueProperty = "locale";
+  nameProperty = "name";
+  initializeContentLanguges = true;
 
   didInsertElement() {
-    this._super(...arguments);
+    super.didInsertElement(...arguments);
 
     if (
       !this.value &&
@@ -21,5 +22,5 @@ export default MultiSelectComponent.extend({
     ) {
       this.set("value", this.currentUser.content_languages[0].locale);
     }
-  },
-});
+  }
+}

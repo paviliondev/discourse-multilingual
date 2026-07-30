@@ -1,9 +1,7 @@
-/* eslint-disable qunit/no-loose-assertions */
 import { click, visit } from "@ember/test-helpers";
 import { test } from "qunit";
 import {
   acceptance,
-  exists,
   loggedInUser,
 } from "discourse/tests/helpers/qunit-helpers";
 
@@ -25,7 +23,9 @@ acceptance(
     test("content languages selector", async (assert) => {
       await visit(`/u/${loggedInUser().username}/preferences/interface`);
 
-      assert.notOk(exists(".content-languages-selector"), "does not display");
+      assert
+        .dom(".content-languages-selector")
+        .doesNotExist("does not display");
     });
   }
 );
@@ -44,7 +44,7 @@ acceptance(
     test("content languages selector", async (assert) => {
       await visit(`/u/${loggedInUser().username}/preferences/interface`);
 
-      assert.ok(exists(".content-languages-selector summary"), "displays");
+      assert.dom(".content-languages-selector summary").exists("displays");
 
       await click(".content-languages-selector summary");
 
