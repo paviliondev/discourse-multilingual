@@ -33,6 +33,8 @@ acceptance(
 acceptance(
   "User interface preferences when topic filtering enabled",
   function (needs) {
+    let lastUserData;
+
     needs.user();
     needs.settings({
       multilingual_enabled: true,
@@ -40,6 +42,12 @@ acceptance(
       multilingual_content_languages_topic_filtering_enabled: true,
     });
     needs.site({ content_languages });
+    needs.pretender((server, helper) => {
+      server.put("/u/eviltrout.json", (request) => {
+        lastUserData = helper.parsePostData(request.requestBody);
+        return helper.response({ user: {} });
+      });
+    });
 
     test("content languages selector", async (assert) => {
       await visit(`/u/${loggedInUser().username}/preferences/interface`);
@@ -56,6 +64,23 @@ acceptance(
           },
           "displays content languages"
         );
+    });
+
+    test("saves content languages as custom fields", async function (assert) {
+      await visit(`/u/${loggedInUser().username}/preferences/interface`);
+
+      const controller = this.owner.lookup("controller:preferences/interface");
+      assert.true(
+        controller.saveAttrNames.includes("custom_fields"),
+        "registers custom fields as a saveable preference"
+      );
+
+      await click(".save-changes");
+
+      assert.true(
+        "custom_fields" in lastUserData,
+        "includes custom fields in the save request"
+      );
     });
   }
 );
