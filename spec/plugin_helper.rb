@@ -4,7 +4,10 @@
 require "webmock/rspec"
 
 RSpec.configure do |config|
-  config.before(:each) { ActiveRecord::Base.connection.begin_transaction(joinable: false) }
+  config.before(:each) do
+    ActiveRecord::Base.connection.begin_transaction(joinable: false)
+    Multilingual::ContentTag.reset_groups
+  end
 
   config.after(:each) { ActiveRecord::Base.connection.rollback_transaction }
 

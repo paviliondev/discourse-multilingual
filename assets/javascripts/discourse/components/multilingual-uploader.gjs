@@ -3,11 +3,11 @@ import { tracked } from "@glimmer/tracking";
 import { getOwner } from "@ember/owner";
 import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 import { service } from "@ember/service";
-import loadingSpinner from "discourse/helpers/loading-spinner";
+import { bind } from "discourse/lib/decorators";
 import UppyUpload from "discourse/lib/uppy/uppy-upload";
-import icon from "discourse-common/helpers/d-icon";
-import i18n from "discourse-common/helpers/i18n";
-import { bind } from "discourse-common/utils/decorators";
+import dIcon from "discourse/ui-kit/helpers/d-icon";
+import dLoadingSpinner from "discourse/ui-kit/helpers/d-loading-spinner";
+import { i18n } from "discourse-i18n";
 
 export default class MultilingualUploader extends Component {
   @service messageBus;
@@ -69,12 +69,12 @@ export default class MultilingualUploader extends Component {
       {{/if}}
 
       {{#if this.uppyUpload.uploading}}
-        {{loadingSpinner size="small"}}
+        {{dLoadingSpinner size="small"}}
         <span>{{i18n "uploading"}}</span>
       {{/if}}
 
       <label class="btn btn-default {{if this.addDisabled 'disabled'}}">
-        {{icon "upload"}}
+        {{dIcon "upload"}}
         {{i18n "upload"}}
         <input
           {{didInsert this.uppyUpload.setup}}

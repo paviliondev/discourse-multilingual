@@ -13,24 +13,24 @@ describe TopicQuery do
   end
 
   context "when user has content languages" do
-    fab!(:user1) { Fabricate(:user) }
-    fab!(:user2) { Fabricate(:user) }
-    fab!(:user3) { Fabricate(:user) }
+    fab!(:user1, :user)
+    fab!(:user2, :user)
+    fab!(:user3, :user)
     fab!(:tag1) { Fabricate(:tag, name: "tag1") }
     fab!(:tag2) { Fabricate(:tag, name: "tag2") }
 
-    fab!(:language_topic1) do
+    let!(:language_topic1) do
       tag1 = Tag.find_by(name: "tag1")
       language_tag1 = Tag.find_by(name: Multilingual::ContentTag.all.first)
       Fabricate(:topic, tags: [tag1, language_tag1])
     end
 
-    fab!(:language_topic2) do
+    let!(:language_topic2) do
       language_tag2 = Tag.find_by(name: Multilingual::ContentTag.all.second)
       Fabricate(:topic, tags: [language_tag2])
     end
 
-    fab!(:language_topic3) do
+    let!(:language_topic3) do
       language_tag3 =
         Tag.find_by(
           name:
@@ -39,11 +39,11 @@ describe TopicQuery do
       Fabricate(:topic, tags: [language_tag3])
     end
 
-    fab!(:non_language_topic1) do
+    let!(:non_language_topic1) do
       tag1 = Tag.find_by(name: "tag1")
       Fabricate(:topic, tags: [tag1])
     end
-    fab!(:non_language_topic2) do
+    let!(:non_language_topic2) do
       tag2 = Tag.find_by(name: "tag2")
       Fabricate(:topic, tags: [tag2])
     end

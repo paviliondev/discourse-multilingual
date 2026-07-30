@@ -1,11 +1,9 @@
-import { computed, set } from "@ember/object";
+import { action, computed, set } from "@ember/object";
 import { schedule } from "@ember/runloop";
-import $ from "jquery";
+import { iconHTML } from "discourse/lib/icon-library";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import renderTag from "discourse/lib/render-tag";
 import Composer from "discourse/models/composer";
-import { iconHTML } from "discourse-common/lib/icon-library";
-import { default as discourseComputed } from "discourse-common/utils/decorators";
 import LanguageSwitcher from "../components/language-switcher";
 import { isContentLanguage } from "../lib/multilingual";
 import {
@@ -39,7 +37,7 @@ export default {
       );
     }
 
-    withPluginApi("1.28.0", (api) => {
+    withPluginApi((api) => {
       api.replaceTagRenderer(multilingualTagRenderer);
 
       discoveryParams.forEach((param) => {
@@ -51,62 +49,49 @@ export default {
 
       api.onPageChange(() => removeParam(localeParam, { ctx: this }));
 
-      api.modifyClass("controller:preferences/interface", {
-        pluginId: "discourse-multilingual",
+      api.addSaveableCustomFields("interface");
 
-        @discourseComputed()
-        availableLocales() {
-          return this.site.interface_languages.map((l) => {
-            return {
-              value: l.locale,
-              name: l.name,
-            };
-          });
-        },
-
-        @discourseComputed("makeThemeDefault")
-        saveAttrNames(makeDefault) {
-          let attrs = this._super(makeDefault);
-          attrs.push("custom_fields");
-          return attrs;
-        },
-
-        actions: {
-          save() {
-            if (!siteSettings.multilingual_content_languages_enabled) {
-              return this._super();
-            }
-
-            let cl = this.model.custom_fields.content_languages;
-            if (!cl || !cl.length) {
-              this.set("model.custom_fields.content_languages", [""]);
-            }
-
-            return this._super().then(() => {
-              const contentLanguages = this.site.content_languages;
-              let rawUserLanguages = this.model.custom_fields.content_languages;
-              let userLanguages = [];
-
-              if (typeof rawUserLanguages === "string") {
-                rawUserLanguages = [rawUserLanguages];
+      api.modifyClass(
+        "controller:preferences/interface",
+        (Superclass) =>
+          class extends Superclass {
+            @action
+            save() {
+              if (!siteSettings.multilingual_content_languages_enabled) {
+                return super.save();
               }
 
-              if (rawUserLanguages) {
-                userLanguages = rawUserLanguages.map((locale) => {
-                  return contentLanguages.find((l) => l.locale === locale);
-                });
+              let cl = this.model.custom_fields.content_languages;
+              if (!cl || !cl.length) {
+                this.set("model.custom_fields.content_languages", [""]);
               }
 
-              // See workaround above
-              userLanguages = userLanguages.filter(
-                (l) => l && isContentLanguage(l.locale, siteSettings)
-              );
+              return super.save().then(() => {
+                const contentLanguages = this.site.content_languages;
+                let rawUserLanguages =
+                  this.model.custom_fields.content_languages;
+                let userLanguages = [];
 
-              currentUser.set("content_languages", userLanguages);
-            });
-          },
-        },
-      });
+                if (typeof rawUserLanguages === "string") {
+                  rawUserLanguages = [rawUserLanguages];
+                }
+
+                if (rawUserLanguages) {
+                  userLanguages = rawUserLanguages.map((locale) => {
+                    return contentLanguages.find((l) => l.locale === locale);
+                  });
+                }
+
+                // See workaround above
+                userLanguages = userLanguages.filter(
+                  (l) => l && isContentLanguage(l.locale, siteSettings)
+                );
+
+                currentUser.set("content_languages", userLanguages);
+              });
+            }
+          }
+      );
 
       api.modifyClass("component:tag-drop", {
         pluginId: "discourse-multilingual",
@@ -220,9 +205,22 @@ export default {
 
         setupContentTagControls() {
           schedule("afterRender", () => {
-            $(".tag-groups-container").addClass("content-tags");
-            $(".tag-group-content h1 input").prop("disabled", true);
-            $(".content-tag-controls").appendTo(".tag-group-content");
+            document
+              .querySelector(".tag-groups-container")
+              ?.classList.add("content-tags");
+
+            const nameInput = document.querySelector(
+              ".tag-group-content h1 input"
+            );
+            if (nameInput) {
+              nameInput.disabled = true;
+            }
+
+            const controls = document.querySelector(".content-tag-controls");
+            const content = document.querySelector(".tag-group-content");
+            if (controls && content) {
+              content.append(controls);
+            }
           });
         },
       });
@@ -232,7 +230,7 @@ export default {
           pluginId: "discourse-multilingual",
 
           click(e) {
-            if ($(e.target).parents(".toggle-all").length) {
+            if (e.target.closest(".toggle-all")) {
               return true;
             } else {
               return this._super(e);

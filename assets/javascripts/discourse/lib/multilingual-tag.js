@@ -1,8 +1,8 @@
+import getURL from "discourse/lib/get-url";
+import { helperContext } from "discourse/lib/helpers";
 import { escapeExpression } from "discourse/lib/utilities";
 import User from "discourse/models/user";
-import getURL from "discourse-common/lib/get-url";
-import { helperContext } from "discourse-common/lib/helpers";
-import I18n from "I18n";
+import I18n from "discourse-i18n";
 import { isContentLanguage } from "./multilingual";
 
 function multilingualTagRenderer(tag, params) {

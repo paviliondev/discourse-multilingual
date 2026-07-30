@@ -1,13 +1,19 @@
+/* eslint-disable ember/no-observers -- the connector tracks a legacy composer property */
+
 import { schedule } from "@ember/runloop";
-import $ from "jquery";
-import { getOwner } from "discourse-common/lib/get-owner";
+import { getOwner } from "discourse/lib/get-owner";
 
 function setupSelector(isFirstPost, ctx) {
   ctx.set("showSelector", isFirstPost);
 
   if (isFirstPost) {
     schedule("afterRender", () => {
-      $(".content-languages-selector").appendTo(".title-and-category");
+      const selector = document.querySelector(".content-languages-selector");
+      const titleAndCategory = document.querySelector(".title-and-category");
+
+      if (selector && titleAndCategory) {
+        titleAndCategory.append(selector);
+      }
     });
   }
 }

@@ -2,7 +2,6 @@ import EmberObject from "@ember/object";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 
-const MultilingualLanguage = EmberObject.extend();
 const LanguagesPath = "/admin/multilingual/languages";
 
 function getParams() {
@@ -16,8 +15,8 @@ function getParams() {
   return params;
 }
 
-MultilingualLanguage.reopenClass({
-  list(params = {}) {
+export default class MultilingualLanguage extends EmberObject {
+  static list(params = {}) {
     return ajax(LanguagesPath, {
       data: Object.assign(getParams(), params),
     })
@@ -25,9 +24,9 @@ MultilingualLanguage.reopenClass({
         return result.map((l) => MultilingualLanguage.create(l));
       })
       .catch(popupAjaxError);
-  },
+  }
 
-  save(languages, params = {}) {
+  static save(languages, params = {}) {
     params = Object.assign(getParams(), params);
     let data = Object.assign({ languages }, params);
     return ajax(LanguagesPath, {
@@ -36,14 +35,12 @@ MultilingualLanguage.reopenClass({
       dataType: "json",
       contentType: "application/json",
     }).catch(popupAjaxError);
-  },
+  }
 
-  remove(locales) {
+  static remove(locales) {
     return ajax(LanguagesPath, {
       method: "DELETE",
       data: Object.assign(getParams(), { locales }),
     }).catch(popupAjaxError);
-  },
-});
-
-export default MultilingualLanguage;
+  }
+}

@@ -3,9 +3,9 @@ import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
-import concatClass from "discourse/helpers/concat-class";
+import { eq } from "discourse/truth-helpers";
+import dConcatClass from "discourse/ui-kit/helpers/d-concat-class";
 import I18n from "discourse-i18n";
-import eq from "truth-helpers/helpers/eq";
 import { addParam, localeParam } from "../lib/multilingual-route";
 
 export default class LanguageSwitcherMenu extends Component {
@@ -25,9 +25,9 @@ export default class LanguageSwitcherMenu extends Component {
       <ul>
         {{#each this.site.interface_languages as |l|}}
           <li>
-            {{! template-lint-disable no-invalid-interactive }}
+            {{! eslint-disable ember/template-no-invalid-interactive }}
             <a
-              class={{concatClass
+              class={{dConcatClass
                 "ls-language"
                 (if (eq l.locale this.currentLocale) "current")
               }}

@@ -1,0 +1,7 @@
+# Legacy object-literal decorators are not supported by Prettier 3.
+assets/javascripts/discourse/components/admin-language-list.js
+assets/javascripts/discourse/components/admin-language.js
+assets/javascripts/discourse/components/language-switcher-bar.js
+assets/javascripts/discourse/components/legacy-table-header-toggle.js
+assets/javascripts/discourse/controllers/admin-multilingual-languages.js
+assets/javascripts/select-kit/components/content-languages-header.js
