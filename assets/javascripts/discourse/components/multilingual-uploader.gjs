@@ -1,6 +1,5 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
-import { getOwner } from "@ember/owner";
 import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 import { service } from "@ember/service";
 import { bind } from "discourse/lib/decorators";
@@ -14,7 +13,7 @@ export default class MultilingualUploader extends Component {
 
   @tracked message;
 
-  uppyUpload = new UppyUpload(getOwner(this), {
+  uppyUpload = new UppyUpload(this, {
     id: this.args.id,
     type: "yml",
     preventDirectS3Uploads: true,
